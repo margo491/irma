@@ -70,7 +70,7 @@ class MaxAdapter(BotAdapter):
         async with httpx.AsyncClient() as client:
             await client.post(
                 f"{_BASE}/messages",
-                params={"access_token": self._token},
+                headers={"Authorization": self._token},
                 json=body,
                 timeout=10,
             )
