@@ -44,14 +44,11 @@ class MaxAdapter(BotAdapter):
 
     # ------------------------------------------------------------------
     async def send(self, message: OutgoingMessage) -> None:
-        body: dict = {
-            "recipient": {"chat_id": int(message.user_id)},
-            "body": {"text": message.text},
-        }
+        body: dict = {"text": message.text}
 
         if message.buttons:
             rows = _split_rows(message.buttons, _ROW_SIZE)
-            body["body"]["attachments"] = [
+            body["attachments"] = [
                 {
                     "type": "inline_keyboard",
                     "payload": {
@@ -73,6 +70,7 @@ class MaxAdapter(BotAdapter):
         async with httpx.AsyncClient() as client:
             await client.post(
                 f"{_BASE}/messages",
+                params={"user_id": message.user_id},
                 headers={"Authorization": self._token},
                 json=body,
                 timeout=10,
