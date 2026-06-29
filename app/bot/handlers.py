@@ -25,17 +25,23 @@ _MAIN_BUTTONS = [
 async def handle(intent: Intent, msg: IncomingMessage, payload: dict) -> OutgoingMessage:
     state = _sessions.get(msg.user_id, "")
 
-    if state == "awaiting_name":
-        return await _handle_awaiting_name(msg)
     if state == "awaiting_birth":
         return await _handle_awaiting_birth(msg)
 
     async with httpx.AsyncClient() as client:
         r = await client.get(f"{API_BASE}/user/{msg.user_id}")
     if r.status_code == 404:
-        _sessions[msg.user_id] = "awaiting_name"
-        _session_data[msg.user_id] = {}
-        return OutgoingMessage(user_id=msg.user_id, text="Добро пожаловать! Как вас зовут?")
+        name = msg.first_name or "Гость"
+        _sessions[msg.user_id] = "awaiting_birth"
+        _session_data[msg.user_id] = {"name": name}
+        return OutgoingMessage(
+            user_id=msg.user_id,
+            text=(
+                f"Привет, {name}! Рады видеть вас в боте Max-кафе.\n\n"
+                "Введите дату рождения (ДД.ММ.ГГГГ) — подарим бонусы ко дню рождения!\n"
+                "Или отправьте «—» чтобы пропустить."
+            ),
+        )
 
     match intent:
         case Intent.OPEN_MENU:
@@ -65,18 +71,6 @@ async def handle(intent: Intent, msg: IncomingMessage, payload: dict) -> Outgoin
             return await _repeat_order(msg, payload.get("order_id"))
         case _:
             return OutgoingMessage(user_id=msg.user_id, text="Выберите раздел:", buttons=_MAIN_BUTTONS)
-
-
-async def _handle_awaiting_name(msg: IncomingMessage) -> OutgoingMessage:
-    name = msg.text.strip()
-    if not name:
-        return OutgoingMessage(user_id=msg.user_id, text="Пожалуйста, введите ваше имя:")
-    _session_data[msg.user_id]["name"] = name
-    _sessions[msg.user_id] = "awaiting_birth"
-    return OutgoingMessage(
-        user_id=msg.user_id,
-        text="Введите дату рождения в формате ДД.ММ.ГГГГ\nили отправьте «—» чтобы пропустить:",
-    )
 
 
 async def _handle_awaiting_birth(msg: IncomingMessage) -> OutgoingMessage:

@@ -9,6 +9,7 @@ class IncomingMessage:
     channel: str      # "max" | "telegram" | ...
     text: str
     payload: dict     # данные кнопок / callback
+    first_name: str = ""  # имя из профиля мессенджера
 
 
 @dataclass

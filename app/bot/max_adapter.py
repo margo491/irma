@@ -22,6 +22,7 @@ class MaxAdapter(BotAdapter):
             cb = raw["callback"]
             user_id = str(cb["user"]["user_id"])
             chat_id = str(cb.get("chat_id") or cb["user"]["user_id"])
+            first_name = cb["user"].get("first_name", "")
             try:
                 payload = json.loads(cb.get("payload") or "{}")
             except (ValueError, TypeError):
@@ -32,6 +33,7 @@ class MaxAdapter(BotAdapter):
                 channel="max",
                 text=payload.get("intent", ""),
                 payload=payload,
+                first_name=first_name,
             )
 
         # message_created или bot_started
@@ -39,8 +41,9 @@ class MaxAdapter(BotAdapter):
         sender = msg.get("sender", {})
         user_id = str(sender.get("user_id", ""))
         chat_id = str(msg.get("recipient", {}).get("chat_id") or user_id)
+        first_name = sender.get("first_name", "")
         text = (msg.get("body") or {}).get("text", "") or ""
-        return IncomingMessage(user_id=user_id, chat_id=chat_id, channel="max", text=text, payload={})
+        return IncomingMessage(user_id=user_id, chat_id=chat_id, channel="max", text=text, payload={}, first_name=first_name)
 
     # ------------------------------------------------------------------
     async def send(self, message: OutgoingMessage) -> None:
