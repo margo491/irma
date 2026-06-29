@@ -4,6 +4,7 @@ from decimal import Decimal
 import httpx
 from app.bot.adapter import IncomingMessage, OutgoingMessage
 from app.bot.intents import Intent
+from app.config import settings
 
 API_BASE = "http://localhost:8000"
 
@@ -253,11 +254,37 @@ async def _confirm_order(msg: IncomingMessage) -> OutgoingMessage:
 
     order = r.json()
     _carts.pop(msg.user_id, None)
+
+    if settings.admin_max_user_id:
+        await _notify_admin(order, user)
+
     return OutgoingMessage(
         user_id=msg.user_id,
         text=f"Заказ №{order['id']} принят!\nСумма: {order['total_amount']} ₽\n\nСпасибо, ждём вас!",
         buttons=_MAIN_BUTTONS,
     )
+
+
+async def _notify_admin(order: dict, user: dict) -> None:
+    items_text = "\n".join(
+        f"  • {i['name']} × {i['qty']} — {i['price']} ₽"
+        for i in order["items"]
+    )
+    phone = user.get("phone") or "не указан"
+    text = (
+        f"🛎 Новый заказ #{order['id']}\n"
+        f"Клиент: {user['name']} ({phone})\n"
+        f"Состав:\n{items_text}\n"
+        f"Итого: {order['total_amount']} ₽"
+    )
+    async with httpx.AsyncClient() as client:
+        await client.post(
+            "https://botapi.max.ru/messages",
+            params={"user_id": settings.admin_max_user_id},
+            headers={"Authorization": settings.max_token},
+            json={"text": text},
+            timeout=10,
+        )
 
 
 async def _show_profile(msg: IncomingMessage) -> OutgoingMessage:
