@@ -12,6 +12,8 @@ _adapter = MaxAdapter(token=settings.max_token)
 @router.post("/webhook")
 async def webhook(request: Request):
     payload = await request.json()
+    import logging
+    logging.getLogger("irma").warning("RAW PAYLOAD: %s", payload)
 
     msg = await _adapter.parse(payload)
     if not msg.user_id:
