@@ -290,20 +290,16 @@ async def _show_history(msg: IncomingMessage) -> OutgoingMessage:
             text="История заказов пуста.",
             buttons=[{"label": "← Главное меню", "payload": {"intent": "open_menu"}}],
         )
-    lines = []
+    blocks = []
     buttons = []
     for o in orders:
-        first_items = o["items"][:2]
-        rest = len(o["items"]) - 2
-        desc = ", ".join(i["name"] for i in first_items)
-        if rest > 0:
-            desc += f" и ещё {rest}"
-        lines.append(f"{o['created_at'][:10]} — {o['total_amount']} ₽ ({desc})")
+        item_lines = "\n".join(f"• {i['name']} × {i['qty']} — {i['price']} ₽" for i in o["items"])
+        blocks.append(f"Заказ #{o['id']} от {o['created_at'][:10]} — {o['total_amount']} ₽\n{item_lines}")
         buttons.append(
             {"label": f"Повторить #{o['id']}", "payload": {"intent": "repeat_order", "order_id": o["id"]}}
         )
     buttons.append({"label": "← Главное меню", "payload": {"intent": "open_menu"}})
-    return OutgoingMessage(user_id=msg.user_id, text="\n".join(lines), buttons=buttons)
+    return OutgoingMessage(user_id=msg.user_id, text="\n\n".join(blocks), buttons=buttons)
 
 
 async def _repeat_order(msg: IncomingMessage, order_id: int) -> OutgoingMessage:
