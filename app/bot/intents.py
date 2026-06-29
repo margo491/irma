@@ -6,6 +6,10 @@ from app.bot.adapter import IncomingMessage
 class Intent(str, Enum):
     OPEN_MENU = "open_menu"
     OPEN_CATEGORY = "open_category"
+    ADD_ITEM = "add_item"
+    SHOW_CART = "show_cart"
+    CLEAR_CART = "clear_cart"
+    CONFIRM_ORDER = "confirm_order"
     SHOW_PROFILE = "show_profile"
     SHOW_BONUSES = "show_bonuses"
     SHOW_ORDER_HISTORY = "show_order_history"

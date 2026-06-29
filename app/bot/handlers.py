@@ -1,5 +1,6 @@
 """Обработчики намерений бота."""
 from datetime import datetime
+from decimal import Decimal
 import httpx
 from app.bot.adapter import IncomingMessage, OutgoingMessage
 from app.bot.intents import Intent
@@ -9,8 +10,12 @@ API_BASE = "http://localhost:8000"
 _sessions: dict[str, str] = {}
 _session_data: dict[str, dict] = {}
 
+# cart: user_id → {item_id: {"name": str, "price": Decimal, "qty": int}}
+_carts: dict[str, dict[int, dict]] = {}
+
 _MAIN_BUTTONS = [
     {"label": "Меню", "payload": {"intent": "open_menu"}},
+    {"label": "Корзина", "payload": {"intent": "show_cart"}},
     {"label": "Профиль", "payload": {"intent": "show_profile"}},
     {"label": "Бонусы", "payload": {"intent": "show_bonuses"}},
     {"label": "История заказов", "payload": {"intent": "show_order_history"}},
@@ -37,6 +42,19 @@ async def handle(intent: Intent, msg: IncomingMessage, payload: dict) -> Outgoin
             return await _show_categories(msg)
         case Intent.OPEN_CATEGORY:
             return await _show_category(msg, payload.get("category_id"))
+        case Intent.ADD_ITEM:
+            return await _add_item(msg, payload.get("item_id"))
+        case Intent.SHOW_CART:
+            return await _show_cart(msg)
+        case Intent.CLEAR_CART:
+            _carts.pop(msg.user_id, None)
+            return OutgoingMessage(
+                user_id=msg.user_id,
+                text="Корзина очищена.",
+                buttons=[{"label": "Меню", "payload": {"intent": "open_menu"}}],
+            )
+        case Intent.CONFIRM_ORDER:
+            return await _confirm_order(msg)
         case Intent.SHOW_PROFILE:
             return await _show_profile(msg)
         case Intent.SHOW_BONUSES:
@@ -98,6 +116,10 @@ async def _show_categories(msg: IncomingMessage) -> OutgoingMessage:
         {"label": c["name"], "payload": {"intent": "open_category", "category_id": c["id"]}}
         for c in categories
     ]
+    cart = _carts.get(msg.user_id, {})
+    if cart:
+        total_qty = sum(v["qty"] for v in cart.values())
+        buttons.append({"label": f"Корзина ({total_qty})", "payload": {"intent": "show_cart"}})
     return OutgoingMessage(user_id=msg.user_id, text="Выберите категорию:", buttons=buttons)
 
 
@@ -112,14 +134,118 @@ async def _show_category(msg: IncomingMessage, category_id: int) -> OutgoingMess
             line += f"\n{i['description']}"
         lines.append(line)
     buttons = [
-        {"label": i["name"], "payload": {"intent": "add_item", "item_id": i["id"]}}
+        {"label": f"+ {i['name']}", "payload": {"intent": "add_item", "item_id": i["id"]}}
         for i in items
     ]
+    cart = _carts.get(msg.user_id, {})
+    if cart:
+        total_qty = sum(v["qty"] for v in cart.values())
+        buttons.append({"label": f"Корзина ({total_qty})", "payload": {"intent": "show_cart"}})
     buttons.append({"label": "← Категории", "payload": {"intent": "open_menu"}})
     return OutgoingMessage(
         user_id=msg.user_id,
         text="\n\n".join(lines) or "Категория пуста",
         buttons=buttons,
+    )
+
+
+async def _add_item(msg: IncomingMessage, item_id: int) -> OutgoingMessage:
+    if not item_id:
+        return OutgoingMessage(user_id=msg.user_id, text="Ошибка: позиция не указана.", buttons=_MAIN_BUTTONS)
+
+    async with httpx.AsyncClient() as client:
+        r = await client.get(f"{API_BASE}/item/{item_id}")
+    if r.status_code != 200:
+        return OutgoingMessage(user_id=msg.user_id, text="Позиция недоступна.", buttons=_MAIN_BUTTONS)
+
+    item = r.json()
+    cart = _carts.setdefault(msg.user_id, {})
+    if item_id in cart:
+        cart[item_id]["qty"] += 1
+    else:
+        cart[item_id] = {"name": item["name"], "price": Decimal(str(item["price"])), "qty": 1}
+
+    qty = cart[item_id]["qty"]
+    total_qty = sum(v["qty"] for v in cart.values())
+    total = sum(v["price"] * v["qty"] for v in cart.values())
+
+    text = (
+        f"✓ {item['name']} добавлен в корзину"
+        + (f" (×{qty})" if qty > 1 else "")
+        + f"\n\nВ корзине: {total_qty} поз. на {total} ₽"
+    )
+    return OutgoingMessage(
+        user_id=msg.user_id,
+        text=text,
+        buttons=[
+            {"label": "Продолжить покупки", "payload": {"intent": "open_menu"}},
+            {"label": f"Корзина ({total_qty})", "payload": {"intent": "show_cart"}},
+        ],
+    )
+
+
+async def _show_cart(msg: IncomingMessage) -> OutgoingMessage:
+    cart = _carts.get(msg.user_id, {})
+    if not cart:
+        return OutgoingMessage(
+            user_id=msg.user_id,
+            text="Корзина пуста.",
+            buttons=[{"label": "Меню", "payload": {"intent": "open_menu"}}],
+        )
+
+    lines = []
+    total = Decimal("0")
+    for item_id, v in cart.items():
+        subtotal = v["price"] * v["qty"]
+        total += subtotal
+        lines.append(f"{v['name']} × {v['qty']} = {subtotal} ₽")
+
+    text = "Ваша корзина:\n" + "\n".join(lines) + f"\n\nИтого: {total} ₽"
+    return OutgoingMessage(
+        user_id=msg.user_id,
+        text=text,
+        buttons=[
+            {"label": "Оформить заказ", "payload": {"intent": "confirm_order"}},
+            {"label": "Очистить", "payload": {"intent": "clear_cart"}},
+            {"label": "← Меню", "payload": {"intent": "open_menu"}},
+        ],
+    )
+
+
+async def _confirm_order(msg: IncomingMessage) -> OutgoingMessage:
+    cart = _carts.get(msg.user_id, {})
+    if not cart:
+        return OutgoingMessage(
+            user_id=msg.user_id,
+            text="Корзина пуста — нечего оформлять.",
+            buttons=[{"label": "Меню", "payload": {"intent": "open_menu"}}],
+        )
+
+    async with httpx.AsyncClient() as client:
+        ru = await client.get(f"{API_BASE}/user/{msg.user_id}")
+        user = ru.json()
+        r = await client.post(
+            f"{API_BASE}/order/",
+            json={
+                "user_id": user["id"],
+                "items": [{"item_id": iid, "qty": v["qty"]} for iid, v in cart.items()],
+                "bonuses_to_spend": "0",
+            },
+        )
+
+    if r.status_code != 200:
+        return OutgoingMessage(
+            user_id=msg.user_id,
+            text=f"Ошибка оформления заказа: {r.text}",
+            buttons=_MAIN_BUTTONS,
+        )
+
+    order = r.json()
+    _carts.pop(msg.user_id, None)
+    return OutgoingMessage(
+        user_id=msg.user_id,
+        text=f"Заказ №{order['id']} принят!\nСумма: {order['total_amount']} ₽\n\nСпасибо, ждём вас!",
+        buttons=_MAIN_BUTTONS,
     )
 
 
