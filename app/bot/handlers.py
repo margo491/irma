@@ -25,6 +25,8 @@ _MAIN_BUTTONS = [
 async def handle(intent: Intent, msg: IncomingMessage, payload: dict) -> OutgoingMessage:
     state = _sessions.get(msg.user_id, "")
 
+    if state == "awaiting_phone":
+        return await _handle_awaiting_phone(msg)
     if state == "awaiting_birth":
         return await _handle_awaiting_birth(msg)
 
@@ -32,14 +34,13 @@ async def handle(intent: Intent, msg: IncomingMessage, payload: dict) -> Outgoin
         r = await client.get(f"{API_BASE}/user/{msg.user_id}")
     if r.status_code == 404:
         name = msg.first_name or "Гость"
-        _sessions[msg.user_id] = "awaiting_birth"
+        _sessions[msg.user_id] = "awaiting_phone"
         _session_data[msg.user_id] = {"name": name}
         return OutgoingMessage(
             user_id=msg.user_id,
             text=(
                 f"Привет, {name}! Рады видеть вас в боте Max-кафе.\n\n"
-                "Введите дату рождения (ДД.ММ.ГГГГ) — подарим бонусы ко дню рождения!\n"
-                "Или отправьте «—» чтобы пропустить."
+                "Введите ваш номер телефона для связи:"
             ),
         )
 
@@ -73,6 +74,22 @@ async def handle(intent: Intent, msg: IncomingMessage, payload: dict) -> Outgoin
             return OutgoingMessage(user_id=msg.user_id, text="Выберите раздел:", buttons=_MAIN_BUTTONS)
 
 
+async def _handle_awaiting_phone(msg: IncomingMessage) -> OutgoingMessage:
+    phone = msg.text.strip()
+    digits = "".join(c for c in phone if c.isdigit())
+    if len(digits) < 10:
+        return OutgoingMessage(
+            user_id=msg.user_id,
+            text="Не похоже на номер телефона. Введите номер в формате +7 (999) 123-45-67 или 89991234567:",
+        )
+    _session_data[msg.user_id]["phone"] = phone
+    _sessions[msg.user_id] = "awaiting_birth"
+    return OutgoingMessage(
+        user_id=msg.user_id,
+        text="Введите дату рождения (ДД.ММ.ГГГГ) — подарим бонусы ко дню рождения!\nИли отправьте «—» чтобы пропустить:",
+    )
+
+
 async def _handle_awaiting_birth(msg: IncomingMessage) -> OutgoingMessage:
     text = msg.text.strip()
     birth_date = None
@@ -92,7 +109,7 @@ async def _handle_awaiting_birth(msg: IncomingMessage) -> OutgoingMessage:
     async with httpx.AsyncClient() as client:
         await client.post(
             f"{API_BASE}/user/",
-            json={"external_id": msg.user_id, "name": name, "birth_date": birth_date},
+            json={"external_id": msg.user_id, "name": name, "phone": data.get("phone"), "birth_date": birth_date},
         )
 
     return OutgoingMessage(
@@ -247,7 +264,7 @@ async def _show_profile(msg: IncomingMessage) -> OutgoingMessage:
     async with httpx.AsyncClient() as client:
         r = await client.get(f"{API_BASE}/user/{msg.user_id}")
         u = r.json()
-    text = f"Имя: {u['name']}\nДата рождения: {u['birth_date'] or '—'}\nБонусы: {u['bonus_balance']} ₽"
+    text = f"Имя: {u['name']}\nТелефон: {u['phone'] or '—'}\nДата рождения: {u['birth_date'] or '—'}\nБонусы: {u['bonus_balance']} ₽"
     return OutgoingMessage(
         user_id=msg.user_id,
         text=text,

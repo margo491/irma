@@ -14,6 +14,8 @@ async def upsert_user(data: UserCreate, db: AsyncSession = Depends(get_db)):
     user = result.scalar_one_or_none()
     if user:
         user.name = data.name
+        if data.phone:
+            user.phone = data.phone
         if data.birth_date:
             user.birth_date = data.birth_date
     else:
@@ -32,6 +34,8 @@ async def update_user(external_id: str, data: UserUpdate, db: AsyncSession = Dep
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     if data.name is not None:
         user.name = data.name
+    if data.phone is not None:
+        user.phone = data.phone
     if data.birth_date is not None:
         user.birth_date = data.birth_date
     await db.commit()
