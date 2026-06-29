@@ -266,25 +266,29 @@ async def _confirm_order(msg: IncomingMessage) -> OutgoingMessage:
 
 
 async def _notify_admin(order: dict, user: dict) -> None:
+    import logging
+    log = logging.getLogger(__name__)
     items_text = "\n".join(
-        f"  • {i['name']} × {i['qty']} — {i['price']} ₽"
+        f"  - {i['name']} x {i['qty']} - {i['price']} р."
         for i in order["items"]
     )
     phone = user.get("phone") or "не указан"
     text = (
-        f"🛎 Новый заказ #{order['id']}\n"
+        f"Новый заказ #{order['id']}\n"
         f"Клиент: {user['name']} ({phone})\n"
         f"Состав:\n{items_text}\n"
-        f"Итого: {order['total_amount']} ₽"
+        f"Итого: {order['total_amount']} р."
     )
+    log.warning("NOTIFY_ADMIN user_id=%s text=%r", settings.admin_max_user_id, text)
     async with httpx.AsyncClient() as client:
-        await client.post(
+        r = await client.post(
             "https://botapi.max.ru/messages",
             params={"user_id": settings.admin_max_user_id},
             headers={"Authorization": settings.max_token},
             json={"text": text},
             timeout=10,
         )
+    log.warning("NOTIFY_ADMIN response status=%s body=%s", r.status_code, r.text)
 
 
 async def _show_profile(msg: IncomingMessage) -> OutgoingMessage:
