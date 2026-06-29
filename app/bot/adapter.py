@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 @dataclass
 class IncomingMessage:
-    user_id: str      # external_id в канале
+    user_id: str      # external_id отправителя (для БД и сессий)
+    chat_id: str      # id чата (для отправки ответа)
     channel: str      # "max" | "telegram" | ...
     text: str
     payload: dict     # данные кнопок / callback

@@ -21,12 +21,14 @@ class MaxAdapter(BotAdapter):
         if update_type == "message_callback":
             cb = raw["callback"]
             user_id = str(cb["user"]["user_id"])
+            chat_id = str(cb.get("chat_id") or cb["user"]["user_id"])
             try:
                 payload = json.loads(cb.get("payload") or "{}")
             except (ValueError, TypeError):
                 payload = {}
             return IncomingMessage(
                 user_id=user_id,
+                chat_id=chat_id,
                 channel="max",
                 text=payload.get("intent", ""),
                 payload=payload,
@@ -36,13 +38,14 @@ class MaxAdapter(BotAdapter):
         msg = raw.get("message", {})
         sender = msg.get("sender", {})
         user_id = str(sender.get("user_id", ""))
+        chat_id = str(msg.get("recipient", {}).get("chat_id") or user_id)
         text = (msg.get("body") or {}).get("text", "") or ""
-        return IncomingMessage(user_id=user_id, channel="max", text=text, payload={})
+        return IncomingMessage(user_id=user_id, chat_id=chat_id, channel="max", text=text, payload={})
 
     # ------------------------------------------------------------------
     async def send(self, message: OutgoingMessage) -> None:
         body: dict = {
-            "recipient": {"user_id": int(message.user_id)},
+            "recipient": {"chat_id": int(message.user_id)},
             "body": {"text": message.text},
         }
 

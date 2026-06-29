@@ -30,7 +30,7 @@ async def handle(intent: Intent, msg: IncomingMessage, payload: dict) -> Outgoin
     if r.status_code == 404:
         _sessions[msg.user_id] = "awaiting_name"
         _session_data[msg.user_id] = {}
-        return OutgoingMessage(user_id=msg.user_id, text="Добро пожаловать! Как вас зовут?")
+        return OutgoingMessage(user_id=msg.chat_id, text="Добро пожаловать! Как вас зовут?")
 
     match intent:
         case Intent.OPEN_MENU:
@@ -46,13 +46,13 @@ async def handle(intent: Intent, msg: IncomingMessage, payload: dict) -> Outgoin
         case Intent.REPEAT_ORDER:
             return await _repeat_order(msg, payload.get("order_id"))
         case _:
-            return OutgoingMessage(user_id=msg.user_id, text="Выберите раздел:", buttons=_MAIN_BUTTONS)
+            return OutgoingMessage(user_id=msg.chat_id, text="Выберите раздел:", buttons=_MAIN_BUTTONS)
 
 
 async def _handle_awaiting_name(msg: IncomingMessage) -> OutgoingMessage:
     name = msg.text.strip()
     if not name:
-        return OutgoingMessage(user_id=msg.user_id, text="Пожалуйста, введите ваше имя:")
+        return OutgoingMessage(user_id=msg.chat_id, text="Пожалуйста, введите ваше имя:")
     _session_data[msg.user_id]["name"] = name
     _sessions[msg.user_id] = "awaiting_birth"
     return OutgoingMessage(
@@ -98,7 +98,7 @@ async def _show_categories(msg: IncomingMessage) -> OutgoingMessage:
         {"label": c["name"], "payload": {"intent": "open_category", "category_id": c["id"]}}
         for c in categories
     ]
-    return OutgoingMessage(user_id=msg.user_id, text="Выберите категорию:", buttons=buttons)
+    return OutgoingMessage(user_id=msg.chat_id, text="Выберите категорию:", buttons=buttons)
 
 
 async def _show_category(msg: IncomingMessage, category_id: int) -> OutgoingMessage:
@@ -177,7 +177,7 @@ async def _show_history(msg: IncomingMessage) -> OutgoingMessage:
             {"label": f"Повторить #{o['id']}", "payload": {"intent": "repeat_order", "order_id": o["id"]}}
         )
     buttons.append({"label": "← Главное меню", "payload": {"intent": "open_menu"}})
-    return OutgoingMessage(user_id=msg.user_id, text="\n".join(lines), buttons=buttons)
+    return OutgoingMessage(user_id=msg.chat_id, text="\n".join(lines), buttons=buttons)
 
 
 async def _repeat_order(msg: IncomingMessage, order_id: int) -> OutgoingMessage:
