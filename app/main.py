@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from app.api.menu import router as menu_router, items_router
 from app.api.user import router as user_router
 from app.api.order import router as order_router, history_router
@@ -14,3 +15,6 @@ app.include_router(order_router, prefix="/order", tags=["order"])
 app.include_router(history_router, prefix="/orders", tags=["order"])
 app.include_router(bonus_router, prefix="/bonuses", tags=["bonus"])
 app.include_router(webhook_router, tags=["bot"])
+
+# Лендинг — монтируется последним, не перекрывает API-роуты
+app.mount("/", StaticFiles(directory="landing", html=True), name="landing")

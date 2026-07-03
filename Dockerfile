@@ -14,4 +14,5 @@ FROM base AS prod
 COPY app ./app
 COPY alembic.ini .
 COPY migrations ./migrations
+COPY landing ./landing
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
