@@ -135,28 +135,31 @@
       margin: 14px auto 0; border-radius: 2px;
     }
 
-    /* ── MENU TABS ── */
-    .menu-tabs {
+    /* ── MENU ANCHOR NAV ── */
+    .menu-anchors {
       display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-      padding: 0 5vw 36px;
+      padding: 0 5vw 36px; position: sticky; top: 64px; z-index: 50;
+      background: rgba(253,246,247,.95); backdrop-filter: blur(6px);
+      padding-top: 14px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--pink);
     }
-    .tab-btn {
-      padding: 9px 22px; border-radius: 30px; border: 1.5px solid var(--pink);
+    .anchor-btn {
+      padding: 8px 20px; border-radius: 30px; border: 1.5px solid var(--pink);
       background: transparent; cursor: pointer;
       font-family: 'Montserrat', sans-serif;
       font-size: .78rem; font-weight: 600; letter-spacing: .06em;
       text-transform: uppercase; color: var(--gray);
-      transition: all .2s;
+      text-decoration: none;
+      transition: all .2s; display: inline-block;
     }
-    .tab-btn:hover, .tab-btn.active {
+    .anchor-btn:hover {
       background: var(--pink-d); border-color: var(--pink-d);
       color: var(--white);
     }
 
-    /* ── DISH CARDS ── */
+    /* ── MENU CATEGORIES ── */
     .menu-section { padding: 0 5vw 80px; }
-    .category-panel { display: none; }
-    .category-panel.active { display: block; }
+    .menu-category { margin-bottom: 70px; scroll-margin-top: 130px; }
     .category-label {
       display: flex; align-items: center; gap: 12px;
       font-size: .72rem; font-weight: 700; letter-spacing: .15em;
@@ -166,6 +169,8 @@
     .category-label::before, .category-label::after {
       content: ''; flex: 1; height: 1px; background: var(--green-l);
     }
+
+    /* ── DISH CARDS ── */
     .dishes-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
@@ -372,12 +377,11 @@
       flex: 2; padding: 14px; background: var(--green);
       color: var(--white); border: none; border-radius: 30px;
       font-family: 'Montserrat', sans-serif; font-size: .9rem;
-      font-weight: 600; letter-spacing: .04em; cursor: pointer; transition: background .2s, transform .15s;
+      font-weight: 600; letter-spacing: .04em; cursor: pointer;
+      transition: background .2s, transform .15s;
       box-shadow: 0 4px 16px rgba(143,168,124,.35);
     }
     .btn-confirm:hover { background: #7a956a; transform: translateY(-1px); }
-
-    /* SUCCESS */
     .order-success { display: none; text-align: center; padding: 64px 0; }
     .order-success.show { display: block; }
     .success-icon { font-size: 3.5rem; margin-bottom: 20px; }
@@ -439,11 +443,18 @@
   <div id="menu">
     <div class="section-title">
       <h2>Наше меню</h2>
-      <p>Нажмите на блюдо, чтобы добавить в корзину</p>
+      <p>Нажмите на блюдо, чтобы узнать состав и добавить в корзину</p>
       <div class="divider"></div>
     </div>
 
-    <div class="menu-tabs" id="tabs"></div>
+    <!-- STICKY ANCHOR NAV -->
+    <div class="menu-anchors">
+      <a class="anchor-btn" href="#cat-salads">Салаты</a>
+      <a class="anchor-btn" href="#cat-coffee">Кофе и чай</a>
+      <a class="anchor-btn" href="#cat-bliny">Блины и бургеры</a>
+      <a class="anchor-btn" href="#cat-pizza">Пицца</a>
+      <a class="anchor-btn" href="#cat-drinks">Холодные напитки</a>
+    </div>
 
     <div class="menu-section" id="categories"></div>
   </div>
@@ -553,53 +564,53 @@ const MENU = [
   {
     id: "salads", name: "Салаты",
     items: [
-      { id: 1,  img: "menu/1.png",  name: "Салат «Весенний»",        price: 280, ingredients: "Помидоры черри, оливки, авокадо, базилик, кукуруза, кешью, оливковое масло" },
-      { id: 2,  img: "menu/2.png",  name: "Салат «Свежесть»",        price: 220, ingredients: "Редис, огурец, помидоры черри, листья салата, руккола, укроп" },
-      { id: 3,  img: "menu/3.png",  name: "Салат «Греческий»",       price: 310, ingredients: "Огурцы, помидоры черри, сыр фета, оливки, красный лук, укроп" },
-      { id: 4,  img: "menu/4.png",  name: "Салат «Мексикано»",       price: 350, ingredients: "Куриное филе, кукуруза, чёрная фасоль, авокадо, красный лук, помидоры" },
-      { id: 5,  img: "menu/5.png",  name: "Салат «Блю»",             price: 380, ingredients: "Руккола, болгарский перец, помидоры черри, сыр с голубой плесенью" },
-      { id: 6,  img: "menu/6.png",  name: "Салат «Цезарь»",          price: 320, ingredients: "Куриное филе, листья романо, гренки, соус Цезарь, пармезан" },
-      { id: 7,  img: "menu/7.png",  name: "Салат «Деревенский»",     price: 290, ingredients: "Куриная грудка, помидоры черри, огурцы, сыр фета, гренки, айсберг" }
+      { id: 1,  img: "dishes/1.png",  name: "Салат «Весенний»",        price: 280, ingredients: "Помидоры черри, оливки, авокадо, базилик, кукуруза, кешью, оливковое масло" },
+      { id: 2,  img: "dishes/2.png",  name: "Салат «Свежесть»",        price: 220, ingredients: "Редис, огурец, помидоры черри, листья салата, руккола, укроп" },
+      { id: 3,  img: "dishes/3.png",  name: "Салат «Греческий»",       price: 310, ingredients: "Огурцы, помидоры черри, сыр фета, оливки, красный лук, укроп" },
+      { id: 4,  img: "dishes/4.png",  name: "Салат «Мексикано»",       price: 350, ingredients: "Куриное филе, кукуруза, чёрная фасоль, авокадо, красный лук, помидоры" },
+      { id: 5,  img: "dishes/5.png",  name: "Салат «Блю»",             price: 380, ingredients: "Руккола, болгарский перец, помидоры черри, сыр с голубой плесенью" },
+      { id: 6,  img: "dishes/6.png",  name: "Салат «Цезарь»",          price: 320, ingredients: "Куриное филе, листья романо, гренки, соус Цезарь, пармезан" },
+      { id: 7,  img: "dishes/7.png",  name: "Салат «Деревенский»",     price: 290, ingredients: "Куриная грудка, помидоры черри, огурцы, сыр фета, гренки, айсберг" }
     ]
   },
   {
     id: "coffee", name: "Кофе и чай",
     items: [
-      { id: 8,  img: "menu/8.png",  name: "Американо",               price: 120, ingredients: "Двойной эспрессо, горячая вода, зёрна Arabica" },
-      { id: 9,  img: "menu/9.png",  name: "Чёрный кофе",             price:  90, ingredients: "Молотый кофе, горячая вода" },
-      { id: 10, img: "menu/10.png", name: "Латте",                   price: 180, ingredients: "Двойной эспрессо, взбитое молоко" },
-      { id: 11, img: "menu/11.png", name: "Чай чёрный",              price: 100, ingredients: "Цейлонский чай, листья мяты" },
-      { id: 12, img: "menu/12.png", name: "Чай фруктовый",           price: 150, ingredients: "Облепиха, шиповник, цитрус, мёд" },
-      { id: 13, img: "menu/13.png", name: "Капучино карамельный",    price: 210, ingredients: "Эспрессо, молоко, карамельный сироп, взбитые сливки" }
+      { id: 8,  img: "dishes/8.png",  name: "Американо",               price: 120, ingredients: "Двойной эспрессо, горячая вода, зёрна Arabica" },
+      { id: 9,  img: "dishes/9.png",  name: "Чёрный кофе",             price:  90, ingredients: "Молотый кофе, горячая вода" },
+      { id: 10, img: "dishes/10.png", name: "Латте",                   price: 180, ingredients: "Двойной эспрессо, взбитое молоко" },
+      { id: 11, img: "dishes/11.png", name: "Чай чёрный",              price: 100, ingredients: "Цейлонский чай, листья мяты" },
+      { id: 12, img: "dishes/12.png", name: "Чай фруктовый",           price: 150, ingredients: "Облепиха, шиповник, цитрус, мёд" },
+      { id: 13, img: "dishes/13.png", name: "Капучино карамельный",    price: 210, ingredients: "Эспрессо, молоко, карамельный сироп, взбитые сливки" }
     ]
   },
   {
     id: "bliny", name: "Блины и бургеры",
     items: [
-      { id: 14, img: "menu/14.png", name: "Блины с ягодами",         price: 250, ingredients: "Тонкие блины, клубника, черника, сахарная пудра" },
-      { id: 15, img: "menu/15.png", name: "Блин с ветчиной и сыром", price: 220, ingredients: "Блин, ветчина, сыр гауда" },
-      { id: 16, img: "menu/16.png", name: "Блин с шоколадом",        price: 180, ingredients: "Блин, шоколадная паста" },
-      { id: 17, img: "menu/17.png", name: "Чизбургер",               price: 320, ingredients: "Говяжья котлета, булка, чеддер, листья салата" },
-      { id: 18, img: "menu/18.png", name: "Бургер классический",     price: 300, ingredients: "Говяжья котлета, булка, томат, красный лук, листья салата, соус" },
-      { id: 19, img: "menu/19.png", name: "Бургер «Двойной»",        price: 390, ingredients: "Двойная говяжья котлета, чеддер, помидор, красный лук, листья салата" }
+      { id: 14, img: "dishes/14.png", name: "Блины с ягодами",         price: 250, ingredients: "Тонкие блины, клубника, черника, сахарная пудра" },
+      { id: 15, img: "dishes/15.png", name: "Блин с ветчиной и сыром", price: 220, ingredients: "Блин, ветчина, сыр гауда" },
+      { id: 16, img: "dishes/16.png", name: "Блин с шоколадом",        price: 180, ingredients: "Блин, шоколадная паста" },
+      { id: 17, img: "dishes/17.png", name: "Чизбургер",               price: 320, ingredients: "Говяжья котлета, булка, чеддер, листья салата" },
+      { id: 18, img: "dishes/18.png", name: "Бургер классический",     price: 300, ingredients: "Говяжья котлета, булка, томат, красный лук, листья салата, соус" },
+      { id: 19, img: "dishes/19.png", name: "Бургер «Двойной»",        price: 390, ingredients: "Двойная говяжья котлета, чеддер, помидор, красный лук, листья салата" }
     ]
   },
   {
     id: "pizza", name: "Пицца",
     items: [
-      { id: 20, img: "menu/20.png", name: "Пицца «Овощная»",         price: 520, ingredients: "Моцарелла, болгарский перец, кукуруза, оливки, красный лук, томатный соус" },
-      { id: 21, img: "menu/21.png", name: "Пицца «Пепперони»",       price: 580, ingredients: "Пепперони, моцарелла, томатный соус, тимьян" },
-      { id: 22, img: "menu/22.png", name: "Пицца «Мясная»",          price: 620, ingredients: "Пепперони, ветчина, оливки, помидоры черри, моцарелла" },
-      { id: 23, img: "menu/23.png", name: "Пицца «Гриль»",           price: 590, ingredients: "Пепперони, шампиньоны, красный лук, болгарский перец, оливки, моцарелла" }
+      { id: 20, img: "dishes/20.png", name: "Пицца «Овощная»",         price: 520, ingredients: "Моцарелла, болгарский перец, кукуруза, оливки, красный лук, томатный соус" },
+      { id: 21, img: "dishes/21.png", name: "Пицца «Пепперони»",       price: 580, ingredients: "Пепперони, моцарелла, томатный соус, тимьян" },
+      { id: 22, img: "dishes/22.png", name: "Пицца «Мясная»",          price: 620, ingredients: "Пепперони, ветчина, оливки, помидоры черри, моцарелла" },
+      { id: 23, img: "dishes/23.png", name: "Пицца «Гриль»",           price: 590, ingredients: "Пепперони, шампиньоны, красный лук, болгарский перец, оливки, моцарелла" }
     ]
   },
   {
     id: "drinks", name: "Холодные напитки",
     items: [
-      { id: 24, img: "menu/24.png", name: "Кола со льдом",           price: 120, ingredients: "Газированный напиток, лёд" },
-      { id: 25, img: "menu/25.png", name: "Клубничный лимонад",      price: 180, ingredients: "Клубника, газированная вода, мята, лёд" },
-      { id: 26, img: "menu/26.png", name: "Голубой лимонад",         price: 200, ingredients: "Синий кюрасао, лайм, мята, газированная вода, лёд" },
-      { id: 27, img: "menu/27.png", name: "Лимонад с лимоном",       price: 150, ingredients: "Лимон, газированная вода, лёд" }
+      { id: 24, img: "dishes/24.png", name: "Кола со льдом",           price: 120, ingredients: "Газированный напиток, лёд" },
+      { id: 25, img: "dishes/25.png", name: "Клубничный лимонад",      price: 180, ingredients: "Клубника, газированная вода, мята, лёд" },
+      { id: 26, img: "dishes/26.png", name: "Голубой лимонад",         price: 200, ingredients: "Синий кюрасао, лайм, мята, газированная вода, лёд" },
+      { id: 27, img: "dishes/27.png", name: "Лимонад с лимоном",       price: 150, ingredients: "Лимон, газированная вода, лёд" }
     ]
   }
 ];
@@ -614,26 +625,18 @@ function saveCart() {
   document.getElementById('cart-count').textContent = total;
 }
 
-/* BUILD MENU */
+/* BUILD MENU — все категории сразу, якорная навигация */
 (function() {
-  var tabsEl = document.getElementById('tabs');
   var catsEl = document.getElementById('categories');
-  MENU.forEach(function(cat, i) {
-    var btn = document.createElement('button');
-    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
-    btn.textContent = cat.name;
-    btn.dataset.cat = cat.id;
-    btn.onclick = function() { switchTab(cat.id); };
-    tabsEl.appendChild(btn);
-
-    var panel = document.createElement('div');
-    panel.className = 'category-panel' + (i === 0 ? ' active' : '');
-    panel.id = 'panel-' + cat.id;
+  MENU.forEach(function(cat) {
+    var section = document.createElement('div');
+    section.className = 'menu-category';
+    section.id = 'cat-' + cat.id;
 
     var label = document.createElement('p');
     label.className = 'category-label';
     label.textContent = cat.name;
-    panel.appendChild(label);
+    section.appendChild(label);
 
     var grid = document.createElement('div');
     grid.className = 'dishes-grid';
@@ -649,15 +652,10 @@ function saveCart() {
         '</div>';
       grid.appendChild(card);
     });
-    panel.appendChild(grid);
-    catsEl.appendChild(panel);
+    section.appendChild(grid);
+    catsEl.appendChild(section);
   });
 })();
-
-function switchTab(catId) {
-  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.cat === catId); });
-  document.querySelectorAll('.category-panel').forEach(function(p){ p.classList.toggle('active', p.id === 'panel-' + catId); });
-}
 
 /* MODAL */
 var currentItem = null;
