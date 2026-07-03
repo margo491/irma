@@ -1,425 +1,562 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IrMa — Семейное кафе by Marinich</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Макс-кафе — семейное кафе Маринич</title>
+<style>
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #fdf8f3; color: #2d1f0e; min-height: 100vh; }
 
-    :root {
-      --pink:    #f2c4ce;
-      --pink-d:  #d98a9a;
-      --green:   #8fa87c;
-      --green-l: #c8d9be;
-      --bg:      #fdf6f7;
-      --white:   #ffffff;
-      --dark:    #3a3a3a;
-      --gray:    #7a7a7a;
-    }
+/* ===== NAV ===== */
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 64px;
+}
+.nav-logo { font-size: 1.4rem; font-weight: 700; color: #8b4513; cursor: pointer; user-select: none; }
+.nav-logo span { color: #d2691e; }
+.nav-links { display: flex; gap: 24px; list-style: none; }
+.nav-links a { text-decoration: none; color: #2d1f0e; font-size: .95rem; transition: color .2s; }
+.nav-links a:hover { color: #8b4513; }
+.cart-btn {
+  background: #8b4513; color: #fff; border: none; border-radius: 24px;
+  padding: 8px 20px; font-size: .95rem; cursor: pointer;
+  display: flex; align-items: center; gap: 8px; transition: background .2s;
+}
+.cart-btn:hover { background: #6b3010; }
+.cart-count {
+  background: #fff; color: #8b4513; border-radius: 50%;
+  width: 22px; height: 22px; font-size: .8rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
 
-    html { scroll-behavior: smooth; }
+/* ===== HERO ===== */
+.hero {
+  background: linear-gradient(135deg, #8b4513 0%, #d2691e 100%);
+  color: #fff; text-align: center; padding: 80px 24px 64px;
+}
+.hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 16px; text-shadow: 0 2px 8px rgba(0,0,0,.2); }
+.hero p { font-size: 1.2rem; opacity: .9; max-width: 520px; margin: 0 auto 32px; }
+.hero-cta {
+  display: inline-block; background: #fff; color: #8b4513;
+  padding: 14px 36px; border-radius: 30px; font-weight: 700;
+  font-size: 1rem; text-decoration: none; transition: transform .2s, box-shadow .2s;
+}
+.hero-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.2); }
 
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: var(--bg);
-      color: var(--dark);
-    }
+/* ===== MENU SECTION ===== */
+.menu-section { max-width: 1200px; margin: 0 auto; padding: 56px 24px; }
+.section-title { font-size: 2rem; font-weight: 700; color: #8b4513; text-align: center; margin-bottom: 36px; }
 
-    /* ── NAV ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(253,246,247,.95);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--pink);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 5vw;
-      height: 64px;
-    }
-    .nav-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem; font-style: italic;
-      color: var(--dark); text-decoration: none;
-      letter-spacing: .03em;
-    }
-    .nav-links { display: flex; gap: 24px; align-items: center; }
-    .nav-links a {
-      text-decoration: none; color: var(--gray);
-      font-size: .8rem; font-weight: 500; letter-spacing: .06em;
-      text-transform: uppercase; transition: color .2s;
-    }
-    .nav-links a:hover { color: var(--pink-d); }
-    .btn-order {
-      background: var(--green); color: var(--white) !important;
-      padding: 10px 22px; border-radius: 30px;
-      font-weight: 600 !important; transition: background .2s, transform .15s !important;
-    }
-    .btn-order:hover { background: #7a956a !important; transform: translateY(-1px); }
+/* TABS */
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+.tab-btn {
+  padding: 10px 22px; border: 2px solid #d2691e; border-radius: 24px;
+  background: #fff; color: #8b4513; font-size: .95rem; font-weight: 600;
+  cursor: pointer; transition: all .2s;
+}
+.tab-btn:hover { background: #fef0e6; }
+.tab-btn.active { background: #8b4513; color: #fff; border-color: #8b4513; }
 
-    /* ── HERO ── */
-    .hero {
-      min-height: 88vh;
-      background: linear-gradient(135deg, #fce4ec 0%, #f8f4f0 45%, #e8f0e0 100%);
-      display: flex; align-items: center; justify-content: center;
-      text-align: center; padding: 60px 5vw;
-      position: relative; overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 20% 50%, rgba(242,196,206,.4) 0%, transparent 60%),
-                  radial-gradient(ellipse at 80% 30%, rgba(200,217,190,.35) 0%, transparent 55%);
-    }
-    .hero-inner { position: relative; max-width: 680px; }
-    .hero-sub {
-      font-size: .75rem; font-weight: 600; letter-spacing: .18em;
-      text-transform: uppercase; color: var(--green);
-      margin-bottom: 16px;
-    }
-    .hero h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 8vw, 6rem);
-      font-style: italic; line-height: 1.05;
-      color: var(--dark); margin-bottom: 8px;
-    }
-    .hero-by {
-      font-size: .85rem; color: var(--gray); letter-spacing: .12em;
-      text-transform: uppercase; margin-bottom: 28px;
-    }
-    .hero-desc {
-      font-size: 1.05rem; color: var(--gray); line-height: 1.7;
-      margin-bottom: 40px; font-weight: 300;
-    }
-    .hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-    .btn-main {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--green); color: var(--white);
-      padding: 16px 36px; border-radius: 50px;
-      font-size: 1rem; font-weight: 600; text-decoration: none;
-      letter-spacing: .04em; transition: background .2s, transform .15s, box-shadow .2s;
-      box-shadow: 0 4px 20px rgba(143,168,124,.35);
-    }
-    .btn-main:hover { background: #7a956a; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(143,168,124,.45); }
-    .btn-main svg { width: 22px; height: 22px; fill: currentColor; }
+/* DISH CARDS */
+.category-panel { display: none; }
+.category-panel.active { display: block; }
+.dishes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}
+.dish-card {
+  background: #fff; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07); cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+.dish-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+.dish-card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #f5ede4; display: block; }
+.dish-card-body { padding: 14px 16px; }
+.dish-card-name { font-size: .95rem; font-weight: 600; color: #2d1f0e; margin-bottom: 6px; line-height: 1.3; }
+.dish-card-price { font-size: 1.05rem; font-weight: 700; color: #8b4513; }
 
-    /* ── SECTION TITLE ── */
-    .section-title {
-      text-align: center; padding: 64px 5vw 40px;
-    }
-    .section-title h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3rem); font-style: italic;
-      color: var(--dark); margin-bottom: 10px;
-    }
-    .section-title p { color: var(--gray); font-size: .9rem; font-weight: 300; }
-    .divider {
-      width: 60px; height: 2px;
-      background: linear-gradient(90deg, var(--pink-d), var(--green));
-      margin: 14px auto 0; border-radius: 2px;
-    }
+/* ===== MODAL ===== */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.55); z-index: 200;
+  align-items: center; justify-content: center; padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #fff; border-radius: 20px; overflow: hidden;
+  max-width: 760px; width: 100%; display: flex; max-height: 90vh;
+  animation: modalIn .2s ease;
+}
+@keyframes modalIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+.modal-img { width: 45%; flex-shrink: 0; object-fit: cover; background: #f5ede4; }
+.modal-body {
+  padding: 32px 28px; display: flex; flex-direction: column;
+  overflow-y: auto; flex: 1;
+}
+.modal-close {
+  align-self: flex-end; background: none; border: none;
+  font-size: 1.3rem; cursor: pointer; color: #bbb; margin-bottom: 12px;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; transition: color .2s, background .2s;
+}
+.modal-close:hover { color: #333; background: #f0f0f0; }
+.modal-name { font-size: 1.4rem; font-weight: 700; color: #2d1f0e; margin-bottom: 10px; line-height: 1.3; }
+.modal-price { font-size: 1.6rem; font-weight: 800; color: #8b4513; margin-bottom: 20px; }
+.modal-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .07em; color: #aaa; margin-bottom: 6px; }
+.modal-ingredients { font-size: .95rem; color: #666; line-height: 1.7; margin-bottom: 28px; flex: 1; }
+.add-to-cart-btn {
+  width: 100%; padding: 14px; background: #8b4513; color: #fff;
+  border: none; border-radius: 12px; font-size: 1.05rem; font-weight: 700;
+  cursor: pointer; transition: background .2s;
+}
+.add-to-cart-btn:hover { background: #6b3010; }
+.add-to-cart-btn.added { background: #27ae60; }
 
-    /* ── MENU TABS ── */
-    .menu-tabs {
-      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-      padding: 0 5vw 36px;
-    }
-    .tab-btn {
-      padding: 9px 22px; border-radius: 30px; border: 1.5px solid var(--pink);
-      background: transparent; cursor: pointer;
-      font-family: 'Montserrat', sans-serif;
-      font-size: .78rem; font-weight: 600; letter-spacing: .06em;
-      text-transform: uppercase; color: var(--gray);
-      transition: all .2s;
-    }
-    .tab-btn:hover, .tab-btn.active {
-      background: var(--pink-d); border-color: var(--pink-d);
-      color: var(--white);
-    }
+/* ===== ORDER BAND ===== */
+.order-band { background: linear-gradient(135deg, #8b4513, #c0522a); color: #fff; text-align: center; padding: 56px 24px; }
+.order-band h2 { font-size: 1.8rem; margin-bottom: 12px; }
+.order-band p { font-size: 1rem; opacity: .9; margin-bottom: 24px; }
+.order-band a {
+  display: inline-block; background: #fff; color: #8b4513;
+  padding: 14px 36px; border-radius: 30px; font-weight: 700;
+  text-decoration: none; transition: transform .2s;
+}
+.order-band a:hover { transform: translateY(-2px); }
 
-    /* ── MENU CARDS ── */
-    .menu-section { padding: 0 5vw 80px; }
-    .menu-category { margin-bottom: 70px; }
-    .category-label {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: .72rem; font-weight: 700; letter-spacing: .15em;
-      text-transform: uppercase; color: var(--green);
-      margin-bottom: 20px;
-    }
-    .category-label::before, .category-label::after {
-      content: ''; flex: 1; height: 1px; background: var(--green-l);
-      display: inline-block; width: 40px;
-    }
-    .menu-img-wrap {
-      border-radius: 20px; overflow: hidden;
-      box-shadow: 0 8px 40px rgba(0,0,0,.08);
-      max-width: 860px; margin: 0 auto;
-      cursor: zoom-in; transition: transform .2s, box-shadow .2s;
-    }
-    .menu-img-wrap:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 50px rgba(0,0,0,.13);
-    }
-    .menu-img-wrap img { width: 100%; display: block; }
+/* ===== SOCIALS ===== */
+.socials-section { max-width: 600px; margin: 0 auto; padding: 48px 24px; text-align: center; }
+.socials-section h3 { font-size: 1.3rem; color: #8b4513; margin-bottom: 24px; font-weight: 700; }
+.social-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+.social-link {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  text-decoration: none; color: #666; font-size: .85rem; transition: color .2s, transform .2s;
+}
+.social-link:hover { color: #8b4513; transform: translateY(-3px); }
+.social-icon {
+  width: 56px; height: 56px; border-radius: 14px; background: #f5ede4;
+  display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+  transition: background .2s;
+}
+.social-link:hover .social-icon { background: #f0d9c0; }
+.social-icon img { width: 34px; height: 34px; object-fit: contain; }
+.social-icon-text { font-size: 1rem; font-weight: 800; color: #8b4513; }
 
-    /* ── LIGHTBOX ── */
-    .lightbox {
-      display: none; position: fixed; inset: 0; z-index: 999;
-      background: rgba(0,0,0,.85); align-items: center; justify-content: center;
-      padding: 24px;
-    }
-    .lightbox.open { display: flex; }
-    .lightbox img { max-width: 100%; max-height: 90vh; border-radius: 12px; }
-    .lightbox-close {
-      position: absolute; top: 20px; right: 28px;
-      font-size: 2rem; color: white; cursor: pointer; line-height: 1;
-      background: none; border: none; opacity: .7;
-    }
-    .lightbox-close:hover { opacity: 1; }
+/* ===== FOOTER ===== */
+footer { background: #2d1f0e; color: rgba(255,255,255,.7); text-align: center; padding: 24px; font-size: .85rem; }
 
-    /* ── ORDER CTA BAND ── */
-    .order-band {
-      background: linear-gradient(135deg, var(--green) 0%, #7a956a 100%);
-      text-align: center; padding: 64px 5vw;
-    }
-    .order-band h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 4vw, 2.8rem); font-style: italic;
-      color: var(--white); margin-bottom: 16px;
-    }
-    .order-band p { color: rgba(255,255,255,.8); margin-bottom: 36px; font-size: .95rem; }
-    .btn-white {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--white); color: var(--green);
-      padding: 16px 40px; border-radius: 50px;
-      font-size: 1rem; font-weight: 700; text-decoration: none;
-      letter-spacing: .04em; transition: transform .15s, box-shadow .2s;
-      box-shadow: 0 4px 20px rgba(0,0,0,.15);
-    }
-    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.2); }
+/* ===== CART PAGE ===== */
+#cart-page { display: none; max-width: 720px; margin: 0 auto; padding: 40px 24px 64px; }
+#cart-page.active { display: block; }
+#main-page.hidden { display: none; }
+.cart-back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: none; color: #8b4513; font-size: 1rem;
+  font-weight: 600; cursor: pointer; padding: 0; margin-bottom: 28px; transition: opacity .2s;
+}
+.cart-back-btn:hover { opacity: .7; }
+.cart-title { font-size: 1.8rem; font-weight: 700; color: #8b4513; margin-bottom: 32px; }
+.cart-empty { text-align: center; color: #bbb; padding: 64px 0; }
+.cart-empty-icon { font-size: 3.5rem; margin-bottom: 12px; }
+.cart-item {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 0; border-bottom: 1px solid #f0e6d6;
+}
+.cart-item-img { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; background: #f5ede4; flex-shrink: 0; }
+.cart-item-info { flex: 1; min-width: 0; }
+.cart-item-name { font-weight: 600; font-size: .95rem; margin-bottom: 4px; line-height: 1.3; }
+.cart-item-price { color: #8b4513; font-weight: 700; }
+.cart-item-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.qty-btn {
+  width: 32px; height: 32px; border-radius: 50%; border: 2px solid #d2691e;
+  background: #fff; color: #8b4513; font-size: 1.1rem; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s;
+}
+.qty-btn:hover { background: #fef0e6; }
+.cart-qty { font-weight: 700; min-width: 24px; text-align: center; }
+.cart-remove { background: none; border: none; color: #ccc; font-size: 1.2rem; cursor: pointer; padding: 4px; transition: color .2s; }
+.cart-remove:hover { color: #e74c3c; }
+.cart-total {
+  display: flex; justify-content: space-between;
+  font-size: 1.2rem; font-weight: 700;
+  padding: 20px 0; border-top: 2px solid #d2691e; margin-top: 4px;
+}
+.cart-actions { display: flex; gap: 12px; margin-top: 24px; }
+.btn-secondary {
+  flex: 1; padding: 14px; border: 2px solid #8b4513; background: #fff;
+  color: #8b4513; border-radius: 12px; font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: background .2s;
+}
+.btn-secondary:hover { background: #fef0e6; }
+.btn-primary {
+  flex: 2; padding: 14px; background: #8b4513; color: #fff;
+  border: none; border-radius: 12px; font-size: 1.05rem; font-weight: 700;
+  cursor: pointer; transition: background .2s;
+}
+.btn-primary:hover { background: #6b3010; }
+.order-success { display: none; text-align: center; padding: 56px 0; }
+.order-success.show { display: block; }
+.success-icon { font-size: 4rem; margin-bottom: 20px; }
+.order-success h2 { color: #27ae60; font-size: 1.7rem; margin-bottom: 12px; }
+.order-success p { color: #666; font-size: 1rem; line-height: 1.7; margin-bottom: 32px; }
 
-    /* ── SOCIAL ── */
-    .social-section { text-align: center; padding: 72px 5vw; }
-    .social-icons {
-      display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
-      margin-top: 36px;
-    }
-    .social-link {
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-      text-decoration: none; color: var(--gray);
-      font-size: .7rem; font-weight: 600; letter-spacing: .08em;
-      text-transform: uppercase; transition: color .2s, transform .15s;
-    }
-    .social-link:hover { color: var(--pink-d); transform: translateY(-3px); }
-    .social-icon {
-      width: 56px; height: 56px; border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      transition: box-shadow .2s;
-    }
-    .social-link:hover .social-icon { box-shadow: 0 6px 20px rgba(0,0,0,.12); }
-    .social-icon svg { width: 30px; height: 30px; }
-    .si-vk    { background: #e8f0fb; }
-    .si-inst  { background: linear-gradient(135deg,#fce4ec,#f3e5f5); }
-    .si-tg    { background: #e3f2fd; }
-    .si-max   { background: #e8f5e9; }
-
-    /* ── FOOTER ── */
-    footer {
-      background: var(--dark); color: rgba(255,255,255,.5);
-      text-align: center; padding: 28px 5vw;
-      font-size: .78rem; letter-spacing: .05em;
-    }
-    footer span { color: rgba(255,255,255,.8); font-family: 'Playfair Display', serif; font-style: italic; }
-
-    @media (max-width: 600px) {
-      .nav-links a:not(.btn-order) { display: none; }
-    }
-  </style>
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+  .navbar { padding: 0 16px; }
+  .nav-links { display: none; }
+  .hero h1 { font-size: 1.9rem; }
+  .hero p { font-size: 1rem; }
+  .modal { flex-direction: column; }
+  .modal-img { width: 100%; height: 200px; flex-shrink: 0; }
+  .modal-body { padding: 20px; }
+  .dishes-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 14px; }
+  .cart-actions { flex-direction: column; }
+}
+</style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a class="nav-logo" href="#">IrMa</a>
-  <div class="nav-links">
-    <a href="#menu">Меню</a>
-    <a href="#social">Контакты</a>
-    <a href="https://max.ru/id312332413602_2_bot" target="_blank" class="btn-order">Заказать</a>
-  </div>
+<!-- NAVBAR -->
+<nav class="navbar">
+  <span class="nav-logo" onclick="showMain()">Макс<span>-кафе</span></span>
+  <ul class="nav-links">
+    <li><a href="#menu">Меню</a></li>
+    <li><a href="#order">Заказать</a></li>
+    <li><a href="#socials">Контакты</a></li>
+  </ul>
+  <button class="cart-btn" onclick="showCart()">
+    🛒 Корзина
+    <span class="cart-count" id="cart-count">0</span>
+  </button>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-inner">
-    <p class="hero-sub">Семейное кафе</p>
-    <h1>IrMa</h1>
-    <p class="hero-by">by Marinich</p>
-    <p class="hero-desc">Домашняя кухня, авторские напитки и уютная атмосфера.<br>Завтраки, обеды, десерты — с любовью каждый день.</p>
-    <div class="hero-cta">
-      <a href="https://max.ru/id312332413602_2_bot" target="_blank" class="btn-main">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-        Сделать заказ в MAX
+<!-- MAIN PAGE -->
+<div id="main-page">
+
+  <section class="hero">
+    <h1>Макс-кафе</h1>
+    <p>Семейное кафе Маринич — домашняя кухня с душой для всей семьи</p>
+    <a href="#menu" class="hero-cta">Смотреть меню</a>
+  </section>
+
+  <section class="menu-section" id="menu">
+    <h2 class="section-title">Наше меню</h2>
+    <div class="tabs" id="tabs"></div>
+    <div id="categories"></div>
+  </section>
+
+  <section class="order-band" id="order">
+    <h2>Сделать заказ в боте</h2>
+    <p>Оформите заказ через наш бот в МАКС — быстро и удобно</p>
+    <a href="https://web.max.ru/-71665082178843" target="_blank" rel="noopener">Открыть бот в МАКС</a>
+  </section>
+
+  <section class="socials-section" id="socials">
+    <h3>Мы в соц. сетях</h3>
+    <div class="social-links">
+      <a href="#" class="social-link">
+        <div class="social-icon"><span class="social-icon-text">ВК</span></div>
+        ВКонтакте
       </a>
-      <a href="#menu" class="btn-main" style="background:transparent;color:var(--green);border:2px solid var(--green);box-shadow:none;">
-        Смотреть меню
+      <a href="https://www.instagram.com/irma_tort?igsh=eTZoaWZ0N3pvd3ho" class="social-link" target="_blank" rel="noopener">
+        <div class="social-icon">📸</div>
+        Instagram
+      </a>
+      <a href="#" class="social-link">
+        <div class="social-icon">✈️</div>
+        Telegram
+      </a>
+      <a href="https://web.max.ru/-71665082178843" class="social-link" target="_blank" rel="noopener">
+        <div class="social-icon"><img src="max-icon.png" alt="МАКС"></div>
+        МАКС
       </a>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- MENU -->
-<div id="menu">
-  <div class="section-title">
-    <h2>Наше меню</h2>
-    <p>Нажмите на карточку, чтобы увеличить</p>
-    <div class="divider"></div>
-  </div>
+  <footer>
+    <p>© 2024 Макс-кафе · Все права защищены</p>
+  </footer>
 
-  <div class="menu-tabs">
-    <button class="tab-btn active" onclick="goTo(this,'cat-breakfast')">Завтраки и салаты</button>
-    <button class="tab-btn" onclick="goTo(this,'cat-bliny')">Блины и бургеры</button>
-    <button class="tab-btn" onclick="goTo(this,'cat-pizza')">Пицца</button>
-    <button class="tab-btn" onclick="goTo(this,'cat-coffee')">Кофе и чай</button>
-    <button class="tab-btn" onclick="goTo(this,'cat-cold')">Холодные напитки</button>
-    <button class="tab-btn" onclick="goTo(this,'cat-summer')">Летнее меню</button>
-  </div>
+</div>
 
-  <div class="menu-section">
-
-    <div class="menu-category" id="cat-breakfast">
-      <p class="category-label">Завтраки &amp; Салаты</p>
-      <div class="menu-img-wrap" onclick="openLightbox(this.querySelector('img').src)">
-        <img src="menu/zavtraki.jpg" alt="Завтраки и салаты" loading="lazy">
-      </div>
-    </div>
-
-    <div class="menu-category" id="cat-bliny">
-      <p class="category-label">Блины &amp; Бургеры</p>
-      <div class="menu-img-wrap" onclick="openLightbox(this.querySelector('img').src)">
-        <img src="menu/bliny.jpg" alt="Блины и бургеры" loading="lazy">
-      </div>
-    </div>
-
-    <div class="menu-category" id="cat-pizza">
-      <p class="category-label">Пицца</p>
-      <div class="menu-img-wrap" onclick="openLightbox(this.querySelector('img').src)">
-        <img src="menu/pizza.jpg" alt="Пицца" loading="lazy">
-      </div>
-    </div>
-
-    <div class="menu-category" id="cat-coffee">
-      <p class="category-label">Кофе и чай</p>
-      <div class="menu-img-wrap" onclick="openLightbox(this.querySelector('img').src)">
-        <img src="menu/kofe.jpg" alt="Кофе и чай" loading="lazy">
-      </div>
-    </div>
-
-    <div class="menu-category" id="cat-cold">
-      <p class="category-label">Холодные напитки</p>
-      <div class="menu-img-wrap" onclick="openLightbox(this.querySelector('img').src)">
-        <img src="menu/holodnye.jpg" alt="Холодные напитки" loading="lazy">
-      </div>
-    </div>
-
-    <div class="menu-category" id="cat-summer">
-      <p class="category-label">Летнее меню</p>
-      <div class="menu-img-wrap" onclick="openLightbox(this.querySelector('img').src)">
-        <img src="menu/letnee.jpg" alt="Летнее меню" loading="lazy">
-      </div>
-    </div>
-
+<!-- CART PAGE -->
+<div id="cart-page">
+  <button class="cart-back-btn" onclick="showMain()">← Вернуться к меню</button>
+  <h2 class="cart-title">Корзина</h2>
+  <div id="cart-items-list"></div>
+  <div class="order-success" id="order-success">
+    <div class="success-icon">✅</div>
+    <h2>Заказ отправлен!</h2>
+    <p>Ваш заказ отправлен Администратору.<br>Мы свяжемся с вами в ближайшее время.</p>
+    <button class="btn-primary" onclick="clearCartAndReturn()" style="max-width:260px;margin:0 auto;display:block;">Вернуться к меню</button>
   </div>
 </div>
 
-<!-- ORDER BAND -->
-<section class="order-band">
-  <h2>Готовы сделать заказ?</h2>
-  <p>Оформите заказ прямо в мессенджере MAX — быстро и удобно</p>
-  <a href="https://max.ru/id312332413602_2_bot" target="_blank" class="btn-white">
-    Открыть бота IrMa в MAX
-  </a>
-</section>
-
-<!-- SOCIAL -->
-<section class="social-section" id="social">
-  <div class="section-title" style="padding-top:0">
-    <h2>Мы в соцсетях</h2>
-    <p>Следите за новинками и акциями</p>
-    <div class="divider"></div>
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="onOverlayClick(event)">
+  <div class="modal" id="modal">
+    <img class="modal-img" id="modal-img" src="" alt="">
+    <div class="modal-body">
+      <button class="modal-close" onclick="closeModal()" title="Закрыть">✕</button>
+      <div class="modal-name" id="modal-name"></div>
+      <div class="modal-price" id="modal-price"></div>
+      <div class="modal-label">Состав</div>
+      <div class="modal-ingredients" id="modal-ingredients"></div>
+      <button class="add-to-cart-btn" id="add-btn" onclick="addCurrentToCart()">Добавить в корзину</button>
+    </div>
   </div>
-  <div class="social-icons">
-
-    <a href="#" target="_blank" class="social-link">
-      <div class="social-icon si-vk">
-        <svg viewBox="0 0 24 24" fill="#4a76a8"><path d="M22.5 0h-21C.67 0 0 .67 0 1.5v21C0 23.33.67 24 1.5 24h21c.83 0 1.5-.67 1.5-1.5v-21C24 .67 23.33 0 22.5 0zM17.1 16.5h-1.6c-.6 0-.79-.48-1.88-1.57-1.03-1.03-1.48-.74-1.48.26v1.06c0 .29-.09.46-.87.46-1.42 0-3.03-.84-4.15-2.41C5.49 11.98 5 9.87 5 9.58c0-.2.08-.38.46-.38h1.6c.35 0 .49.16.63.55.67 1.92 1.79 3.6 2.25 3.6.17 0 .25-.08.25-.51v-2c-.06-1.11-.64-1.21-.64-1.6 0-.19.16-.38.4-.38h2.52c.29 0 .38.15.38.48v2.72c0 .3.13.4.21.4.17 0 .32-.1.64-.42 1.01-1.11 1.73-2.82 1.73-2.82.09-.2.27-.38.62-.38h1.6c.48 0 .58.25.48.55-.2.88-2.1 3.59-2.1 3.59-.17.27-.23.38 0 .68.17.23.72.71 1.08 1.14.68.79 1.19 1.44 1.33 1.9.12.44-.11.67-.59.67z"/></svg>
-      </div>
-      ВКонтакте
-    </a>
-
-    <a href="https://www.instagram.com/irma_tort?igsh=eTZoaWZ0N3pvd3ho" target="_blank" class="social-link">
-      <div class="social-icon si-inst">
-        <svg viewBox="0 0 24 24" fill="url(#ig-grad)">
-          <defs>
-            <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#f09433"/>
-              <stop offset="25%" stop-color="#e6683c"/>
-              <stop offset="50%" stop-color="#dc2743"/>
-              <stop offset="75%" stop-color="#cc2366"/>
-              <stop offset="100%" stop-color="#bc1888"/>
-            </linearGradient>
-          </defs>
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
-      </div>
-      Instagram
-    </a>
-
-    <a href="#" target="_blank" class="social-link">
-      <div class="social-icon si-tg">
-        <svg viewBox="0 0 24 24" fill="#229ed9"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
-      </div>
-      Telegram
-    </a>
-
-    <a href="https://web.max.ru/-71665082178843" target="_blank" class="social-link">
-      <div class="social-icon" style="background:none;padding:0;overflow:hidden;border-radius:16px">
-        <img src="max-icon.png" alt="MAX" width="56" height="56" style="display:block;border-radius:16px">
-      </div>
-      Макс
-    </a>
-
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <span>IrMa</span> — Семейное кафе by Marinich &nbsp;·&nbsp; 2025
-</footer>
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-  <img id="lightbox-img" src="" alt="">
 </div>
 
 <script>
-  function goTo(btn, id) {
-    document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+const MENU = [
+  {
+    id: "salads", name: "Салаты",
+    items: [
+      { id: 1,  img: "menu/1.png",  name: "Салат «Весенний»",        price: 280, ingredients: "Помидоры черри, оливки, авокадо, базилик, кукуруза, кешью, оливковое масло" },
+      { id: 2,  img: "menu/2.png",  name: "Салат «Свежесть»",        price: 220, ingredients: "Редис, огурец, помидоры черри, листья салата, руккола, укроп" },
+      { id: 3,  img: "menu/3.png",  name: "Салат «Греческий»",       price: 310, ingredients: "Огурцы, помидоры черри, сыр фета, оливки, красный лук, укроп" },
+      { id: 4,  img: "menu/4.png",  name: "Салат «Мексикано»",       price: 350, ingredients: "Куриное филе, кукуруза, чёрная фасоль, авокадо, красный лук, помидоры" },
+      { id: 5,  img: "menu/5.png",  name: "Салат «Блю»",             price: 380, ingredients: "Руккола, болгарский перец, помидоры черри, сыр с голубой плесенью" },
+      { id: 6,  img: "menu/6.png",  name: "Салат «Цезарь»",          price: 320, ingredients: "Куриное филе, листья романо, гренки, соус Цезарь, пармезан" },
+      { id: 7,  img: "menu/7.png",  name: "Салат «Деревенский»",     price: 290, ingredients: "Куриная грудка, помидоры черри, огурцы, сыр фета, гренки, айсберг" }
+    ]
+  },
+  {
+    id: "coffee", name: "Кофе и чай",
+    items: [
+      { id: 8,  img: "menu/8.png",  name: "Американо",               price: 120, ingredients: "Двойной эспрессо, горячая вода, зёрна Arabica" },
+      { id: 9,  img: "menu/9.png",  name: "Чёрный кофе",             price:  90, ingredients: "Молотый кофе, горячая вода" },
+      { id: 10, img: "menu/10.png", name: "Латте",                   price: 180, ingredients: "Двойной эспрессо, взбитое молоко" },
+      { id: 11, img: "menu/11.png", name: "Чай чёрный",              price: 100, ingredients: "Цейлонский чай, листья мяты" },
+      { id: 12, img: "menu/12.png", name: "Чай фруктовый",           price: 150, ingredients: "Облепиха, шиповник, цитрус, мёд" },
+      { id: 13, img: "menu/13.png", name: "Капучино карамельный",    price: 210, ingredients: "Эспрессо, молоко, карамельный сироп, взбитые сливки" }
+    ]
+  },
+  {
+    id: "bliny", name: "Блины и бургеры",
+    items: [
+      { id: 14, img: "menu/14.png", name: "Блины с ягодами",         price: 250, ingredients: "Тонкие блины, клубника, черника, сахарная пудра" },
+      { id: 15, img: "menu/15.png", name: "Блин с ветчиной и сыром", price: 220, ingredients: "Блин, ветчина, сыр гауда" },
+      { id: 16, img: "menu/16.png", name: "Блин с шоколадом",        price: 180, ingredients: "Блин, шоколадная паста" },
+      { id: 17, img: "menu/17.png", name: "Чизбургер",               price: 320, ingredients: "Говяжья котлета, булка, чеддер, листья салата" },
+      { id: 18, img: "menu/18.png", name: "Бургер классический",     price: 300, ingredients: "Говяжья котлета, булка, томат, красный лук, листья салата, соус" },
+      { id: 19, img: "menu/19.png", name: "Бургер «Двойной»",        price: 390, ingredients: "Двойная говяжья котлета, чеддер, помидор, красный лук, листья салата" }
+    ]
+  },
+  {
+    id: "pizza", name: "Пицца",
+    items: [
+      { id: 20, img: "menu/20.png", name: "Пицца «Овощная»",         price: 520, ingredients: "Моцарелла, болгарский перец, кукуруза, оливки, красный лук, томатный соус" },
+      { id: 21, img: "menu/21.png", name: "Пицца «Пепперони»",       price: 580, ingredients: "Пепперони, моцарелла, томатный соус, тимьян" },
+      { id: 22, img: "menu/22.png", name: "Пицца «Мясная»",          price: 620, ingredients: "Пепперони, ветчина, оливки, помидоры черри, моцарелла" },
+      { id: 23, img: "menu/23.png", name: "Пицца «Гриль»",           price: 590, ingredients: "Пепперони, шампиньоны, красный лук, болгарский перец, оливки, моцарелла" }
+    ]
+  },
+  {
+    id: "drinks", name: "Холодные напитки",
+    items: [
+      { id: 24, img: "menu/24.png", name: "Кола со льдом",           price: 120, ingredients: "Газированный напиток, лёд" },
+      { id: 25, img: "menu/25.png", name: "Клубничный лимонад",      price: 180, ingredients: "Клубника, газированная вода, мята, лёд" },
+      { id: 26, img: "menu/26.png", name: "Голубой лимонад",         price: 200, ingredients: "Синий кюрасао, лайм, мята, газированная вода, лёд" },
+      { id: 27, img: "menu/27.png", name: "Лимонад с лимоном",       price: 150, ingredients: "Лимон, газированная вода, лёд" }
+    ]
   }
-  function openLightbox(src) {
-    document.getElementById('lightbox-img').src = src;
-    document.getElementById('lightbox').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
-</script>
+];
 
+/* ===== CART ===== */
+let cart = {};
+try { cart = JSON.parse(localStorage.getItem('irma_cart') || '{}'); } catch(e) {}
+
+function saveCart() {
+  try { localStorage.setItem('irma_cart', JSON.stringify(cart)); } catch(e) {}
+  const total = Object.values(cart).reduce(function(s, v) { return s + v.qty; }, 0);
+  document.getElementById('cart-count').textContent = total;
+}
+
+/* ===== BUILD MENU ===== */
+(function() {
+  var tabsEl = document.getElementById('tabs');
+  var catsEl = document.getElementById('categories');
+  MENU.forEach(function(cat, i) {
+    var btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+    btn.textContent = cat.name;
+    btn.dataset.cat = cat.id;
+    btn.onclick = function() { switchTab(cat.id); };
+    tabsEl.appendChild(btn);
+
+    var panel = document.createElement('div');
+    panel.className = 'category-panel' + (i === 0 ? ' active' : '');
+    panel.id = 'panel-' + cat.id;
+
+    var grid = document.createElement('div');
+    grid.className = 'dishes-grid';
+
+    cat.items.forEach(function(item) {
+      var card = document.createElement('div');
+      card.className = 'dish-card';
+      card.onclick = function() { openModal(item); };
+      card.innerHTML =
+        '<img class="dish-card-img" src="' + item.img + '" alt="' + item.name + '" loading="lazy">' +
+        '<div class="dish-card-body">' +
+          '<div class="dish-card-name">' + item.name + '</div>' +
+          '<div class="dish-card-price">' + item.price + ' ₽</div>' +
+        '</div>';
+      grid.appendChild(card);
+    });
+
+    panel.appendChild(grid);
+    catsEl.appendChild(panel);
+  });
+})();
+
+function switchTab(catId) {
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.cat === catId); });
+  document.querySelectorAll('.category-panel').forEach(function(p) { p.classList.toggle('active', p.id === 'panel-' + catId); });
+}
+
+/* ===== MODAL ===== */
+var currentItem = null;
+
+function openModal(item) {
+  currentItem = item;
+  document.getElementById('modal-img').src = item.img;
+  document.getElementById('modal-img').alt = item.name;
+  document.getElementById('modal-name').textContent = item.name;
+  document.getElementById('modal-price').textContent = item.price + ' ₽';
+  document.getElementById('modal-ingredients').textContent = item.ingredients;
+  var btn = document.getElementById('add-btn');
+  btn.textContent = 'Добавить в корзину';
+  btn.className = 'add-to-cart-btn';
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentItem = null;
+}
+
+function onOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+function addCurrentToCart() {
+  if (!currentItem) return;
+  var id = String(currentItem.id);
+  if (cart[id]) {
+    cart[id].qty++;
+  } else {
+    cart[id] = { name: currentItem.name, price: currentItem.price, img: currentItem.img, qty: 1 };
+  }
+  saveCart();
+  var btn = document.getElementById('add-btn');
+  btn.textContent = '✓ Добавлено';
+  btn.className = 'add-to-cart-btn added';
+  setTimeout(function() {
+    btn.textContent = 'Добавить в корзину';
+    btn.className = 'add-to-cart-btn';
+  }, 1400);
+}
+
+/* ===== PAGE NAVIGATION ===== */
+function showCart() {
+  document.getElementById('main-page').classList.add('hidden');
+  document.getElementById('cart-page').classList.add('active');
+  document.getElementById('order-success').classList.remove('show');
+  renderCart();
+  window.scrollTo(0, 0);
+}
+
+function showMain() {
+  document.getElementById('cart-page').classList.remove('active');
+  document.getElementById('main-page').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+/* ===== RENDER CART ===== */
+function renderCart() {
+  var list = document.getElementById('cart-items-list');
+  var entries = Object.entries(cart);
+
+  if (entries.length === 0) {
+    list.innerHTML =
+      '<div class="cart-empty">' +
+        '<div class="cart-empty-icon">🛒</div>' +
+        '<p>Корзина пуста</p>' +
+        '<p style="margin-top:8px;font-size:.88rem;color:#ccc">Добавьте блюда из меню</p>' +
+      '</div>';
+    return;
+  }
+
+  var total = 0;
+  var html = '';
+  entries.forEach(function(entry) {
+    var id = entry[0], v = entry[1];
+    var sub = v.price * v.qty;
+    total += sub;
+    html +=
+      '<div class="cart-item">' +
+        '<img class="cart-item-img" src="' + v.img + '" alt="' + v.name + '">' +
+        '<div class="cart-item-info">' +
+          '<div class="cart-item-name">' + v.name + '</div>' +
+          '<div class="cart-item-price">' + sub + ' ₽</div>' +
+        '</div>' +
+        '<div class="cart-item-controls">' +
+          '<button class="qty-btn" onclick="changeQty(\'' + id + '\',-1)">−</button>' +
+          '<span class="cart-qty">' + v.qty + '</span>' +
+          '<button class="qty-btn" onclick="changeQty(\'' + id + '\',1)">+</button>' +
+          '<button class="cart-remove" onclick="removeItem(\'' + id + '\')" title="Удалить">✕</button>' +
+        '</div>' +
+      '</div>';
+  });
+
+  html +=
+    '<div class="cart-total"><span>Итого:</span><span>' + total + ' ₽</span></div>' +
+    '<div class="cart-actions">' +
+      '<button class="btn-secondary" onclick="showMain()">← К меню</button>' +
+      '<button class="btn-primary" onclick="placeOrder()">Оформить заказ</button>' +
+    '</div>';
+
+  list.innerHTML = html;
+}
+
+function changeQty(id, delta) {
+  if (!cart[id]) return;
+  cart[id].qty += delta;
+  if (cart[id].qty <= 0) delete cart[id];
+  saveCart();
+  renderCart();
+}
+
+function removeItem(id) {
+  delete cart[id];
+  saveCart();
+  renderCart();
+}
+
+function placeOrder() {
+  cart = {};
+  saveCart();
+  document.getElementById('cart-items-list').innerHTML = '';
+  document.getElementById('order-success').classList.add('show');
+}
+
+function clearCartAndReturn() {
+  document.getElementById('order-success').classList.remove('show');
+  showMain();
+}
+
+/* init */
+saveCart();
+</script>
 </body>
 </html>
