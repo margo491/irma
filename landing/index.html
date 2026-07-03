@@ -382,6 +382,21 @@
       box-shadow: 0 4px 16px rgba(143,168,124,.35);
     }
     .btn-confirm:hover { background: #7a956a; transform: translateY(-1px); }
+    .phone-field { margin-top: 24px; }
+    .phone-label {
+      display: block; font-size: .72rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--gray);
+      margin-bottom: 8px;
+    }
+    .phone-input {
+      width: 100%; padding: 13px 16px; border: 1.5px solid var(--pink);
+      border-radius: 12px; font-family: 'Montserrat', sans-serif;
+      font-size: .95rem; color: var(--dark); background: var(--white);
+      outline: none; transition: border-color .2s;
+    }
+    .phone-input:focus { border-color: var(--pink-d); }
+    .phone-error { color: var(--pink-d); font-size: .78rem; margin-top: 6px; min-height: 18px; }
+    .order-error { color: var(--pink-d); font-size: .85rem; text-align: center; margin-top: 12px; min-height: 20px; }
     .order-success { display: none; text-align: center; padding: 64px 0; }
     .order-success.show { display: block; }
     .success-icon { font-size: 3.5rem; margin-bottom: 20px; }
@@ -745,10 +760,16 @@ function renderCart() {
       '<span class="cart-total-label">Итого:</span>' +
       '<span class="cart-total-amount">' + total + ' ₽</span>' +
     '</div>' +
+    '<div class="phone-field">' +
+      '<label class="phone-label">Ваш номер телефона <span style="color:var(--pink-d)">*</span></label>' +
+      '<input type="tel" id="phone-input" class="phone-input" placeholder="+7 (999) 123-45-67">' +
+      '<div class="phone-error" id="phone-error"></div>' +
+    '</div>' +
     '<div class="cart-actions">' +
       '<button class="btn-ghost" onclick="showMain()">← К меню</button>' +
       '<button class="btn-confirm" onclick="placeOrder()">Оформить заказ</button>' +
-    '</div>';
+    '</div>' +
+    '<div class="order-error" id="order-error"></div>';
   list.innerHTML = html;
 }
 
@@ -762,9 +783,44 @@ function changeQty(id, delta) {
 function removeItem(id) { delete cart[id]; saveCart(); renderCart(); }
 
 function placeOrder() {
-  cart = {}; saveCart();
-  document.getElementById('cart-items-list').innerHTML = '';
-  document.getElementById('order-success').classList.add('show');
+  var phoneInput = document.getElementById('phone-input');
+  var phoneError = document.getElementById('phone-error');
+  if (!phoneInput) return;
+  var phone = phoneInput.value.trim();
+  var digits = phone.replace(/\D/g, '');
+  if (digits.length < 10) {
+    phoneError.textContent = 'Введите корректный номер телефона';
+    phoneInput.focus();
+    return;
+  }
+  phoneError.textContent = '';
+
+  var items = Object.values(cart).map(function(v) {
+    return { name: v.name, price: v.price, qty: v.qty };
+  });
+
+  var confirmBtn = document.querySelector('.btn-confirm');
+  if (confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = 'Отправляем…'; }
+
+  fetch('/order/landing', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone: phone, items: items })
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('server');
+    return r.json();
+  })
+  .then(function() {
+    cart = {}; saveCart();
+    document.getElementById('cart-items-list').innerHTML = '';
+    document.getElementById('order-success').classList.add('show');
+  })
+  .catch(function() {
+    var errEl = document.getElementById('order-error');
+    if (errEl) errEl.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
+    if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = 'Оформить заказ'; }
+  });
 }
 
 function clearCartAndReturn() {
