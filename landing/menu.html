@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IrMa — Меню</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink:    #f2c4ce;
+      --pink-d:  #d98a9a;
+      --green:   #8fa87c;
+      --green-l: #c8d9be;
+      --bg:      #fdf6f7;
+      --white:   #ffffff;
+      --dark:    #3a3a3a;
+      --gray:    #7a7a7a;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--dark); }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(253,246,247,.95); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--pink);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw; height: 64px;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-style: italic;
+      color: var(--dark); text-decoration: none; letter-spacing: .03em;
+    }
+    .nav-links { display: flex; gap: 14px; align-items: center; }
+    .nav-links a {
+      text-decoration: none; color: var(--gray);
+      font-size: .77rem; font-weight: 500; letter-spacing: .05em;
+      text-transform: uppercase; transition: color .2s; white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--pink-d); }
+    .nav-links a.nav-active { color: var(--pink-d); font-weight: 700; }
+    .btn-order {
+      background: var(--green); color: var(--white) !important;
+      padding: 9px 20px; border-radius: 30px;
+      font-size: .77rem; font-weight: 600 !important;
+      transition: background .2s, transform .15s !important; white-space: nowrap;
+    }
+    .btn-order:hover { background: #7a956a !important; transform: translateY(-1px); }
+    .btn-cart {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--pink-d); color: var(--white) !important;
+      padding: 9px 16px; border-radius: 30px;
+      font-size: .77rem; font-weight: 600 !important;
+      border: none; cursor: pointer; letter-spacing: .04em;
+      transition: background .2s, transform .15s;
+      font-family: 'Montserrat', sans-serif; white-space: nowrap;
+    }
+    .btn-cart:hover { background: #c07080 !important; transform: translateY(-1px); }
+    .cart-badge {
+      background: var(--white); color: var(--pink-d);
+      border-radius: 50%; width: 19px; height: 19px;
+      font-size: .7rem; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .nav-burger {
+      display: none; background: none; border: none;
+      font-size: 1.4rem; cursor: pointer; color: var(--dark); padding: 4px; line-height: 1;
+    }
+
+    /* PAGE HERO */
+    .page-hero {
+      background: linear-gradient(135deg, #fce4ec 0%, #f8f4f0 50%, #e8f0e0 100%);
+      padding: 48px 5vw 44px; text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 20% 50%, rgba(242,196,206,.3) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 30%, rgba(200,217,190,.25) 0%, transparent 55%);
+    }
+    .page-hero-inner { position: relative; }
+    .page-hero-sub {
+      font-size: .72rem; font-weight: 600; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 12px;
+    }
+    .page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem); font-style: italic;
+      color: var(--dark); margin-bottom: 10px; line-height: 1.1;
+    }
+    .page-hero p { color: var(--gray); font-size: .95rem; font-weight: 300; }
+
+    /* DIVIDER */
+    .divider {
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, var(--pink-d), var(--green));
+      margin: 14px auto 0; border-radius: 2px;
+    }
+
+    /* MENU ANCHOR NAV */
+    .menu-anchors {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+      padding: 14px 5vw; position: sticky; top: 64px; z-index: 50;
+      background: rgba(253,246,247,.95); backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--pink);
+    }
+    .anchor-btn {
+      padding: 8px 20px; border-radius: 30px; border: 1.5px solid var(--pink);
+      background: transparent; cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .78rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--gray);
+      text-decoration: none; transition: all .2s; display: inline-block;
+    }
+    .anchor-btn:hover { background: var(--pink-d); border-color: var(--pink-d); color: var(--white); }
+
+    /* MENU CATEGORIES */
+    .menu-section { padding: 0 5vw 80px; }
+    .menu-category { margin-bottom: 70px; scroll-margin-top: 130px; }
+    .category-label {
+      display: flex; align-items: center; gap: 12px;
+      font-size: .72rem; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 24px;
+    }
+    .category-label::before, .category-label::after { content: ''; flex: 1; height: 1px; background: var(--green-l); }
+
+    /* DISH CARDS */
+    .dishes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px; }
+    .dish-card {
+      background: var(--white); border-radius: 20px; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,.07); cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .dish-card:hover { transform: translateY(-5px); box-shadow: 0 12px 36px rgba(0,0,0,.12); }
+    .dish-card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #fce4ec; display: block; }
+    .dish-card-body { padding: 14px 16px 16px; }
+    .dish-card-name { font-size: .88rem; font-weight: 600; color: var(--dark); margin-bottom: 6px; line-height: 1.35; }
+    .dish-card-price { font-size: .95rem; font-weight: 700; color: var(--pink-d); }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(40,20,25,.6); z-index: 200;
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--white); border-radius: 24px; overflow: hidden;
+      max-width: 760px; width: 100%; display: flex; max-height: 90vh;
+      animation: modalIn .22s ease;
+    }
+    @keyframes modalIn { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
+    .modal-img { width: 46%; flex-shrink: 0; object-fit: cover; background: #fce4ec; }
+    .modal-body { padding: 32px 28px; display: flex; flex-direction: column; overflow-y: auto; flex: 1; }
+    .modal-close {
+      align-self: flex-end; background: none; border: none;
+      font-size: 1.3rem; cursor: pointer; color: #ccc; margin-bottom: 14px;
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; transition: color .2s, background .2s;
+    }
+    .modal-close:hover { color: var(--dark); background: var(--pink); }
+    .modal-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: var(--dark); margin-bottom: 8px; line-height: 1.3; }
+    .modal-price { font-size: 1.5rem; font-weight: 700; color: var(--pink-d); margin-bottom: 20px; }
+    .modal-label { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+    .modal-ingredients { font-size: .9rem; color: var(--gray); line-height: 1.7; margin-bottom: 28px; flex: 1; font-weight: 300; }
+    .btn-add {
+      width: 100%; padding: 14px; background: var(--green); color: var(--white);
+      border: none; border-radius: 30px; font-family: 'Montserrat', sans-serif;
+      font-size: .9rem; font-weight: 600; letter-spacing: .06em;
+      cursor: pointer; transition: background .2s, transform .15s;
+    }
+    .btn-add:hover { background: #7a956a; transform: translateY(-1px); }
+    .btn-add.added { background: var(--pink-d); }
+
+    /* ORDER BAND */
+    .order-band { background: linear-gradient(135deg, var(--green) 0%, #7a956a 100%); text-align: center; padding: 64px 5vw; }
+    .order-band h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-style: italic; color: var(--white); margin-bottom: 16px; }
+    .order-band p { color: rgba(255,255,255,.8); margin-bottom: 36px; font-size: .95rem; }
+    .btn-white {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--white); color: var(--green);
+      padding: 16px 40px; border-radius: 50px;
+      font-size: 1rem; font-weight: 700; text-decoration: none;
+      letter-spacing: .04em; transition: transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.2); }
+
+    /* FOOTER */
+    footer { background: var(--dark); color: rgba(255,255,255,.5); padding: 36px 5vw 24px; font-size: .78rem; }
+    .footer-inner { max-width: 960px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; margin-bottom: 28px; }
+    .footer-brand-name { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--white); display: block; margin-bottom: 4px; }
+    .footer-tagline { color: rgba(255,255,255,.4); font-size: .76rem; }
+    .footer-nav { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+    .footer-nav a { color: rgba(255,255,255,.5); text-decoration: none; font-size: .75rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; transition: color .2s; }
+    .footer-nav a:hover { color: rgba(255,255,255,.9); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px; text-align: center; }
+
+    /* CART PAGE */
+    #cart-page { display: none; padding: 0 5vw 80px; }
+    #cart-page.active { display: block; }
+    #main-page.hidden { display: none; }
+    .cart-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: none; border: none; color: var(--gray);
+      font-family: 'Montserrat', sans-serif; font-size: .78rem; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+      padding: 0; margin: 32px 0 12px; transition: color .2s;
+    }
+    .cart-back:hover { color: var(--pink-d); }
+    .cart-title-wrap { padding: 16px 0 40px; text-align: center; }
+    .cart-title-wrap h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); font-style: italic; color: var(--dark); }
+    .cart-content { max-width: 680px; margin: 0 auto; }
+    .cart-empty { text-align: center; padding: 64px 0; color: var(--gray); font-weight: 300; }
+    .cart-empty-icon { font-size: 3rem; margin-bottom: 16px; }
+    .cart-item { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--pink); }
+    .cart-item-img { width: 72px; height: 72px; border-radius: 14px; object-fit: cover; background: #fce4ec; flex-shrink: 0; }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-name { font-weight: 600; font-size: .9rem; margin-bottom: 4px; line-height: 1.3; }
+    .cart-item-price { color: var(--pink-d); font-weight: 700; font-size: .9rem; }
+    .cart-item-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--pink-d); background: var(--white); color: var(--pink-d); font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; }
+    .qty-btn:hover { background: var(--pink); }
+    .cart-qty { font-weight: 700; min-width: 22px; text-align: center; font-size: .9rem; }
+    .cart-remove { background: none; border: none; color: #ccc; font-size: 1.1rem; cursor: pointer; padding: 4px; transition: color .2s; }
+    .cart-remove:hover { color: var(--pink-d); }
+    .cart-total { display: flex; justify-content: space-between; align-items: center; padding: 22px 0; font-size: 1.1rem; font-weight: 700; border-top: 2px solid var(--pink-d); margin-top: 4px; }
+    .cart-total-label { color: var(--gray); font-weight: 400; }
+    .cart-total-amount { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--pink-d); }
+    .cart-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .btn-ghost { flex: 1; padding: 14px; border: 1.5px solid var(--green); background: transparent; color: var(--green); border-radius: 30px; font-family: 'Montserrat', sans-serif; font-size: .85rem; font-weight: 600; letter-spacing: .04em; cursor: pointer; transition: background .2s; }
+    .btn-ghost:hover { background: var(--green-l); }
+    .btn-confirm { flex: 2; padding: 14px; background: var(--green); color: var(--white); border: none; border-radius: 30px; font-family: 'Montserrat', sans-serif; font-size: .9rem; font-weight: 600; letter-spacing: .04em; cursor: pointer; transition: background .2s, transform .15s; box-shadow: 0 4px 16px rgba(143,168,124,.35); }
+    .btn-confirm:hover { background: #7a956a; transform: translateY(-1px); }
+    .phone-field { margin-top: 24px; }
+    .phone-label { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gray); margin-bottom: 8px; }
+    .phone-input { width: 100%; padding: 13px 16px; border: 1.5px solid var(--pink); border-radius: 12px; font-family: 'Montserrat', sans-serif; font-size: .95rem; color: var(--dark); background: var(--white); outline: none; transition: border-color .2s; }
+    .phone-input:focus { border-color: var(--pink-d); }
+    .phone-error { color: var(--pink-d); font-size: .78rem; margin-top: 6px; min-height: 18px; }
+    .order-error { color: var(--pink-d); font-size: .85rem; text-align: center; margin-top: 12px; min-height: 20px; }
+    .order-success { display: none; text-align: center; padding: 64px 0; }
+    .order-success.show { display: block; }
+    .success-icon { font-size: 3.5rem; margin-bottom: 20px; }
+    .order-success h2 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2rem; color: var(--green); margin-bottom: 12px; }
+    .order-success p { color: var(--gray); font-weight: 300; line-height: 1.7; margin-bottom: 32px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .nav-burger { display: block; }
+      .nav-links {
+        position: fixed; top: 64px; left: 0; right: 0;
+        background: rgba(253,246,247,.98); backdrop-filter: blur(8px);
+        flex-direction: column; align-items: flex-start; gap: 14px;
+        padding: 20px 5vw; display: none;
+        border-bottom: 1px solid var(--pink); z-index: 99;
+        box-shadow: 0 8px 24px rgba(0,0,0,.08);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { font-size: .9rem; }
+    }
+    @media (max-width: 600px) {
+      .modal { flex-direction: column; }
+      .modal-img { width: 100%; height: 200px; flex-shrink: 0; }
+      .modal-body { padding: 20px; }
+      .dishes-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+      .cart-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html" id="logo-link">IrMa</a>
+  <div class="nav-links" id="nav-links">
+    <a href="index.html">Главная</a>
+    <a href="menu.html" class="nav-active">Меню</a>
+    <a href="training.html">Обучение</a>
+    <a href="blog.html">Блог</a>
+    <a href="contacts.html">Контакты</a>
+    <button class="btn-cart" onclick="showCart()">🛒 <span class="cart-badge" id="cart-count">0</span></button>
+    <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-order">Заказать</a>
+  </div>
+  <button class="nav-burger" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
+</nav>
+
+<!-- ===== MAIN PAGE ===== -->
+<div id="main-page">
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="page-hero-sub">Семейное кафе by Marinich</p>
+      <h1>Наше меню</h1>
+      <p>Нажмите на блюдо, чтобы узнать состав и добавить в корзину</p>
+    </div>
+  </section>
+
+  <!-- STICKY ANCHOR NAV -->
+  <div class="menu-anchors">
+    <a class="anchor-btn" href="#cat-salads">Салаты</a>
+    <a class="anchor-btn" href="#cat-coffee">Кофе и чай</a>
+    <a class="anchor-btn" href="#cat-bliny">Блины и бургеры</a>
+    <a class="anchor-btn" href="#cat-pizza">Пицца</a>
+    <a class="anchor-btn" href="#cat-drinks">Холодные напитки</a>
+  </div>
+
+  <div class="menu-section" id="categories"></div>
+
+  <!-- ORDER BAND -->
+  <section class="order-band">
+    <h2>Готовы сделать заказ?</h2>
+    <p>Оформите заказ прямо в мессенджере MAX — быстро и удобно</p>
+    <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-white">Открыть бота IrMa в MAX</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <span class="footer-brand-name">IrMa</span>
+          <span class="footer-tagline">Семейное кафе by Marinich</span>
+        </div>
+        <nav class="footer-nav">
+          <a href="index.html">Главная</a>
+          <a href="menu.html">Меню</a>
+          <a href="training.html">Обучение</a>
+          <a href="blog.html">Блог</a>
+          <a href="contacts.html">Контакты</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">© 2025 IrMa. Все права защищены.</div>
+    </div>
+  </footer>
+
+</div><!-- /main-page -->
+
+<!-- ===== CART PAGE ===== -->
+<div id="cart-page">
+  <button class="cart-back" onclick="showMain()">← Вернуться к меню</button>
+  <div class="cart-title-wrap">
+    <h2>Ваша корзина</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="cart-content">
+    <div id="cart-items-list"></div>
+    <div class="order-success" id="order-success">
+      <div class="success-icon">✅</div>
+      <h2>Заказ отправлен!</h2>
+      <p>Ваш заказ отправлен администратору.<br>Мы свяжемся с вами в ближайшее время.</p>
+      <button class="btn-confirm" onclick="clearCartAndReturn()" style="max-width:260px;margin:0 auto;display:block;">Вернуться к меню</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modal-overlay" onclick="onOverlayClick(event)">
+  <div class="modal" id="modal">
+    <img class="modal-img" id="modal-img" src="" alt="">
+    <div class="modal-body">
+      <button class="modal-close" onclick="closeModal()" title="Закрыть">✕</button>
+      <div class="modal-name" id="modal-name"></div>
+      <div class="modal-price" id="modal-price"></div>
+      <div class="modal-label">Состав</div>
+      <div class="modal-ingredients" id="modal-ingredients"></div>
+      <button class="btn-add" id="add-btn" onclick="addCurrentToCart()">Добавить в корзину</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MENU = [
+  {
+    id: "salads", name: "Салаты",
+    items: [
+      { id: 1,  img: "dishes/1.png",  name: "Салат «Весенний»",        price: 280, ingredients: "Помидоры черри, оливки, авокадо, базилик, кукуруза, кешью, оливковое масло" },
+      { id: 2,  img: "dishes/2.png",  name: "Салат «Свежесть»",        price: 220, ingredients: "Редис, огурец, помидоры черри, листья салата, руккола, укроп" },
+      { id: 3,  img: "dishes/3.png",  name: "Салат «Греческий»",       price: 310, ingredients: "Огурцы, помидоры черри, сыр фета, оливки, красный лук, укроп" },
+      { id: 4,  img: "dishes/4.png",  name: "Салат «Мексикано»",       price: 350, ingredients: "Куриное филе, кукуруза, чёрная фасоль, авокадо, красный лук, помидоры" },
+      { id: 5,  img: "dishes/5.png",  name: "Салат «Блю»",             price: 380, ingredients: "Руккола, болгарский перец, помидоры черри, сыр с голубой плесенью" },
+      { id: 6,  img: "dishes/6.png",  name: "Салат «Цезарь»",          price: 320, ingredients: "Куриное филе, листья романо, гренки, соус Цезарь, пармезан" },
+      { id: 7,  img: "dishes/7.png",  name: "Салат «Деревенский»",     price: 290, ingredients: "Куриная грудка, помидоры черри, огурцы, сыр фета, гренки, айсберг" }
+    ]
+  },
+  {
+    id: "coffee", name: "Кофе и чай",
+    items: [
+      { id: 8,  img: "dishes/8.png",  name: "Американо",               price: 120, ingredients: "Двойной эспрессо, горячая вода, зёрна Arabica" },
+      { id: 9,  img: "dishes/9.png",  name: "Чёрный кофе",             price:  90, ingredients: "Молотый кофе, горячая вода" },
+      { id: 10, img: "dishes/10.png", name: "Латте",                   price: 180, ingredients: "Двойной эспрессо, взбитое молоко" },
+      { id: 11, img: "dishes/11.png", name: "Чай чёрный",              price: 100, ingredients: "Цейлонский чай, листья мяты" },
+      { id: 12, img: "dishes/12.png", name: "Чай фруктовый",           price: 150, ingredients: "Облепиха, шиповник, цитрус, мёд" },
+      { id: 13, img: "dishes/13.png", name: "Капучино карамельный",    price: 210, ingredients: "Эспрессо, молоко, карамельный сироп, взбитые сливки" }
+    ]
+  },
+  {
+    id: "bliny", name: "Блины и бургеры",
+    items: [
+      { id: 14, img: "dishes/14.png", name: "Блины с ягодами",         price: 250, ingredients: "Тонкие блины, клубника, черника, сахарная пудра" },
+      { id: 15, img: "dishes/15.png", name: "Блин с ветчиной и сыром", price: 220, ingredients: "Блин, ветчина, сыр гауда" },
+      { id: 16, img: "dishes/16.png", name: "Блин с шоколадом",        price: 180, ingredients: "Блин, шоколадная паста" },
+      { id: 17, img: "dishes/17.png", name: "Чизбургер",               price: 320, ingredients: "Говяжья котлета, булка, чеддер, листья салата" },
+      { id: 18, img: "dishes/18.png", name: "Бургер классический",     price: 300, ingredients: "Говяжья котлета, булка, томат, красный лук, листья салата, соус" },
+      { id: 19, img: "dishes/19.png", name: "Бургер «Двойной»",        price: 390, ingredients: "Двойная говяжья котлета, чеддер, помидор, красный лук, листья салата" }
+    ]
+  },
+  {
+    id: "pizza", name: "Пицца",
+    items: [
+      { id: 20, img: "dishes/20.png", name: "Пицца «Овощная»",         price: 520, ingredients: "Моцарелла, болгарский перец, кукуруза, оливки, красный лук, томатный соус" },
+      { id: 21, img: "dishes/21.png", name: "Пицца «Пепперони»",       price: 580, ingredients: "Пепперони, моцарелла, томатный соус, тимьян" },
+      { id: 22, img: "dishes/22.png", name: "Пицца «Мясная»",          price: 620, ingredients: "Пепперони, ветчина, оливки, помидоры черри, моцарелла" },
+      { id: 23, img: "dishes/23.png", name: "Пицца «Гриль»",           price: 590, ingredients: "Пепперони, шампиньоны, красный лук, болгарский перец, оливки, моцарелла" }
+    ]
+  },
+  {
+    id: "drinks", name: "Холодные напитки",
+    items: [
+      { id: 24, img: "dishes/24.png", name: "Кола со льдом",           price: 120, ingredients: "Газированный напиток, лёд" },
+      { id: 25, img: "dishes/25.png", name: "Клубничный лимонад",      price: 180, ingredients: "Клубника, газированная вода, мята, лёд" },
+      { id: 26, img: "dishes/26.png", name: "Голубой лимонад",         price: 200, ingredients: "Синий кюрасао, лайм, мята, газированная вода, лёд" },
+      { id: 27, img: "dishes/27.png", name: "Лимонад с лимоном",       price: 150, ingredients: "Лимон, газированная вода, лёд" }
+    ]
+  }
+];
+
+/* CART */
+var cart = {};
+try { cart = JSON.parse(localStorage.getItem('irma_cart') || '{}'); } catch(e) {}
+
+function saveCart() {
+  try { localStorage.setItem('irma_cart', JSON.stringify(cart)); } catch(e) {}
+  var total = Object.values(cart).reduce(function(s,v){ return s+v.qty; }, 0);
+  document.getElementById('cart-count').textContent = total;
+}
+
+/* BUILD MENU */
+(function() {
+  var catsEl = document.getElementById('categories');
+  MENU.forEach(function(cat) {
+    var section = document.createElement('div');
+    section.className = 'menu-category';
+    section.id = 'cat-' + cat.id;
+    var label = document.createElement('p');
+    label.className = 'category-label';
+    label.textContent = cat.name;
+    section.appendChild(label);
+    var grid = document.createElement('div');
+    grid.className = 'dishes-grid';
+    cat.items.forEach(function(item) {
+      var card = document.createElement('div');
+      card.className = 'dish-card';
+      card.onclick = function() { openModal(item); };
+      card.innerHTML =
+        '<img class="dish-card-img" src="' + item.img + '" alt="' + item.name + '" loading="lazy">' +
+        '<div class="dish-card-body">' +
+          '<div class="dish-card-name">' + item.name + '</div>' +
+          '<div class="dish-card-price">' + item.price + ' ₽</div>' +
+        '</div>';
+      grid.appendChild(card);
+    });
+    section.appendChild(grid);
+    catsEl.appendChild(section);
+  });
+})();
+
+/* MODAL */
+var currentItem = null;
+
+function openModal(item) {
+  currentItem = item;
+  document.getElementById('modal-img').src = item.img;
+  document.getElementById('modal-img').alt = item.name;
+  document.getElementById('modal-name').textContent = item.name;
+  document.getElementById('modal-price').textContent = item.price + ' ₽';
+  document.getElementById('modal-ingredients').textContent = item.ingredients;
+  var btn = document.getElementById('add-btn');
+  btn.textContent = 'Добавить в корзину';
+  btn.className = 'btn-add';
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentItem = null;
+}
+
+function onOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
+
+function addCurrentToCart() {
+  if (!currentItem) return;
+  var id = String(currentItem.id);
+  if (cart[id]) { cart[id].qty++; }
+  else { cart[id] = { name: currentItem.name, price: currentItem.price, img: currentItem.img, qty: 1 }; }
+  saveCart();
+  var btn = document.getElementById('add-btn');
+  btn.textContent = '✓ Добавлено';
+  btn.className = 'btn-add added';
+  setTimeout(function(){ btn.textContent = 'Добавить в корзину'; btn.className = 'btn-add'; }, 1400);
+}
+
+/* NAVIGATION */
+function showCart() {
+  document.getElementById('main-page').classList.add('hidden');
+  document.getElementById('cart-page').classList.add('active');
+  document.getElementById('order-success').classList.remove('show');
+  renderCart();
+  window.scrollTo(0, 0);
+}
+
+function showMain() {
+  document.getElementById('cart-page').classList.remove('active');
+  document.getElementById('main-page').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+/* Logo intercept — если корзина открыта, возвращаем к меню; иначе — уходим на главную */
+document.getElementById('logo-link').addEventListener('click', function(e) {
+  if (document.getElementById('cart-page').classList.contains('active')) {
+    e.preventDefault();
+    showMain();
+  }
+});
+
+/* RENDER CART */
+function renderCart() {
+  var list = document.getElementById('cart-items-list');
+  var entries = Object.entries(cart);
+  if (entries.length === 0) {
+    list.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Корзина пуста</p></div>';
+    return;
+  }
+  var total = 0, html = '';
+  entries.forEach(function(e) {
+    var id = e[0], v = e[1], sub = v.price * v.qty;
+    total += sub;
+    html +=
+      '<div class="cart-item">' +
+        '<img class="cart-item-img" src="' + v.img + '" alt="' + v.name + '">' +
+        '<div class="cart-item-info">' +
+          '<div class="cart-item-name">' + v.name + '</div>' +
+          '<div class="cart-item-price">' + sub + ' ₽</div>' +
+        '</div>' +
+        '<div class="cart-item-controls">' +
+          '<button class="qty-btn" onclick="changeQty(\'' + id + '\',-1)">−</button>' +
+          '<span class="cart-qty">' + v.qty + '</span>' +
+          '<button class="qty-btn" onclick="changeQty(\'' + id + '\',1)">+</button>' +
+          '<button class="cart-remove" onclick="removeItem(\'' + id + '\')">✕</button>' +
+        '</div>' +
+      '</div>';
+  });
+  html +=
+    '<div class="cart-total">' +
+      '<span class="cart-total-label">Итого:</span>' +
+      '<span class="cart-total-amount">' + total + ' ₽</span>' +
+    '</div>' +
+    '<div class="phone-field">' +
+      '<label class="phone-label">Ваш номер телефона <span style="color:var(--pink-d)">*</span></label>' +
+      '<input type="tel" id="phone-input" class="phone-input" placeholder="+7 (999) 123-45-67">' +
+      '<div class="phone-error" id="phone-error"></div>' +
+    '</div>' +
+    '<div class="cart-actions">' +
+      '<button class="btn-ghost" onclick="showMain()">← К меню</button>' +
+      '<button class="btn-confirm" onclick="placeOrder()">Оформить заказ</button>' +
+    '</div>' +
+    '<div class="order-error" id="order-error"></div>';
+  list.innerHTML = html;
+}
+
+function changeQty(id, delta) {
+  if (!cart[id]) return;
+  cart[id].qty += delta;
+  if (cart[id].qty <= 0) delete cart[id];
+  saveCart(); renderCart();
+}
+
+function removeItem(id) { delete cart[id]; saveCart(); renderCart(); }
+
+function placeOrder() {
+  var phoneInput = document.getElementById('phone-input');
+  var phoneError = document.getElementById('phone-error');
+  if (!phoneInput) return;
+  var phone = phoneInput.value.trim();
+  var digits = phone.replace(/\D/g, '');
+  if (digits.length < 10) {
+    phoneError.textContent = 'Введите корректный номер телефона';
+    phoneInput.focus();
+    return;
+  }
+  phoneError.textContent = '';
+  var items = Object.values(cart).map(function(v) {
+    return { name: v.name, price: v.price, qty: v.qty };
+  });
+  var confirmBtn = document.querySelector('.btn-confirm');
+  if (confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = 'Отправляем…'; }
+  fetch('/order/landing', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone: phone, items: items })
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('server');
+    return r.json();
+  })
+  .then(function() {
+    cart = {}; saveCart();
+    document.getElementById('cart-items-list').innerHTML = '';
+    document.getElementById('order-success').classList.add('show');
+  })
+  .catch(function() {
+    var errEl = document.getElementById('order-error');
+    if (errEl) errEl.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
+    if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = 'Оформить заказ'; }
+  });
+}
+
+function clearCartAndReturn() {
+  document.getElementById('order-success').classList.remove('show');
+  showMain();
+}
+
+saveCart();
+</script>
+</body>
+</html>

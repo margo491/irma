@@ -21,92 +21,75 @@
     }
 
     html { scroll-behavior: smooth; }
+    body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--dark); }
 
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: var(--bg);
-      color: var(--dark);
-    }
-
-    /* ── NAV ── */
+    /* NAV */
     nav {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(253,246,247,.95);
-      backdrop-filter: blur(8px);
+      background: rgba(253,246,247,.95); backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--pink);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 5vw;
-      height: 64px;
+      padding: 0 5vw; height: 64px;
     }
     .nav-logo {
       font-family: 'Playfair Display', serif;
       font-size: 1.5rem; font-style: italic;
-      color: var(--dark); text-decoration: none;
-      letter-spacing: .03em; cursor: pointer;
+      color: var(--dark); text-decoration: none; letter-spacing: .03em;
     }
-    .nav-links { display: flex; gap: 16px; align-items: center; }
+    .nav-links { display: flex; gap: 14px; align-items: center; }
     .nav-links a {
       text-decoration: none; color: var(--gray);
-      font-size: .8rem; font-weight: 500; letter-spacing: .06em;
-      text-transform: uppercase; transition: color .2s;
+      font-size: .77rem; font-weight: 500; letter-spacing: .05em;
+      text-transform: uppercase; transition: color .2s; white-space: nowrap;
     }
     .nav-links a:hover { color: var(--pink-d); }
+    .nav-links a.nav-active { color: var(--pink-d); font-weight: 700; }
     .btn-order {
       background: var(--green); color: var(--white) !important;
-      padding: 10px 22px; border-radius: 30px;
-      font-weight: 600 !important; transition: background .2s, transform .15s !important;
+      padding: 9px 20px; border-radius: 30px;
+      font-size: .77rem; font-weight: 600 !important;
+      transition: background .2s, transform .15s !important; white-space: nowrap;
     }
     .btn-order:hover { background: #7a956a !important; transform: translateY(-1px); }
     .btn-cart {
       display: inline-flex; align-items: center; gap: 6px;
       background: var(--pink-d); color: var(--white) !important;
-      padding: 10px 18px; border-radius: 30px;
-      font-size: .8rem; font-weight: 600 !important;
+      padding: 9px 16px; border-radius: 30px;
+      font-size: .77rem; font-weight: 600 !important;
       border: none; cursor: pointer; letter-spacing: .04em;
       transition: background .2s, transform .15s;
+      font-family: 'Montserrat', sans-serif; white-space: nowrap;
     }
     .btn-cart:hover { background: #c07080 !important; transform: translateY(-1px); }
     .cart-badge {
       background: var(--white); color: var(--pink-d);
-      border-radius: 50%; width: 20px; height: 20px;
-      font-size: .72rem; font-weight: 700;
+      border-radius: 50%; width: 19px; height: 19px;
+      font-size: .7rem; font-weight: 700;
       display: inline-flex; align-items: center; justify-content: center;
     }
+    .nav-burger {
+      display: none; background: none; border: none;
+      font-size: 1.4rem; cursor: pointer; color: var(--dark); padding: 4px; line-height: 1;
+    }
 
-    /* ── HERO ── */
+    /* HERO */
     .hero {
-      min-height: 88vh;
+      min-height: 90vh;
       background: linear-gradient(135deg, #fce4ec 0%, #f8f4f0 45%, #e8f0e0 100%);
       display: flex; align-items: center; justify-content: center;
       text-align: center; padding: 60px 5vw;
       position: relative; overflow: hidden;
     }
     .hero::before {
-      content: '';
-      position: absolute; inset: 0;
+      content: ''; position: absolute; inset: 0;
       background: radial-gradient(ellipse at 20% 50%, rgba(242,196,206,.4) 0%, transparent 60%),
                   radial-gradient(ellipse at 80% 30%, rgba(200,217,190,.35) 0%, transparent 55%);
     }
     .hero-inner { position: relative; max-width: 680px; }
-    .hero-sub {
-      font-size: .75rem; font-weight: 600; letter-spacing: .18em;
-      text-transform: uppercase; color: var(--green);
-      margin-bottom: 16px;
-    }
-    .hero h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 8vw, 6rem);
-      font-style: italic; line-height: 1.05;
-      color: var(--dark); margin-bottom: 8px;
-    }
-    .hero-by {
-      font-size: .85rem; color: var(--gray); letter-spacing: .12em;
-      text-transform: uppercase; margin-bottom: 28px;
-    }
-    .hero-desc {
-      font-size: 1.05rem; color: var(--gray); line-height: 1.7;
-      margin-bottom: 40px; font-weight: 300;
-    }
+    .hero-sub { font-size: .75rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--green); margin-bottom: 16px; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 8vw, 6rem); font-style: italic; line-height: 1.05; color: var(--dark); margin-bottom: 8px; }
+    .hero-by { font-size: .85rem; color: var(--gray); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 28px; }
+    .hero-desc { font-size: 1.05rem; color: var(--gray); line-height: 1.7; margin-bottom: 40px; font-weight: 300; }
     .hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
     .btn-main {
       display: inline-flex; align-items: center; gap: 10px;
@@ -117,151 +100,106 @@
       box-shadow: 0 4px 20px rgba(143,168,124,.35);
     }
     .btn-main:hover { background: #7a956a; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(143,168,124,.45); }
-    .btn-main svg { width: 22px; height: 22px; fill: currentColor; }
+    .btn-main-outline {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: transparent; color: var(--green);
+      padding: 16px 36px; border-radius: 50px; border: 2px solid var(--green);
+      font-size: 1rem; font-weight: 600; text-decoration: none;
+      letter-spacing: .04em; transition: background .2s, transform .15s;
+    }
+    .btn-main-outline:hover { background: var(--green-l); transform: translateY(-2px); }
 
-    /* ── SECTION TITLE ── */
-    .section-title {
-      text-align: center; padding: 64px 5vw 40px;
-    }
-    .section-title h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3rem); font-style: italic;
-      color: var(--dark); margin-bottom: 10px;
-    }
+    /* SECTION TITLE */
+    .section-title { text-align: center; padding: 64px 5vw 40px; }
+    .section-title h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); font-style: italic; color: var(--dark); margin-bottom: 10px; }
     .section-title p { color: var(--gray); font-size: .9rem; font-weight: 300; }
-    .divider {
-      width: 60px; height: 2px;
-      background: linear-gradient(90deg, var(--pink-d), var(--green));
-      margin: 14px auto 0; border-radius: 2px;
-    }
+    .divider { width: 60px; height: 2px; background: linear-gradient(90deg, var(--pink-d), var(--green)); margin: 14px auto 0; border-radius: 2px; }
 
-    /* ── MENU ANCHOR NAV ── */
-    .menu-anchors {
-      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-      padding: 0 5vw 36px; position: sticky; top: 64px; z-index: 50;
-      background: rgba(253,246,247,.95); backdrop-filter: blur(6px);
-      padding-top: 14px; padding-bottom: 14px;
-      border-bottom: 1px solid var(--pink);
+    /* CAROUSEL */
+    .carousel-section { padding: 0 0 80px; overflow: hidden; }
+    .carousel-wrapper { overflow: hidden; }
+    .carousel-track {
+      display: flex; width: max-content;
+      animation: carousel-scroll 38s linear infinite;
     }
-    .anchor-btn {
-      padding: 8px 20px; border-radius: 30px; border: 1.5px solid var(--pink);
-      background: transparent; cursor: pointer;
-      font-family: 'Montserrat', sans-serif;
-      font-size: .78rem; font-weight: 600; letter-spacing: .06em;
-      text-transform: uppercase; color: var(--gray);
-      text-decoration: none;
-      transition: all .2s; display: inline-block;
+    .carousel-wrapper:hover .carousel-track { animation-play-state: paused; }
+    @keyframes carousel-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
-    .anchor-btn:hover {
-      background: var(--pink-d); border-color: var(--pink-d);
-      color: var(--white);
-    }
-
-    /* ── MENU CATEGORIES ── */
-    .menu-section { padding: 0 5vw 80px; }
-    .menu-category { margin-bottom: 70px; scroll-margin-top: 130px; }
-    .category-label {
-      display: flex; align-items: center; gap: 12px;
-      font-size: .72rem; font-weight: 700; letter-spacing: .15em;
-      text-transform: uppercase; color: var(--green);
-      margin-bottom: 24px;
-    }
-    .category-label::before, .category-label::after {
-      content: ''; flex: 1; height: 1px; background: var(--green-l);
-    }
-
-    /* ── DISH CARDS ── */
-    .dishes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 22px;
-    }
-    .dish-card {
+    .carousel-card {
+      width: 200px; flex-shrink: 0; margin-right: 22px;
       background: var(--white); border-radius: 20px; overflow: hidden;
-      box-shadow: 0 4px 24px rgba(0,0,0,.07); cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,.07);
+      text-decoration: none; color: inherit; display: block;
       transition: transform .2s, box-shadow .2s;
     }
-    .dish-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 36px rgba(0,0,0,.12);
+    .carousel-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(0,0,0,.13); }
+    .carousel-card img { width: 200px; height: 200px; object-fit: cover; background: #fce4ec; display: block; }
+    .carousel-card-body { padding: 12px 14px 14px; }
+    .carousel-card-name { font-size: .82rem; font-weight: 600; color: var(--dark); margin-bottom: 4px; line-height: 1.3; }
+    .carousel-card-price { font-size: .85rem; font-weight: 700; color: var(--pink-d); }
+    .carousel-cta { text-align: center; padding-top: 36px; }
+    .btn-outline-green {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 2px solid var(--green); color: var(--green);
+      padding: 14px 36px; border-radius: 50px;
+      font-size: .9rem; font-weight: 600; text-decoration: none;
+      letter-spacing: .04em; transition: background .2s, transform .15s;
     }
-    .dish-card-img {
-      width: 100%; aspect-ratio: 1/1; object-fit: cover;
-      background: #fce4ec; display: block;
-    }
-    .dish-card-body { padding: 14px 16px 16px; }
-    .dish-card-name {
-      font-size: .88rem; font-weight: 600; color: var(--dark);
-      margin-bottom: 6px; line-height: 1.35;
-    }
-    .dish-card-price {
-      font-size: .95rem; font-weight: 700; color: var(--pink-d);
-    }
+    .btn-outline-green:hover { background: var(--green-l); transform: translateY(-1px); }
 
-    /* ── MODAL ── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(40,20,25,.6); z-index: 200;
-      align-items: center; justify-content: center; padding: 16px;
+    /* NEWS */
+    .news-section { padding: 0 5vw 80px; }
+    .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .news-card {
+      background: var(--white); border-radius: 20px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,.06);
+      transition: transform .2s, box-shadow .2s;
     }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--white); border-radius: 24px; overflow: hidden;
-      max-width: 760px; width: 100%; display: flex; max-height: 90vh;
-      animation: modalIn .22s ease;
-    }
-    @keyframes modalIn { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
-    .modal-img { width: 46%; flex-shrink: 0; object-fit: cover; background: #fce4ec; }
-    .modal-body {
-      padding: 32px 28px; display: flex; flex-direction: column;
-      overflow-y: auto; flex: 1;
-    }
-    .modal-close {
-      align-self: flex-end; background: none; border: none;
-      font-size: 1.3rem; cursor: pointer; color: #ccc; margin-bottom: 14px;
-      width: 32px; height: 32px; border-radius: 50%;
+    .news-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,.1); }
+    .news-card-img {
+      width: 100%; height: 180px; object-fit: cover;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--green-l) 100%);
       display: flex; align-items: center; justify-content: center;
-      transition: color .2s, background .2s;
+      font-size: 3.5rem;
     }
-    .modal-close:hover { color: var(--dark); background: var(--pink); }
-    .modal-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem; font-style: italic;
-      color: var(--dark); margin-bottom: 8px; line-height: 1.3;
-    }
-    .modal-price {
-      font-size: 1.5rem; font-weight: 700; color: var(--pink-d);
-      margin-bottom: 20px;
-    }
-    .modal-label {
+    .news-card-body { padding: 20px 22px 24px; }
+    .news-tag {
       font-size: .68rem; font-weight: 700; letter-spacing: .12em;
       text-transform: uppercase; color: var(--green); margin-bottom: 8px;
     }
-    .modal-ingredients {
-      font-size: .9rem; color: var(--gray); line-height: 1.7;
-      margin-bottom: 28px; flex: 1; font-weight: 300;
-    }
-    .btn-add {
-      width: 100%; padding: 14px;
-      background: var(--green); color: var(--white);
-      border: none; border-radius: 30px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: .9rem; font-weight: 600; letter-spacing: .06em;
-      cursor: pointer; transition: background .2s, transform .15s;
-    }
-    .btn-add:hover { background: #7a956a; transform: translateY(-1px); }
-    .btn-add.added { background: var(--pink-d); }
+    .news-card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; color: var(--dark); margin-bottom: 8px; line-height: 1.35; }
+    .news-card-text { font-size: .85rem; color: var(--gray); line-height: 1.65; font-weight: 300; }
+    .news-date { font-size: .72rem; color: #bbb; margin-top: 14px; letter-spacing: .04em; }
 
-    /* ── ORDER BAND ── */
-    .order-band {
-      background: linear-gradient(135deg, var(--green) 0%, #7a956a 100%);
-      text-align: center; padding: 64px 5vw;
+    /* PROMOS */
+    .promos-section { padding: 0 5vw 80px; }
+    .promos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .promo-card {
+      border-radius: 24px; overflow: hidden; position: relative;
+      min-height: 200px; display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 28px 28px 28px;
+      box-shadow: 0 6px 28px rgba(0,0,0,.12);
+      transition: transform .2s, box-shadow .2s;
     }
-    .order-band h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 4vw, 2.8rem); font-style: italic;
-      color: var(--white); margin-bottom: 16px;
+    .promo-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(0,0,0,.16); }
+    .promo-card-1 { background: linear-gradient(135deg, #d98a9a 0%, #f2c4ce 100%); }
+    .promo-card-2 { background: linear-gradient(135deg, #8fa87c 0%, #c8d9be 100%); }
+    .promo-card-3 { background: linear-gradient(135deg, #b07baf 0%, #e8d5e8 100%); }
+    .promo-icon { font-size: 2.8rem; margin-bottom: 12px; }
+    .promo-badge {
+      display: inline-block; background: rgba(255,255,255,.25);
+      color: var(--white); font-size: .68rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 10px;
     }
+    .promo-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-style: italic; color: var(--white); margin-bottom: 8px; line-height: 1.2; }
+    .promo-text { font-size: .85rem; color: rgba(255,255,255,.85); line-height: 1.55; font-weight: 300; }
+
+    /* ORDER BAND */
+    .order-band { background: linear-gradient(135deg, var(--green) 0%, #7a956a 100%); text-align: center; padding: 80px 5vw; }
+    .order-band h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-style: italic; color: var(--white); margin-bottom: 16px; }
     .order-band p { color: rgba(255,255,255,.8); margin-bottom: 36px; font-size: .95rem; }
     .btn-white {
       display: inline-flex; align-items: center; gap: 10px;
@@ -273,24 +211,12 @@
     }
     .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.2); }
 
-    /* ── SOCIAL ── */
+    /* SOCIAL */
     .social-section { text-align: center; padding: 72px 5vw; }
-    .social-icons {
-      display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
-      margin-top: 36px;
-    }
-    .social-link {
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-      text-decoration: none; color: var(--gray);
-      font-size: .7rem; font-weight: 600; letter-spacing: .08em;
-      text-transform: uppercase; transition: color .2s, transform .15s;
-    }
+    .social-icons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 36px; }
+    .social-link { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--gray); font-size: .7rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; transition: color .2s, transform .15s; }
     .social-link:hover { color: var(--pink-d); transform: translateY(-3px); }
-    .social-icon {
-      width: 56px; height: 56px; border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      transition: box-shadow .2s;
-    }
+    .social-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; transition: box-shadow .2s; }
     .social-link:hover .social-icon { box-shadow: 0 6px 20px rgba(0,0,0,.12); }
     .social-icon svg { width: 30px; height: 30px; }
     .si-vk   { background: #e8f0fb; }
@@ -298,122 +224,31 @@
     .si-tg   { background: #e3f2fd; }
     .si-max  { background: #e8f5e9; }
 
-    /* ── FOOTER ── */
-    footer {
-      background: var(--dark); color: rgba(255,255,255,.5);
-      text-align: center; padding: 28px 5vw;
-      font-size: .78rem; letter-spacing: .05em;
-    }
-    footer span { color: rgba(255,255,255,.8); font-family: 'Playfair Display', serif; font-style: italic; }
+    /* FOOTER */
+    footer { background: var(--dark); color: rgba(255,255,255,.5); padding: 36px 5vw 24px; font-size: .78rem; }
+    .footer-inner { max-width: 960px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; margin-bottom: 28px; }
+    .footer-brand-name { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--white); display: block; margin-bottom: 4px; }
+    .footer-tagline { color: rgba(255,255,255,.4); font-size: .76rem; }
+    .footer-nav { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+    .footer-nav a { color: rgba(255,255,255,.5); text-decoration: none; font-size: .75rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; transition: color .2s; }
+    .footer-nav a:hover { color: rgba(255,255,255,.9); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px; text-align: center; }
 
-    /* ── CART PAGE ── */
-    #cart-page { display: none; padding: 0 5vw 80px; }
-    #cart-page.active { display: block; }
-    #main-page.hidden { display: none; }
-    .cart-back {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: none; border: none; color: var(--gray);
-      font-family: 'Montserrat', sans-serif;
-      font-size: .78rem; font-weight: 600; letter-spacing: .08em;
-      text-transform: uppercase; cursor: pointer;
-      padding: 0; margin: 32px 0 12px; transition: color .2s;
-    }
-    .cart-back:hover { color: var(--pink-d); }
-    .cart-title-wrap { padding: 16px 0 40px; text-align: center; }
-    .cart-title-wrap h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3rem); font-style: italic; color: var(--dark);
-    }
-    .cart-content { max-width: 680px; margin: 0 auto; }
-    .cart-empty { text-align: center; padding: 64px 0; color: var(--gray); font-weight: 300; }
-    .cart-empty-icon { font-size: 3rem; margin-bottom: 16px; }
-    .cart-item {
-      display: flex; align-items: center; gap: 16px;
-      padding: 16px 0; border-bottom: 1px solid var(--pink);
-    }
-    .cart-item-img {
-      width: 72px; height: 72px; border-radius: 14px;
-      object-fit: cover; background: #fce4ec; flex-shrink: 0;
-    }
-    .cart-item-info { flex: 1; min-width: 0; }
-    .cart-item-name {
-      font-weight: 600; font-size: .9rem; margin-bottom: 4px; line-height: 1.3;
-    }
-    .cart-item-price { color: var(--pink-d); font-weight: 700; font-size: .9rem; }
-    .cart-item-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .qty-btn {
-      width: 30px; height: 30px; border-radius: 50%;
-      border: 1.5px solid var(--pink-d); background: var(--white);
-      color: var(--pink-d); font-size: 1rem; font-weight: 700;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: background .2s;
-    }
-    .qty-btn:hover { background: var(--pink); }
-    .cart-qty { font-weight: 700; min-width: 22px; text-align: center; font-size: .9rem; }
-    .cart-remove {
-      background: none; border: none; color: #ccc;
-      font-size: 1.1rem; cursor: pointer; padding: 4px; transition: color .2s;
-    }
-    .cart-remove:hover { color: var(--pink-d); }
-    .cart-total {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 22px 0; font-size: 1.1rem; font-weight: 700;
-      border-top: 2px solid var(--pink-d); margin-top: 4px;
-    }
-    .cart-total-label { color: var(--gray); font-weight: 400; }
-    .cart-total-amount {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem; color: var(--pink-d);
-    }
-    .cart-actions { display: flex; gap: 12px; margin-top: 24px; }
-    .btn-ghost {
-      flex: 1; padding: 14px; border: 1.5px solid var(--green);
-      background: transparent; color: var(--green); border-radius: 30px;
-      font-family: 'Montserrat', sans-serif; font-size: .85rem;
-      font-weight: 600; letter-spacing: .04em; cursor: pointer; transition: background .2s;
-    }
-    .btn-ghost:hover { background: var(--green-l); }
-    .btn-confirm {
-      flex: 2; padding: 14px; background: var(--green);
-      color: var(--white); border: none; border-radius: 30px;
-      font-family: 'Montserrat', sans-serif; font-size: .9rem;
-      font-weight: 600; letter-spacing: .04em; cursor: pointer;
-      transition: background .2s, transform .15s;
-      box-shadow: 0 4px 16px rgba(143,168,124,.35);
-    }
-    .btn-confirm:hover { background: #7a956a; transform: translateY(-1px); }
-    .phone-field { margin-top: 24px; }
-    .phone-label {
-      display: block; font-size: .72rem; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; color: var(--gray);
-      margin-bottom: 8px;
-    }
-    .phone-input {
-      width: 100%; padding: 13px 16px; border: 1.5px solid var(--pink);
-      border-radius: 12px; font-family: 'Montserrat', sans-serif;
-      font-size: .95rem; color: var(--dark); background: var(--white);
-      outline: none; transition: border-color .2s;
-    }
-    .phone-input:focus { border-color: var(--pink-d); }
-    .phone-error { color: var(--pink-d); font-size: .78rem; margin-top: 6px; min-height: 18px; }
-    .order-error { color: var(--pink-d); font-size: .85rem; text-align: center; margin-top: 12px; min-height: 20px; }
-    .order-success { display: none; text-align: center; padding: 64px 0; }
-    .order-success.show { display: block; }
-    .success-icon { font-size: 3.5rem; margin-bottom: 20px; }
-    .order-success h2 {
-      font-family: 'Playfair Display', serif; font-style: italic;
-      font-size: 2rem; color: var(--green); margin-bottom: 12px;
-    }
-    .order-success p { color: var(--gray); font-weight: 300; line-height: 1.7; margin-bottom: 32px; }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 600px) {
-      .nav-links a:not(.btn-order):not(.btn-cart) { display: none; }
-      .modal { flex-direction: column; }
-      .modal-img { width: 100%; height: 200px; flex-shrink: 0; }
-      .modal-body { padding: 20px; }
-      .dishes-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
-      .cart-actions { flex-direction: column; }
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .nav-burger { display: block; }
+      .nav-links {
+        position: fixed; top: 64px; left: 0; right: 0;
+        background: rgba(253,246,247,.98); backdrop-filter: blur(8px);
+        flex-direction: column; align-items: flex-start; gap: 14px;
+        padding: 20px 5vw; display: none;
+        border-bottom: 1px solid var(--pink); z-index: 99;
+        box-shadow: 0 8px 24px rgba(0,0,0,.08);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { font-size: .9rem; }
+      .hero { min-height: 80vh; }
     }
   </style>
 </head>
@@ -421,414 +256,238 @@
 
 <!-- NAV -->
 <nav>
-  <span class="nav-logo" onclick="showMain()">IrMa</span>
-  <div class="nav-links">
-    <a href="#menu">Меню</a>
-    <a href="#social">Контакты</a>
-    <button class="btn-cart" onclick="showCart()">
-      🛒 Корзина <span class="cart-badge" id="cart-count">0</span>
-    </button>
+  <a class="nav-logo" href="index.html">IrMa</a>
+  <div class="nav-links" id="nav-links">
+    <a href="index.html" class="nav-active">Главная</a>
+    <a href="menu.html">Меню</a>
+    <a href="training.html">Обучение</a>
+    <a href="blog.html">Блог</a>
+    <a href="contacts.html">Контакты</a>
+    <button class="btn-cart" onclick="window.location='menu.html'">🛒 <span class="cart-badge" id="cart-count">0</span></button>
     <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-order">Заказать</a>
   </div>
+  <button class="nav-burger" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
 </nav>
 
-<!-- ===== MAIN PAGE ===== -->
-<div id="main-page">
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-inner">
-      <p class="hero-sub">Семейное кафе</p>
-      <h1>IrMa</h1>
-      <p class="hero-by">by Marinich</p>
-      <p class="hero-desc">Домашняя кухня, авторские напитки и уютная атмосфера.<br>Завтраки, обеды, десерты — с любовью каждый день.</p>
-      <div class="hero-cta">
-        <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-main">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-          Сделать заказ в MAX
-        </a>
-        <a href="#menu" class="btn-main" style="background:transparent;color:var(--green);border:2px solid var(--green);box-shadow:none;">
-          Смотреть меню
-        </a>
-      </div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-sub">Семейное кафе</p>
+    <h1>IrMa</h1>
+    <p class="hero-by">by Marinich</p>
+    <p class="hero-desc">Домашняя кухня, авторские напитки и уютная атмосфера.<br>Завтраки, обеды, десерты — с любовью каждый день.</p>
+    <div class="hero-cta">
+      <a href="menu.html" class="btn-main">Смотреть меню</a>
+      <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-main-outline">Заказать в MAX</a>
     </div>
-  </section>
-
-  <!-- MENU -->
-  <div id="menu">
-    <div class="section-title">
-      <h2>Наше меню</h2>
-      <p>Нажмите на блюдо, чтобы узнать состав и добавить в корзину</p>
-      <div class="divider"></div>
-    </div>
-
-    <!-- STICKY ANCHOR NAV -->
-    <div class="menu-anchors">
-      <a class="anchor-btn" href="#cat-salads">Салаты</a>
-      <a class="anchor-btn" href="#cat-coffee">Кофе и чай</a>
-      <a class="anchor-btn" href="#cat-bliny">Блины и бургеры</a>
-      <a class="anchor-btn" href="#cat-pizza">Пицца</a>
-      <a class="anchor-btn" href="#cat-drinks">Холодные напитки</a>
-    </div>
-
-    <div class="menu-section" id="categories"></div>
   </div>
+</section>
 
-  <!-- ORDER BAND -->
-  <section class="order-band">
-    <h2>Готовы сделать заказ?</h2>
-    <p>Оформите заказ прямо в мессенджере MAX — быстро и удобно</p>
-    <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-white">
-      Открыть бота IrMa в MAX
-    </a>
-  </section>
-
-  <!-- SOCIAL -->
-  <section class="social-section" id="social">
-    <div class="section-title" style="padding-top:0">
-      <h2>Мы в соцсетях</h2>
-      <p>Следите за новинками и акциями</p>
-      <div class="divider"></div>
-    </div>
-    <div class="social-icons">
-
-      <a href="#" class="social-link">
-        <div class="social-icon si-vk">
-          <svg viewBox="0 0 24 24" fill="#4a76a8"><path d="M22.5 0h-21C.67 0 0 .67 0 1.5v21C0 23.33.67 24 1.5 24h21c.83 0 1.5-.67 1.5-1.5v-21C24 .67 23.33 0 22.5 0zM17.1 16.5h-1.6c-.6 0-.79-.48-1.88-1.57-1.03-1.03-1.48-.74-1.48.26v1.06c0 .29-.09.46-.87.46-1.42 0-3.03-.84-4.15-2.41C5.49 11.98 5 9.87 5 9.58c0-.2.08-.38.46-.38h1.6c.35 0 .49.16.63.55.67 1.92 1.79 3.6 2.25 3.6.17 0 .25-.08.25-.51v-2c-.06-1.11-.64-1.21-.64-1.6 0-.19.16-.38.4-.38h2.52c.29 0 .38.15.38.48v2.72c0 .3.13.4.21.4.17 0 .32-.1.64-.42 1.01-1.11 1.73-2.82 1.73-2.82.09-.2.27-.38.62-.38h1.6c.48 0 .58.25.48.55-.2.88-2.1 3.59-2.1 3.59-.17.27-.23.38 0 .68.17.23.72.71 1.08 1.14.68.79 1.19 1.44 1.33 1.9.12.44-.11.67-.59.67z"/></svg>
-        </div>
-        ВКонтакте
-      </a>
-
-      <a href="https://www.instagram.com/irma_tort?igsh=eTZoaWZ0N3pvd3ho" target="_blank" class="social-link">
-        <div class="social-icon si-inst">
-          <svg viewBox="0 0 24 24" fill="url(#ig-grad)">
-            <defs>
-              <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#f09433"/>
-                <stop offset="25%" stop-color="#e6683c"/>
-                <stop offset="50%" stop-color="#dc2743"/>
-                <stop offset="75%" stop-color="#cc2366"/>
-                <stop offset="100%" stop-color="#bc1888"/>
-              </linearGradient>
-            </defs>
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-          </svg>
-        </div>
-        Instagram
-      </a>
-
-      <a href="#" class="social-link">
-        <div class="social-icon si-tg">
-          <svg viewBox="0 0 24 24" fill="#229ed9"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
-        </div>
-        Telegram
-      </a>
-
-      <a href="https://web.max.ru/-71665082178843" target="_blank" class="social-link">
-        <div class="social-icon" style="background:none;padding:0;overflow:hidden;border-radius:16px">
-          <img src="max-icon.png" alt="MAX" width="56" height="56" style="display:block;border-radius:16px">
-        </div>
-        Макс
-      </a>
-
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <span>IrMa</span> — Семейное кафе by Marinich &nbsp;·&nbsp; 2025
-  </footer>
-
-</div><!-- /main-page -->
-
-<!-- ===== CART PAGE ===== -->
-<div id="cart-page">
-  <button class="cart-back" onclick="showMain()">← Вернуться к меню</button>
-  <div class="cart-title-wrap">
-    <h2>Ваша корзина</h2>
+<!-- CAROUSEL -->
+<section class="carousel-section">
+  <div class="section-title">
+    <h2>Из нашего меню</h2>
+    <p>Свежие блюда каждый день — выбирайте любимое</p>
     <div class="divider"></div>
   </div>
-  <div class="cart-content">
-    <div id="cart-items-list"></div>
-    <div class="order-success" id="order-success">
-      <div class="success-icon">✅</div>
-      <h2>Заказ отправлен!</h2>
-      <p>Ваш заказ отправлен Администратору.<br>Мы свяжемся с вами в ближайшее время.</p>
-      <button class="btn-confirm" onclick="clearCartAndReturn()" style="max-width:260px;margin:0 auto;display:block;">Вернуться к меню</button>
-    </div>
+  <div class="carousel-wrapper">
+    <div class="carousel-track" id="carousel-track"></div>
   </div>
-</div>
+  <div class="carousel-cta">
+    <a href="menu.html" class="btn-outline-green">Всё меню →</a>
+  </div>
+</section>
 
-<!-- ===== MODAL ===== -->
-<div class="modal-overlay" id="modal-overlay" onclick="onOverlayClick(event)">
-  <div class="modal" id="modal">
-    <img class="modal-img" id="modal-img" src="" alt="">
-    <div class="modal-body">
-      <button class="modal-close" onclick="closeModal()" title="Закрыть">✕</button>
-      <div class="modal-name" id="modal-name"></div>
-      <div class="modal-price" id="modal-price"></div>
-      <div class="modal-label">Состав</div>
-      <div class="modal-ingredients" id="modal-ingredients"></div>
-      <button class="btn-add" id="add-btn" onclick="addCurrentToCart()">Добавить в корзину</button>
-    </div>
+<!-- NEWS -->
+<section class="news-section">
+  <div class="section-title" style="padding-top:0">
+    <h2>Новости</h2>
+    <p>Следите за жизнью кафе</p>
+    <div class="divider"></div>
   </div>
-</div>
+  <div class="news-grid">
+
+    <div class="news-card">
+      <div class="news-card-img">🍕</div>
+      <div class="news-card-body">
+        <p class="news-tag">Новинка</p>
+        <p class="news-card-title">Пицца «Гриль» теперь в меню</p>
+        <p class="news-card-text">Добавили новую пиццу с пепперони, шампиньонами, болгарским перцем и оливками на тонком хрустящем тесте. Обязательно попробуйте!</p>
+        <p class="news-date">25 июня 2025</p>
+      </div>
+    </div>
+
+    <div class="news-card">
+      <div class="news-card-img">⏰</div>
+      <div class="news-card-body">
+        <p class="news-tag">График работы</p>
+        <p class="news-card-title">Открываемся по воскресеньям</p>
+        <p class="news-card-text">Отличные новости! Теперь IrMa работает все семь дней в неделю. В выходные ждём вас с 10:00 до 20:00 — приходите с семьёй на вкусный завтрак.</p>
+        <p class="news-date">10 июня 2025</p>
+      </div>
+    </div>
+
+    <div class="news-card">
+      <div class="news-card-img">🎂</div>
+      <div class="news-card-body">
+        <p class="news-tag">Событие</p>
+        <p class="news-card-title">IrMa — нам исполняется 3 года!</p>
+        <p class="news-card-text">15 июля отмечаем день рождения кафе: скидки на всё меню, живая музыка с 18:00 и сладкие подарки первым 30 гостям. Не пропустите!</p>
+        <p class="news-date">1 июня 2025</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROMOS -->
+<section class="promos-section">
+  <div class="section-title" style="padding-top:0">
+    <h2>Акции</h2>
+    <p>Выгодные предложения для наших гостей</p>
+    <div class="divider"></div>
+  </div>
+  <div class="promos-grid">
+
+    <div class="promo-card promo-card-1">
+      <div class="promo-icon">☀️</div>
+      <span class="promo-badge">Каждый день</span>
+      <p class="promo-title">Завтрак в подарок</p>
+      <p class="promo-text">При заказе от 600 ₽ с 9:00 до 12:00 — чашка кофе или чай в подарок. Идеально начать день вкусно.</p>
+    </div>
+
+    <div class="promo-card promo-card-2">
+      <div class="promo-icon">☕</div>
+      <span class="promo-badge">По вторникам</span>
+      <p class="promo-title">Два кофе по цене одного</p>
+      <p class="promo-text">Каждый вторник — любые два кофейных напитка за цену одного. Приходите вдвоём и пробуйте новинки вместе.</p>
+    </div>
+
+    <div class="promo-card promo-card-3">
+      <div class="promo-icon">🎁</div>
+      <span class="promo-badge">Постоянно</span>
+      <p class="promo-title">Бонусная программа</p>
+      <p class="promo-text">10% от каждого заказа через бота IrMa возвращается бонусами. Копите и тратьте на любимые блюда.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ORDER BAND -->
+<section class="order-band">
+  <h2>Готовы сделать заказ?</h2>
+  <p>Оформите заказ прямо в мессенджере MAX — быстро, удобно и без лишних шагов</p>
+  <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-white">Открыть бота IrMa в MAX</a>
+</section>
+
+<!-- SOCIAL -->
+<section class="social-section">
+  <div class="section-title" style="padding-top:0">
+    <h2>Мы в соцсетях</h2>
+    <p>Следите за новинками и акциями</p>
+    <div class="divider"></div>
+  </div>
+  <div class="social-icons">
+
+    <a href="#" class="social-link">
+      <div class="social-icon si-vk">
+        <svg viewBox="0 0 24 24" fill="#4a76a8"><path d="M22.5 0h-21C.67 0 0 .67 0 1.5v21C0 23.33.67 24 1.5 24h21c.83 0 1.5-.67 1.5-1.5v-21C24 .67 23.33 0 22.5 0zM17.1 16.5h-1.6c-.6 0-.79-.48-1.88-1.57-1.03-1.03-1.48-.74-1.48.26v1.06c0 .29-.09.46-.87.46-1.42 0-3.03-.84-4.15-2.41C5.49 11.98 5 9.87 5 9.58c0-.2.08-.38.46-.38h1.6c.35 0 .49.16.63.55.67 1.92 1.79 3.6 2.25 3.6.17 0 .25-.08.25-.51v-2c-.06-1.11-.64-1.21-.64-1.6 0-.19.16-.38.4-.38h2.52c.29 0 .38.15.38.48v2.72c0 .3.13.4.21.4.17 0 .32-.1.64-.42 1.01-1.11 1.73-2.82 1.73-2.82.09-.2.27-.38.62-.38h1.6c.48 0 .58.25.48.55-.2.88-2.1 3.59-2.1 3.59-.17.27-.23.38 0 .68.17.23.72.71 1.08 1.14.68.79 1.19 1.44 1.33 1.9.12.44-.11.67-.59.67z"/></svg>
+      </div>
+      ВКонтакте
+    </a>
+
+    <a href="https://www.instagram.com/irma_tort?igsh=eTZoaWZ0N3pvd3ho" target="_blank" class="social-link">
+      <div class="social-icon si-inst">
+        <svg viewBox="0 0 24 24" fill="url(#ig-grad)">
+          <defs>
+            <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#f09433"/>
+              <stop offset="25%" stop-color="#e6683c"/>
+              <stop offset="50%" stop-color="#dc2743"/>
+              <stop offset="75%" stop-color="#cc2366"/>
+              <stop offset="100%" stop-color="#bc1888"/>
+            </linearGradient>
+          </defs>
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+      </div>
+      Instagram
+    </a>
+
+    <a href="#" class="social-link">
+      <div class="social-icon si-tg">
+        <svg viewBox="0 0 24 24" fill="#229ed9"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+      </div>
+      Telegram
+    </a>
+
+    <a href="https://web.max.ru/-71665082178843" target="_blank" class="social-link">
+      <div class="social-icon" style="background:none;padding:0;overflow:hidden;border-radius:16px">
+        <img src="max-icon.png" alt="MAX" width="56" height="56" style="display:block;border-radius:16px">
+      </div>
+      Макс
+    </a>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <span class="footer-brand-name">IrMa</span>
+        <span class="footer-tagline">Семейное кафе by Marinich</span>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Главная</a>
+        <a href="menu.html">Меню</a>
+        <a href="training.html">Обучение</a>
+        <a href="blog.html">Блог</a>
+        <a href="contacts.html">Контакты</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">© 2025 IrMa. Все права защищены.</div>
+  </div>
+</footer>
 
 <script>
-const MENU = [
-  {
-    id: "salads", name: "Салаты",
-    items: [
-      { id: 1,  img: "dishes/1.png",  name: "Салат «Весенний»",        price: 280, ingredients: "Помидоры черри, оливки, авокадо, базилик, кукуруза, кешью, оливковое масло" },
-      { id: 2,  img: "dishes/2.png",  name: "Салат «Свежесть»",        price: 220, ingredients: "Редис, огурец, помидоры черри, листья салата, руккола, укроп" },
-      { id: 3,  img: "dishes/3.png",  name: "Салат «Греческий»",       price: 310, ingredients: "Огурцы, помидоры черри, сыр фета, оливки, красный лук, укроп" },
-      { id: 4,  img: "dishes/4.png",  name: "Салат «Мексикано»",       price: 350, ingredients: "Куриное филе, кукуруза, чёрная фасоль, авокадо, красный лук, помидоры" },
-      { id: 5,  img: "dishes/5.png",  name: "Салат «Блю»",             price: 380, ingredients: "Руккола, болгарский перец, помидоры черри, сыр с голубой плесенью" },
-      { id: 6,  img: "dishes/6.png",  name: "Салат «Цезарь»",          price: 320, ingredients: "Куриное филе, листья романо, гренки, соус Цезарь, пармезан" },
-      { id: 7,  img: "dishes/7.png",  name: "Салат «Деревенский»",     price: 290, ingredients: "Куриная грудка, помидоры черри, огурцы, сыр фета, гренки, айсберг" }
-    ]
-  },
-  {
-    id: "coffee", name: "Кофе и чай",
-    items: [
-      { id: 8,  img: "dishes/8.png",  name: "Американо",               price: 120, ingredients: "Двойной эспрессо, горячая вода, зёрна Arabica" },
-      { id: 9,  img: "dishes/9.png",  name: "Чёрный кофе",             price:  90, ingredients: "Молотый кофе, горячая вода" },
-      { id: 10, img: "dishes/10.png", name: "Латте",                   price: 180, ingredients: "Двойной эспрессо, взбитое молоко" },
-      { id: 11, img: "dishes/11.png", name: "Чай чёрный",              price: 100, ingredients: "Цейлонский чай, листья мяты" },
-      { id: 12, img: "dishes/12.png", name: "Чай фруктовый",           price: 150, ingredients: "Облепиха, шиповник, цитрус, мёд" },
-      { id: 13, img: "dishes/13.png", name: "Капучино карамельный",    price: 210, ingredients: "Эспрессо, молоко, карамельный сироп, взбитые сливки" }
-    ]
-  },
-  {
-    id: "bliny", name: "Блины и бургеры",
-    items: [
-      { id: 14, img: "dishes/14.png", name: "Блины с ягодами",         price: 250, ingredients: "Тонкие блины, клубника, черника, сахарная пудра" },
-      { id: 15, img: "dishes/15.png", name: "Блин с ветчиной и сыром", price: 220, ingredients: "Блин, ветчина, сыр гауда" },
-      { id: 16, img: "dishes/16.png", name: "Блин с шоколадом",        price: 180, ingredients: "Блин, шоколадная паста" },
-      { id: 17, img: "dishes/17.png", name: "Чизбургер",               price: 320, ingredients: "Говяжья котлета, булка, чеддер, листья салата" },
-      { id: 18, img: "dishes/18.png", name: "Бургер классический",     price: 300, ingredients: "Говяжья котлета, булка, томат, красный лук, листья салата, соус" },
-      { id: 19, img: "dishes/19.png", name: "Бургер «Двойной»",        price: 390, ingredients: "Двойная говяжья котлета, чеддер, помидор, красный лук, листья салата" }
-    ]
-  },
-  {
-    id: "pizza", name: "Пицца",
-    items: [
-      { id: 20, img: "dishes/20.png", name: "Пицца «Овощная»",         price: 520, ingredients: "Моцарелла, болгарский перец, кукуруза, оливки, красный лук, томатный соус" },
-      { id: 21, img: "dishes/21.png", name: "Пицца «Пепперони»",       price: 580, ingredients: "Пепперони, моцарелла, томатный соус, тимьян" },
-      { id: 22, img: "dishes/22.png", name: "Пицца «Мясная»",          price: 620, ingredients: "Пепперони, ветчина, оливки, помидоры черри, моцарелла" },
-      { id: 23, img: "dishes/23.png", name: "Пицца «Гриль»",           price: 590, ingredients: "Пепперони, шампиньоны, красный лук, болгарский перец, оливки, моцарелла" }
-    ]
-  },
-  {
-    id: "drinks", name: "Холодные напитки",
-    items: [
-      { id: 24, img: "dishes/24.png", name: "Кола со льдом",           price: 120, ingredients: "Газированный напиток, лёд" },
-      { id: 25, img: "dishes/25.png", name: "Клубничный лимонад",      price: 180, ingredients: "Клубника, газированная вода, мята, лёд" },
-      { id: 26, img: "dishes/26.png", name: "Голубой лимонад",         price: 200, ingredients: "Синий кюрасао, лайм, мята, газированная вода, лёд" },
-      { id: 27, img: "dishes/27.png", name: "Лимонад с лимоном",       price: 150, ingredients: "Лимон, газированная вода, лёд" }
-    ]
-  }
-];
-
-/* CART */
-var cart = {};
-try { cart = JSON.parse(localStorage.getItem('irma_cart') || '{}'); } catch(e) {}
-
-function saveCart() {
-  try { localStorage.setItem('irma_cart', JSON.stringify(cart)); } catch(e) {}
-  var total = Object.values(cart).reduce(function(s,v){ return s+v.qty; }, 0);
-  document.getElementById('cart-count').textContent = total;
-}
-
-/* BUILD MENU — все категории сразу, якорная навигация */
+/* Cart count from localStorage */
 (function() {
-  var catsEl = document.getElementById('categories');
-  MENU.forEach(function(cat) {
-    var section = document.createElement('div');
-    section.className = 'menu-category';
-    section.id = 'cat-' + cat.id;
-
-    var label = document.createElement('p');
-    label.className = 'category-label';
-    label.textContent = cat.name;
-    section.appendChild(label);
-
-    var grid = document.createElement('div');
-    grid.className = 'dishes-grid';
-    cat.items.forEach(function(item) {
-      var card = document.createElement('div');
-      card.className = 'dish-card';
-      card.onclick = function() { openModal(item); };
-      card.innerHTML =
-        '<img class="dish-card-img" src="' + item.img + '" alt="' + item.name + '" loading="lazy">' +
-        '<div class="dish-card-body">' +
-          '<div class="dish-card-name">' + item.name + '</div>' +
-          '<div class="dish-card-price">' + item.price + ' ₽</div>' +
-        '</div>';
-      grid.appendChild(card);
-    });
-    section.appendChild(grid);
-    catsEl.appendChild(section);
-  });
+  try {
+    var cart = JSON.parse(localStorage.getItem('irma_cart') || '{}');
+    var total = Object.values(cart).reduce(function(s,v){ return s+(v.qty||0); }, 0);
+    document.getElementById('cart-count').textContent = total;
+  } catch(e) {}
 })();
 
-/* MODAL */
-var currentItem = null;
-
-function openModal(item) {
-  currentItem = item;
-  document.getElementById('modal-img').src = item.img;
-  document.getElementById('modal-img').alt = item.name;
-  document.getElementById('modal-name').textContent = item.name;
-  document.getElementById('modal-price').textContent = item.price + ' ₽';
-  document.getElementById('modal-ingredients').textContent = item.ingredients;
-  var btn = document.getElementById('add-btn');
-  btn.textContent = 'Добавить в корзину';
-  btn.className = 'btn-add';
-  document.getElementById('modal-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-  currentItem = null;
-}
-
-function onOverlayClick(e) {
-  if (e.target === document.getElementById('modal-overlay')) closeModal();
-}
-
-document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
-
-function addCurrentToCart() {
-  if (!currentItem) return;
-  var id = String(currentItem.id);
-  if (cart[id]) { cart[id].qty++; }
-  else { cart[id] = { name: currentItem.name, price: currentItem.price, img: currentItem.img, qty: 1 }; }
-  saveCart();
-  var btn = document.getElementById('add-btn');
-  btn.textContent = '✓ Добавлено';
-  btn.className = 'btn-add added';
-  setTimeout(function(){ btn.textContent = 'Добавить в корзину'; btn.className = 'btn-add'; }, 1400);
-}
-
-/* NAVIGATION */
-function showCart() {
-  document.getElementById('main-page').classList.add('hidden');
-  document.getElementById('cart-page').classList.add('active');
-  document.getElementById('order-success').classList.remove('show');
-  renderCart();
-  window.scrollTo(0, 0);
-}
-
-function showMain() {
-  document.getElementById('cart-page').classList.remove('active');
-  document.getElementById('main-page').classList.remove('hidden');
-  window.scrollTo(0, 0);
-}
-
-/* RENDER CART */
-function renderCart() {
-  var list = document.getElementById('cart-items-list');
-  var entries = Object.entries(cart);
-  if (entries.length === 0) {
-    list.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Корзина пуста</p></div>';
-    return;
-  }
-  var total = 0, html = '';
-  entries.forEach(function(e) {
-    var id = e[0], v = e[1], sub = v.price * v.qty;
-    total += sub;
-    html +=
-      '<div class="cart-item">' +
-        '<img class="cart-item-img" src="' + v.img + '" alt="' + v.name + '">' +
-        '<div class="cart-item-info">' +
-          '<div class="cart-item-name">' + v.name + '</div>' +
-          '<div class="cart-item-price">' + sub + ' ₽</div>' +
-        '</div>' +
-        '<div class="cart-item-controls">' +
-          '<button class="qty-btn" onclick="changeQty(\'' + id + '\',-1)">−</button>' +
-          '<span class="cart-qty">' + v.qty + '</span>' +
-          '<button class="qty-btn" onclick="changeQty(\'' + id + '\',1)">+</button>' +
-          '<button class="cart-remove" onclick="removeItem(\'' + id + '\')">✕</button>' +
-        '</div>' +
-      '</div>';
-  });
-  html +=
-    '<div class="cart-total">' +
-      '<span class="cart-total-label">Итого:</span>' +
-      '<span class="cart-total-amount">' + total + ' ₽</span>' +
-    '</div>' +
-    '<div class="phone-field">' +
-      '<label class="phone-label">Ваш номер телефона <span style="color:var(--pink-d)">*</span></label>' +
-      '<input type="tel" id="phone-input" class="phone-input" placeholder="+7 (999) 123-45-67">' +
-      '<div class="phone-error" id="phone-error"></div>' +
-    '</div>' +
-    '<div class="cart-actions">' +
-      '<button class="btn-ghost" onclick="showMain()">← К меню</button>' +
-      '<button class="btn-confirm" onclick="placeOrder()">Оформить заказ</button>' +
-    '</div>' +
-    '<div class="order-error" id="order-error"></div>';
-  list.innerHTML = html;
-}
-
-function changeQty(id, delta) {
-  if (!cart[id]) return;
-  cart[id].qty += delta;
-  if (cart[id].qty <= 0) delete cart[id];
-  saveCart(); renderCart();
-}
-
-function removeItem(id) { delete cart[id]; saveCart(); renderCart(); }
-
-function placeOrder() {
-  var phoneInput = document.getElementById('phone-input');
-  var phoneError = document.getElementById('phone-error');
-  if (!phoneInput) return;
-  var phone = phoneInput.value.trim();
-  var digits = phone.replace(/\D/g, '');
-  if (digits.length < 10) {
-    phoneError.textContent = 'Введите корректный номер телефона';
-    phoneInput.focus();
-    return;
-  }
-  phoneError.textContent = '';
-
-  var items = Object.values(cart).map(function(v) {
-    return { name: v.name, price: v.price, qty: v.qty };
-  });
-
-  var confirmBtn = document.querySelector('.btn-confirm');
-  if (confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = 'Отправляем…'; }
-
-  fetch('/order/landing', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone: phone, items: items })
-  })
-  .then(function(r) {
-    if (!r.ok) throw new Error('server');
-    return r.json();
-  })
-  .then(function() {
-    cart = {}; saveCart();
-    document.getElementById('cart-items-list').innerHTML = '';
-    document.getElementById('order-success').classList.add('show');
-  })
-  .catch(function() {
-    var errEl = document.getElementById('order-error');
-    if (errEl) errEl.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
-    if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = 'Оформить заказ'; }
-  });
-}
-
-function clearCartAndReturn() {
-  document.getElementById('order-success').classList.remove('show');
-  showMain();
-}
-
-saveCart();
+/* Carousel */
+var featured = [
+  {img: 'dishes/6.png',  name: 'Салат «Цезарь»',        price: 320},
+  {img: 'dishes/13.png', name: 'Капучино карамельный',   price: 210},
+  {img: 'dishes/14.png', name: 'Блины с ягодами',        price: 250},
+  {img: 'dishes/21.png', name: 'Пицца «Пепперони»',      price: 580},
+  {img: 'dishes/25.png', name: 'Клубничный лимонад',     price: 180},
+  {img: 'dishes/19.png', name: 'Бургер «Двойной»',       price: 390},
+  {img: 'dishes/10.png', name: 'Латте',                  price: 180},
+  {img: 'dishes/5.png',  name: 'Салат «Блю»',            price: 380},
+  {img: 'dishes/23.png', name: 'Пицца «Гриль»',          price: 590},
+  {img: 'dishes/26.png', name: 'Голубой лимонад',        price: 200},
+];
+var track = document.getElementById('carousel-track');
+/* Duplicate for seamless infinite scroll */
+[...featured, ...featured].forEach(function(d) {
+  var a = document.createElement('a');
+  a.className = 'carousel-card';
+  a.href = 'menu.html';
+  a.innerHTML =
+    '<img src="' + d.img + '" alt="' + d.name + '" loading="lazy">' +
+    '<div class="carousel-card-body">' +
+      '<div class="carousel-card-name">' + d.name + '</div>' +
+      '<div class="carousel-card-price">' + d.price + ' ₽</div>' +
+    '</div>';
+  track.appendChild(a);
+});
 </script>
 </body>
 </html>

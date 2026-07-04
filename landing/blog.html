@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IrMa — Блог</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink:    #f2c4ce;
+      --pink-d:  #d98a9a;
+      --green:   #8fa87c;
+      --green-l: #c8d9be;
+      --bg:      #fdf6f7;
+      --white:   #ffffff;
+      --dark:    #3a3a3a;
+      --gray:    #7a7a7a;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--dark); }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(253,246,247,.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--pink); display: flex; align-items: center; justify-content: space-between; padding: 0 5vw; height: 64px; }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; color: var(--dark); text-decoration: none; letter-spacing: .03em; }
+    .nav-links { display: flex; gap: 14px; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--gray); font-size: .77rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; transition: color .2s; white-space: nowrap; }
+    .nav-links a:hover { color: var(--pink-d); }
+    .nav-links a.nav-active { color: var(--pink-d); font-weight: 700; }
+    .btn-order { background: var(--green); color: var(--white) !important; padding: 9px 20px; border-radius: 30px; font-size: .77rem; font-weight: 600 !important; transition: background .2s, transform .15s !important; white-space: nowrap; }
+    .btn-order:hover { background: #7a956a !important; transform: translateY(-1px); }
+    .btn-cart { display: inline-flex; align-items: center; gap: 6px; background: var(--pink-d); color: var(--white) !important; padding: 9px 16px; border-radius: 30px; font-size: .77rem; font-weight: 600 !important; border: none; cursor: pointer; letter-spacing: .04em; transition: background .2s, transform .15s; font-family: 'Montserrat', sans-serif; white-space: nowrap; }
+    .btn-cart:hover { background: #c07080 !important; transform: translateY(-1px); }
+    .cart-badge { background: var(--white); color: var(--pink-d); border-radius: 50%; width: 19px; height: 19px; font-size: .7rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+    .nav-burger { display: none; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--dark); padding: 4px; line-height: 1; }
+
+    .page-hero { background: linear-gradient(135deg, #fce4ec 0%, #f8f4f0 50%, #e8f0e0 100%); padding: 64px 5vw 60px; text-align: center; position: relative; overflow: hidden; }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(242,196,206,.3) 0%, transparent 60%), radial-gradient(ellipse at 80% 30%, rgba(200,217,190,.25) 0%, transparent 55%); }
+    .page-hero-inner { position: relative; max-width: 640px; margin: 0 auto; }
+    .page-hero-sub { font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 4rem); font-style: italic; color: var(--dark); margin-bottom: 14px; line-height: 1.1; }
+    .page-hero p { color: var(--gray); font-size: .95rem; font-weight: 300; line-height: 1.65; }
+    .divider { width: 60px; height: 2px; background: linear-gradient(90deg, var(--pink-d), var(--green)); margin: 18px auto 0; border-radius: 2px; }
+
+    /* FEATURED POST */
+    .featured-section { padding: 72px 5vw 0; }
+    .featured-post {
+      background: var(--white); border-radius: 28px; overflow: hidden;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      box-shadow: 0 6px 32px rgba(0,0,0,.08);
+      max-width: 960px; margin: 0 auto;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .featured-post:hover { transform: translateY(-4px); box-shadow: 0 14px 44px rgba(0,0,0,.12); }
+    .featured-post-img {
+      background: linear-gradient(135deg, #d98a9a 0%, #f2c4ce 50%, #c8d9be 100%);
+      display: flex; align-items: center; justify-content: center; font-size: 6rem;
+      min-height: 300px;
+    }
+    .featured-post-body { padding: 40px 44px; display: flex; flex-direction: column; justify-content: center; }
+    .post-tag { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+    .post-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-style: italic; color: var(--dark); margin-bottom: 14px; line-height: 1.3; }
+    .post-excerpt { font-size: .9rem; color: var(--gray); line-height: 1.7; font-weight: 300; margin-bottom: 24px; }
+    .post-meta { display: flex; align-items: center; gap: 16px; font-size: .75rem; color: #bbb; }
+    .post-author { font-weight: 600; color: var(--gray); }
+    .btn-read {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green); color: var(--white);
+      padding: 12px 28px; border-radius: 30px;
+      font-size: .85rem; font-weight: 600; text-decoration: none;
+      letter-spacing: .04em; transition: background .2s, transform .15s;
+      align-self: flex-start; margin-top: 8px;
+    }
+    .btn-read:hover { background: #7a956a; transform: translateY(-1px); }
+
+    /* BLOG GRID */
+    .blog-section { padding: 56px 5vw 80px; }
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; max-width: 1100px; margin: 0 auto; }
+    .blog-card {
+      background: var(--white); border-radius: 22px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,.06);
+      transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column;
+    }
+    .blog-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(0,0,0,.11); }
+    .blog-card-img {
+      width: 100%; height: 170px;
+      display: flex; align-items: center; justify-content: center; font-size: 4rem;
+    }
+    .bc-pink  { background: linear-gradient(135deg, #fce4ec, #f9d0dc); }
+    .bc-green { background: linear-gradient(135deg, #e8f5e9, #c8d9be); }
+    .bc-peach { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+    .bc-lilac { background: linear-gradient(135deg, #f3e5f5, #e1bee7); }
+    .bc-blue  { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
+    .blog-card-body { padding: 20px 22px 24px; flex: 1; display: flex; flex-direction: column; }
+    .blog-card-tag { font-size: .66rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+    .blog-card-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-style: italic; color: var(--dark); margin-bottom: 10px; line-height: 1.35; }
+    .blog-card-text { font-size: .84rem; color: var(--gray); line-height: 1.65; font-weight: 300; flex: 1; }
+    .blog-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+    .blog-card-date { font-size: .72rem; color: #bbb; }
+    .blog-card-link { font-size: .75rem; font-weight: 700; color: var(--pink-d); text-decoration: none; letter-spacing: .04em; transition: color .2s; }
+    .blog-card-link:hover { color: #c07080; }
+
+    /* SUBSCRIBE */
+    .subscribe-band { background: linear-gradient(135deg, #fce4ec 0%, #f8f4f0 50%, #e8f0e0 100%); padding: 72px 5vw; text-align: center; }
+    .subscribe-band h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 4vw, 2.5rem); font-style: italic; color: var(--dark); margin-bottom: 12px; }
+    .subscribe-band p { color: var(--gray); font-size: .9rem; font-weight: 300; line-height: 1.7; margin-bottom: 32px; }
+    .subscribe-form { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; max-width: 480px; margin: 0 auto; }
+    .subscribe-input { flex: 1; min-width: 200px; padding: 13px 18px; border: 1.5px solid var(--pink); border-radius: 30px; font-family: 'Montserrat', sans-serif; font-size: .9rem; color: var(--dark); background: var(--white); outline: none; transition: border-color .2s; }
+    .subscribe-input:focus { border-color: var(--pink-d); }
+    .subscribe-btn { padding: 13px 28px; background: var(--green); color: var(--white); border: none; border-radius: 30px; font-family: 'Montserrat', sans-serif; font-size: .88rem; font-weight: 600; cursor: pointer; transition: background .2s, transform .15s; }
+    .subscribe-btn:hover { background: #7a956a; transform: translateY(-1px); }
+
+    /* FOOTER */
+    footer { background: var(--dark); color: rgba(255,255,255,.5); padding: 36px 5vw 24px; font-size: .78rem; }
+    .footer-inner { max-width: 960px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; margin-bottom: 28px; }
+    .footer-brand-name { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--white); display: block; margin-bottom: 4px; }
+    .footer-tagline { color: rgba(255,255,255,.4); font-size: .76rem; }
+    .footer-nav { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+    .footer-nav a { color: rgba(255,255,255,.5); text-decoration: none; font-size: .75rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; transition: color .2s; }
+    .footer-nav a:hover { color: rgba(255,255,255,.9); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px; text-align: center; }
+
+    @media (max-width: 768px) {
+      .nav-burger { display: block; }
+      .nav-links { position: fixed; top: 64px; left: 0; right: 0; background: rgba(253,246,247,.98); backdrop-filter: blur(8px); flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px 5vw; display: none; border-bottom: 1px solid var(--pink); z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+      .nav-links.open { display: flex; }
+      .nav-links a { font-size: .9rem; }
+      .featured-post { grid-template-columns: 1fr; }
+      .featured-post-img { min-height: 200px; }
+      .featured-post-body { padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">IrMa</a>
+  <div class="nav-links" id="nav-links">
+    <a href="index.html">Главная</a>
+    <a href="menu.html">Меню</a>
+    <a href="training.html">Обучение</a>
+    <a href="blog.html" class="nav-active">Блог</a>
+    <a href="contacts.html">Контакты</a>
+    <button class="btn-cart" onclick="window.location='menu.html'">🛒 <span class="cart-badge" id="cart-count">0</span></button>
+    <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-order">Заказать</a>
+  </div>
+  <button class="nav-burger" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="page-hero-sub">Кухня. Культура. Вдохновение</p>
+    <h1>Блог IrMa</h1>
+    <p>Рецепты, советы и истории из жизни нашего кафе — всё, что вдохновляет нас каждый день</p>
+    <div class="divider"></div>
+  </div>
+</section>
+
+<!-- FEATURED POST -->
+<section class="featured-section">
+  <div class="featured-post">
+    <div class="featured-post-img">🫒</div>
+    <div class="featured-post-body">
+      <p class="post-tag">Рецепт · Главный материал</p>
+      <p class="post-title">Секрет идеального салата «Цезарь» — рассказывает наш шеф</p>
+      <p class="post-excerpt">Казалось бы, простое блюдо — но именно в деталях скрыт весь вкус. Шеф-повар IrMa Ирина Маринич делится фирменным рецептом соуса и раскрывает, почему мы не используем магазинные заправки.</p>
+      <div class="post-meta">
+        <span class="post-author">Ирина Маринич</span>
+        <span>20 июня 2025</span>
+        <span>7 мин чтения</span>
+      </div>
+      <a href="#" class="btn-read">Читать статью</a>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG GRID -->
+<section class="blog-section">
+  <div class="blog-grid">
+
+    <div class="blog-card">
+      <div class="blog-card-img bc-pink">☕</div>
+      <div class="blog-card-body">
+        <p class="blog-card-tag">Напитки</p>
+        <p class="blog-card-title">5 рецептов идеального кофе для дома</p>
+        <p class="blog-card-text">Раскрываем секреты, которые превратят обычное утро в маленькое удовольствие — без кофемашины за 100 тысяч.</p>
+        <div class="blog-card-footer">
+          <span class="blog-card-date">5 июня 2025</span>
+          <a href="#" class="blog-card-link">Читать →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="blog-card">
+      <div class="blog-card-img bc-green">🥑</div>
+      <div class="blog-card-body">
+        <p class="blog-card-tag">Советы</p>
+        <p class="blog-card-title">Как выбрать авокадо и не ошибиться</p>
+        <p class="blog-card-text">Недозрелый или перезрелый — авокадо легко испортит блюдо. Рассказываем, как выбрать идеальный плод за 30 секунд.</p>
+        <div class="blog-card-footer">
+          <span class="blog-card-date">18 мая 2025</span>
+          <a href="#" class="blog-card-link">Читать →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="blog-card">
+      <div class="blog-card-img bc-peach">🍕</div>
+      <div class="blog-card-body">
+        <p class="blog-card-tag">Рецепт</p>
+        <p class="blog-card-title">Домашняя пицца: тонкое тесто без дрожжей</p>
+        <p class="blog-card-text">Быстрый рецепт пиццы, которую можно приготовить за 40 минут — хрустящее тесто, томатный соус и любая начинка.</p>
+        <div class="blog-card-footer">
+          <span class="blog-card-date">2 мая 2025</span>
+          <a href="#" class="blog-card-link">Читать →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="blog-card">
+      <div class="blog-card-img bc-lilac">🎂</div>
+      <div class="blog-card-body">
+        <p class="blog-card-tag">О нас</p>
+        <p class="blog-card-title">История IrMa: как семейная кухня стала кафе</p>
+        <p class="blog-card-text">Три года назад Ирина Маринич решила открыть маленькое место, где можно поесть как дома. Читайте, как всё начиналось.</p>
+        <div class="blog-card-footer">
+          <span class="blog-card-date">15 апреля 2025</span>
+          <a href="#" class="blog-card-link">Читать →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="blog-card">
+      <div class="blog-card-img bc-blue">🍓</div>
+      <div class="blog-card-body">
+        <p class="blog-card-tag">Сезон</p>
+        <p class="blog-card-title">Летнее меню: что попробовать этим летом</p>
+        <p class="blog-card-text">Клубничный лимонад, лёгкие салаты и холодный капучино — собрали всё самое освежающее из нашего летнего меню.</p>
+        <div class="blog-card-footer">
+          <span class="blog-card-date">1 июня 2025</span>
+          <a href="#" class="blog-card-link">Читать →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="blog-card">
+      <div class="blog-card-img bc-pink" style="font-size:3.5rem">🥞</div>
+      <div class="blog-card-body">
+        <p class="blog-card-tag">Рецепт</p>
+        <p class="blog-card-title">Тонкие блины: 3 теста для любого случая</p>
+        <p class="blog-card-text">На кефире, на молоке и на воде — у каждого теста свой характер. Разбираемся, когда и какой выбрать.</p>
+        <div class="blog-card-footer">
+          <span class="blog-card-date">10 марта 2025</span>
+          <a href="#" class="blog-card-link">Читать →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SUBSCRIBE -->
+<section class="subscribe-band">
+  <h2>Подписывайтесь на обновления</h2>
+  <p>Новые рецепты, анонсы мастер-классов и акции — раз в неделю, без спама</p>
+  <div class="subscribe-form">
+    <input type="email" class="subscribe-input" placeholder="ваш@email.ru">
+    <button class="subscribe-btn" onclick="this.textContent='✓ Подписались!'">Подписаться</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <span class="footer-brand-name">IrMa</span>
+        <span class="footer-tagline">Семейное кафе by Marinich</span>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Главная</a>
+        <a href="menu.html">Меню</a>
+        <a href="training.html">Обучение</a>
+        <a href="blog.html">Блог</a>
+        <a href="contacts.html">Контакты</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">© 2025 IrMa. Все права защищены.</div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  try {
+    var cart = JSON.parse(localStorage.getItem('irma_cart') || '{}');
+    var total = Object.values(cart).reduce(function(s,v){ return s+(v.qty||0); }, 0);
+    document.getElementById('cart-count').textContent = total;
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IrMa — Обучение</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink:    #f2c4ce;
+      --pink-d:  #d98a9a;
+      --green:   #8fa87c;
+      --green-l: #c8d9be;
+      --bg:      #fdf6f7;
+      --white:   #ffffff;
+      --dark:    #3a3a3a;
+      --gray:    #7a7a7a;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--dark); }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(253,246,247,.95); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--pink);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw; height: 64px;
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; color: var(--dark); text-decoration: none; letter-spacing: .03em; }
+    .nav-links { display: flex; gap: 14px; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--gray); font-size: .77rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; transition: color .2s; white-space: nowrap; }
+    .nav-links a:hover { color: var(--pink-d); }
+    .nav-links a.nav-active { color: var(--pink-d); font-weight: 700; }
+    .btn-order { background: var(--green); color: var(--white) !important; padding: 9px 20px; border-radius: 30px; font-size: .77rem; font-weight: 600 !important; transition: background .2s, transform .15s !important; white-space: nowrap; }
+    .btn-order:hover { background: #7a956a !important; transform: translateY(-1px); }
+    .btn-cart { display: inline-flex; align-items: center; gap: 6px; background: var(--pink-d); color: var(--white) !important; padding: 9px 16px; border-radius: 30px; font-size: .77rem; font-weight: 600 !important; border: none; cursor: pointer; letter-spacing: .04em; transition: background .2s, transform .15s; font-family: 'Montserrat', sans-serif; white-space: nowrap; }
+    .btn-cart:hover { background: #c07080 !important; transform: translateY(-1px); }
+    .cart-badge { background: var(--white); color: var(--pink-d); border-radius: 50%; width: 19px; height: 19px; font-size: .7rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+    .nav-burger { display: none; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--dark); padding: 4px; line-height: 1; }
+
+    .page-hero {
+      background: linear-gradient(135deg, #fce4ec 0%, #f8f4f0 50%, #e8f0e0 100%);
+      padding: 64px 5vw 60px; text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(242,196,206,.3) 0%, transparent 60%), radial-gradient(ellipse at 80% 30%, rgba(200,217,190,.25) 0%, transparent 55%); }
+    .page-hero-inner { position: relative; max-width: 640px; margin: 0 auto; }
+    .page-hero-sub { font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 4rem); font-style: italic; color: var(--dark); margin-bottom: 14px; line-height: 1.1; }
+    .page-hero p { color: var(--gray); font-size: .95rem; font-weight: 300; line-height: 1.65; }
+    .divider { width: 60px; height: 2px; background: linear-gradient(90deg, var(--pink-d), var(--green)); margin: 18px auto 0; border-radius: 2px; }
+
+    /* COURSES */
+    .courses-section { padding: 72px 5vw 80px; }
+    .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 28px; max-width: 1100px; margin: 0 auto; }
+
+    .course-card {
+      background: var(--white); border-radius: 24px; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,.07);
+      transition: transform .2s, box-shadow .2s;
+      display: flex; flex-direction: column;
+    }
+    .course-card:hover { transform: translateY(-5px); box-shadow: 0 14px 40px rgba(0,0,0,.11); }
+    .course-card-header {
+      padding: 36px 28px 28px;
+      display: flex; flex-direction: column; align-items: flex-start;
+    }
+    .course-emoji { font-size: 3.2rem; margin-bottom: 16px; }
+    .course-tag { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+    .course-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-style: italic; color: var(--dark); margin-bottom: 12px; line-height: 1.3; }
+    .course-desc { font-size: .88rem; color: var(--gray); line-height: 1.7; font-weight: 300; flex: 1; }
+
+    .course-card-footer {
+      padding: 20px 28px 28px;
+      border-top: 1px solid var(--pink);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+    }
+    .course-meta { display: flex; flex-direction: column; gap: 4px; }
+    .course-meta-item { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--gray); }
+    .course-meta-item svg { width: 14px; height: 14px; fill: var(--green); flex-shrink: 0; }
+    .course-price { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--pink-d); font-weight: 600; }
+    .btn-enroll {
+      width: 100%; margin-top: 16px; padding: 13px;
+      background: var(--green); color: var(--white);
+      border: none; border-radius: 30px; cursor: pointer;
+      font-family: 'Montserrat', sans-serif; font-size: .88rem; font-weight: 600;
+      letter-spacing: .05em; transition: background .2s, transform .15s;
+      text-decoration: none; display: block; text-align: center;
+    }
+    .btn-enroll:hover { background: #7a956a; transform: translateY(-1px); }
+
+    /* KIDS HIGHLIGHT */
+    .kids-band {
+      background: linear-gradient(135deg, #fce4ec 0%, #f0e8f5 50%, #e8f0e0 100%);
+      padding: 64px 5vw; text-align: center;
+    }
+    .kids-band h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 4vw, 2.5rem); font-style: italic; color: var(--dark); margin-bottom: 14px; }
+    .kids-band p { color: var(--gray); font-size: .95rem; font-weight: 300; line-height: 1.7; max-width: 560px; margin: 0 auto 32px; }
+    .btn-pink {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--pink-d); color: var(--white);
+      padding: 14px 36px; border-radius: 50px;
+      font-size: .9rem; font-weight: 600; text-decoration: none;
+      letter-spacing: .04em; transition: background .2s, transform .15s;
+    }
+    .btn-pink:hover { background: #c07080; transform: translateY(-2px); }
+
+    /* FAQ */
+    .faq-section { padding: 72px 5vw 80px; max-width: 800px; margin: 0 auto; }
+    .faq-section h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.5rem); font-style: italic; color: var(--dark); text-align: center; margin-bottom: 40px; }
+    .faq-item { border-bottom: 1px solid var(--pink); padding: 20px 0; }
+    .faq-q { font-weight: 600; font-size: .95rem; color: var(--dark); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .faq-q::after { content: '+'; font-size: 1.3rem; color: var(--pink-d); font-weight: 300; flex-shrink: 0; transition: transform .2s; }
+    .faq-item.open .faq-q::after { transform: rotate(45deg); }
+    .faq-a { font-size: .88rem; color: var(--gray); line-height: 1.7; font-weight: 300; max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s; }
+    .faq-item.open .faq-a { max-height: 200px; padding-top: 12px; }
+
+    /* FOOTER */
+    footer { background: var(--dark); color: rgba(255,255,255,.5); padding: 36px 5vw 24px; font-size: .78rem; }
+    .footer-inner { max-width: 960px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; margin-bottom: 28px; }
+    .footer-brand-name { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--white); display: block; margin-bottom: 4px; }
+    .footer-tagline { color: rgba(255,255,255,.4); font-size: .76rem; }
+    .footer-nav { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+    .footer-nav a { color: rgba(255,255,255,.5); text-decoration: none; font-size: .75rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; transition: color .2s; }
+    .footer-nav a:hover { color: rgba(255,255,255,.9); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px; text-align: center; }
+
+    @media (max-width: 768px) {
+      .nav-burger { display: block; }
+      .nav-links { position: fixed; top: 64px; left: 0; right: 0; background: rgba(253,246,247,.98); backdrop-filter: blur(8px); flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px 5vw; display: none; border-bottom: 1px solid var(--pink); z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+      .nav-links.open { display: flex; }
+      .nav-links a { font-size: .9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">IrMa</a>
+  <div class="nav-links" id="nav-links">
+    <a href="index.html">Главная</a>
+    <a href="menu.html">Меню</a>
+    <a href="training.html" class="nav-active">Обучение</a>
+    <a href="blog.html">Блог</a>
+    <a href="contacts.html">Контакты</a>
+    <button class="btn-cart" onclick="window.location='menu.html'">🛒 <span class="cart-badge" id="cart-count">0</span></button>
+    <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-order">Заказать</a>
+  </div>
+  <button class="nav-burger" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="page-hero-sub">Кулинарная студия IrMa</p>
+    <h1>Мастер-классы</h1>
+    <p>Научитесь готовить вкусно — под руководством наших шеф-поваров и бариста в уютной атмосфере кафе</p>
+    <div class="divider"></div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section class="courses-section">
+  <div class="courses-grid">
+
+    <!-- Course 1 -->
+    <div class="course-card">
+      <div class="course-card-header">
+        <div class="course-emoji">🥞</div>
+        <span class="course-tag">Популярное</span>
+        <p class="course-title">Блины и домашняя выпечка</p>
+        <p class="course-desc">Откроем секреты идеального тонкого теста, научим начинкам на любой вкус — сладким и солёным. Вы уйдёте с готовыми блюдами и подробным рецептом.</p>
+      </div>
+      <div class="course-card-footer">
+        <div class="course-meta">
+          <span class="course-meta-item">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+            2 часа
+          </span>
+          <span class="course-meta-item">
+            <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+            Каждая суббота, 11:00
+          </span>
+          <span class="course-meta-item">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            До 10 участников
+          </span>
+        </div>
+        <div class="course-price">1 500 ₽</div>
+        <a href="contacts.html" class="btn-enroll">Записаться</a>
+      </div>
+    </div>
+
+    <!-- Course 2 -->
+    <div class="course-card">
+      <div class="course-card-header">
+        <div class="course-emoji">☕</div>
+        <span class="course-tag">Новинка</span>
+        <p class="course-title">Курс бариста: искусство кофе</p>
+        <p class="course-desc">Разберёмся в сортах зерна, настройке помола и темперамента эспрессо. Научим рисовать на капучино и варить фильтр-кофе как в лучших кофейнях города.</p>
+      </div>
+      <div class="course-card-footer">
+        <div class="course-meta">
+          <span class="course-meta-item">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+            3 часа
+          </span>
+          <span class="course-meta-item">
+            <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+            Каждое воскресенье, 12:00
+          </span>
+          <span class="course-meta-item">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            До 8 участников
+          </span>
+        </div>
+        <div class="course-price">2 500 ₽</div>
+        <a href="contacts.html" class="btn-enroll">Записаться</a>
+      </div>
+    </div>
+
+    <!-- Course 3 -->
+    <div class="course-card">
+      <div class="course-card-header">
+        <div class="course-emoji">🍕</div>
+        <span class="course-tag">Хит</span>
+        <p class="course-title">Пицца с нуля</p>
+        <p class="course-desc">Замесим тесто по итальянскому рецепту, приготовим томатный соус и соберём пиццу с любимой начинкой. Каждый унесёт свою пиццу домой.</p>
+      </div>
+      <div class="course-card-footer">
+        <div class="course-meta">
+          <span class="course-meta-item">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+            2.5 часа
+          </span>
+          <span class="course-meta-item">
+            <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+            1 и 3 суббота, 14:00
+          </span>
+          <span class="course-meta-item">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            До 10 участников
+          </span>
+        </div>
+        <div class="course-price">1 800 ₽</div>
+        <a href="contacts.html" class="btn-enroll">Записаться</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- KIDS BAND -->
+<section class="kids-band">
+  <div style="font-size:3rem;margin-bottom:16px">👨‍🍳</div>
+  <h2>Детская кулинарная студия</h2>
+  <p>Мастер-классы для детей от 6 до 14 лет каждую среду с 16:00 до 18:00. Делаем пиццу, украшаем блины, лепим пельмени — весело, вкусно и познавательно.</p>
+  <a href="contacts.html" class="btn-pink">Записать ребёнка — 800 ₽</a>
+</section>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>Частые вопросы</h2>
+
+  <div class="faq-item">
+    <p class="faq-q">Нужно ли приносить свои продукты?</p>
+    <p class="faq-a">Нет, все ингредиенты входят в стоимость мастер-класса. Приходите налегке — всё уже ждёт вас на рабочем месте.</p>
+  </div>
+
+  <div class="faq-item">
+    <p class="faq-q">Можно ли прийти без опыта?</p>
+    <p class="faq-a">Конечно! Все наши программы рассчитаны на любой уровень подготовки. Шеф-повар объяснит каждый шаг — вы обязательно справитесь.</p>
+  </div>
+
+  <div class="faq-item">
+    <p class="faq-q">Как записаться?</p>
+    <p class="faq-a">Свяжитесь с нами любым удобным способом: через форму на странице «Контакты», позвоните по телефону или напишите в мессенджер.</p>
+  </div>
+
+  <div class="faq-item">
+    <p class="faq-q">Есть ли скидки для постоянных гостей?</p>
+    <p class="faq-a">Да! Участникам бонусной программы IrMa — скидка 10% на все мастер-классы. Оформите бонусную карту через бота IrMa в MAX.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <span class="footer-brand-name">IrMa</span>
+        <span class="footer-tagline">Семейное кафе by Marinich</span>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Главная</a>
+        <a href="menu.html">Меню</a>
+        <a href="training.html">Обучение</a>
+        <a href="blog.html">Блог</a>
+        <a href="contacts.html">Контакты</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">© 2025 IrMa. Все права защищены.</div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  try {
+    var cart = JSON.parse(localStorage.getItem('irma_cart') || '{}');
+    var total = Object.values(cart).reduce(function(s,v){ return s+(v.qty||0); }, 0);
+    document.getElementById('cart-count').textContent = total;
+  } catch(e) {}
+})();
+
+document.querySelectorAll('.faq-q').forEach(function(q) {
+  q.addEventListener('click', function() {
+    var item = q.closest('.faq-item');
+    item.classList.toggle('open');
+  });
+});
+</script>
+</body>
+</html>
