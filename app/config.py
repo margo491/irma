@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     bonus_max_spend_rate: float = 0.20
     max_token: str = ""
     admin_max_user_id: str = ""
+    admin_email: str = ""
+    admin_password: str = ""
 
     class Config:
         env_file = ".env"
