@@ -58,7 +58,10 @@
       display: grid; grid-template-columns: 1fr 1.1fr; gap: 0;
       box-shadow: 0 6px 32px rgba(0,0,0,.08);
       max-width: 1000px; margin: 0 auto;
+      text-decoration: none; color: inherit;
+      transition: transform .2s, box-shadow .2s;
     }
+    .online-card:hover { transform: translateY(-4px); box-shadow: 0 14px 44px rgba(0,0,0,.13); }
     .online-img { display: block; width: 100%; height: 100%; min-width: 0; object-fit: cover; min-height: 380px; }
     .online-body { padding: 44px 48px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
     .online-tag { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--pink-d); margin-bottom: 12px; }
@@ -223,7 +226,7 @@
 
 <!-- ONLINE LESSONS -->
 <section class="online-section">
-  <div class="online-card">
+  <a class="online-card" href="training-online.html">
     <img class="online-img" src="training/online-lessons.jpg" alt="Онлайн-уроки IrMa by Marinich">
     <div class="online-body">
       <p class="online-tag">Новинка · Онлайн-формат</p>
@@ -260,9 +263,9 @@
       </div>
 
       <p class="online-note">Уроки будут постоянно пополняться ♥</p>
-      <a href="training-online.html" class="btn-pink" style="align-self:flex-start">Узнать больше</a>
+      <span class="btn-pink" style="align-self:flex-start">Узнать больше</span>
     </div>
-  </div>
+  </a>
 </section>
 
 <!-- LESSON CATALOG -->
