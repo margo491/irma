@@ -48,15 +48,14 @@
     .breadcrumb span.current { color: var(--pink-d); font-weight: 600; }
 
     /* POST HERO */
-    .post-hero { padding: 24px 5vw 0; max-width: 900px; margin: 0 auto; }
+    .post-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.3fr); gap: 44px; max-width: 1100px; margin: 0 auto; padding: 24px 5vw 0; align-items: start; }
+    .post-media { position: sticky; top: 84px; }
+    .post-media img { width: 100%; border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,.12); display: block; }
+    .post-content { min-width: 0; padding-bottom: 56px; }
     .post-hero-tag { font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--pink-d); margin-bottom: 14px; }
-    .post-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4.5vw, 3.2rem); font-style: italic; color: var(--dark); margin-bottom: 16px; line-height: 1.15; }
-    .post-hero-sub { color: var(--gray); font-size: 1rem; font-weight: 300; line-height: 1.7; max-width: 640px; margin-bottom: 32px; }
-    .post-hero-img { width: 100%; max-width: 520px; display: block; margin: 0 auto; border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,.12); }
-
-    /* POST BODY */
-    .post-body { max-width: 720px; margin: 0 auto; padding: 48px 5vw 0; }
-    .post-body h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; color: var(--dark); margin-bottom: 18px; }
+    .post-content h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.7rem, 2.8vw, 2.4rem); font-style: italic; color: var(--dark); margin-bottom: 14px; line-height: 1.15; }
+    .post-hero-sub { color: var(--gray); font-size: .95rem; font-weight: 300; line-height: 1.65; margin-bottom: 28px; }
+    .post-content h2 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-style: italic; color: var(--dark); margin-bottom: 16px; }
     .post-features { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 40px; }
     .post-feature { display: flex; align-items: center; gap: 8px; background: var(--white); border: 1px solid var(--pink); border-radius: 30px; padding: 10px 18px; font-size: .85rem; color: var(--dark); box-shadow: 0 2px 10px rgba(0,0,0,.04); }
     .post-feature svg { width: 16px; height: 16px; fill: var(--green); flex-shrink: 0; }
@@ -81,7 +80,7 @@
     .post-note { font-size: .9rem; color: var(--gray); font-style: italic; margin-bottom: 44px; }
 
     .cta-band {
-      text-align: center; padding: 44px 5vw 72px;
+      padding: 8px 0 0;
     }
     .btn-pink {
       display: inline-flex; align-items: center; gap: 8px;
@@ -149,6 +148,8 @@
       .nav-links { position: fixed; top: 64px; left: 0; right: 0; background: rgba(253,246,247,.98); backdrop-filter: blur(8px); flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px 5vw; display: none; border-bottom: 1px solid var(--pink); z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
       .nav-links.open { display: flex; }
       .nav-links a { font-size: .9rem; }
+      .post-layout { grid-template-columns: 1fr; gap: 24px; }
+      .post-media { position: static; }
     }
   </style>
 </head>
@@ -176,15 +177,14 @@
 </div>
 
 <!-- POST HERO -->
-<section class="post-hero">
+<div class="post-layout">
+  <div class="post-media">
+    <img class="post-hero-img" src="training/online-lessons.jpg" alt="Онлайн-уроки IrMa by Marinich">
+  </div>
+  <div class="post-content">
   <p class="post-hero-tag">Новинка · Онлайн-формат</p>
   <h1>Онлайн-уроки от IrMa by Marinich</h1>
   <p class="post-hero-sub">От обучающего кондитера и основателя семейного кафе IrMa by Marinich. Смотрите видеоуроки в удобное время и готовьте по проверенным техкартам и рецептам — без привязки к расписанию офлайн-мастер-классов.</p>
-  <img class="post-hero-img" src="training/online-lessons.jpg" alt="Онлайн-уроки IrMa by Marinich">
-</section>
-
-<!-- POST BODY -->
-<div class="post-body">
 
   <h2>Как это работает</h2>
   <div class="post-features">
@@ -224,6 +224,7 @@
     <a href="training.html" class="back-link">← Вернуться к разделу «Обучение»</a>
   </div>
 
+  </div>
 </div>
 
 <!-- LEAD MODAL -->
