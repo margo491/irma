@@ -51,8 +51,36 @@
     .page-hero p { color: var(--gray); font-size: .95rem; font-weight: 300; line-height: 1.65; }
     .divider { width: 60px; height: 2px; background: linear-gradient(90deg, var(--pink-d), var(--green)); margin: 18px auto 0; border-radius: 2px; }
 
+    /* ONLINE LESSONS POST */
+    .online-section { padding: 72px 5vw 0; }
+    .online-card {
+      background: var(--white); border-radius: 28px; overflow: hidden;
+      display: grid; grid-template-columns: 1fr 1.1fr; gap: 0;
+      box-shadow: 0 6px 32px rgba(0,0,0,.08);
+      max-width: 1000px; margin: 0 auto;
+    }
+    .online-img { display: block; width: 100%; height: 100%; min-width: 0; object-fit: cover; min-height: 380px; }
+    .online-body { padding: 44px 48px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+    .online-tag { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--pink-d); margin-bottom: 12px; }
+    .online-title { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-style: italic; color: var(--dark); margin-bottom: 10px; line-height: 1.2; }
+    .online-sub { font-size: .88rem; color: var(--gray); line-height: 1.65; font-weight: 300; margin-bottom: 24px; }
+    .online-features { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+    .online-feature { display: flex; align-items: center; gap: 7px; background: var(--bg); border: 1px solid var(--pink); border-radius: 30px; padding: 8px 14px; font-size: .78rem; color: var(--dark); }
+    .online-feature svg { width: 15px; height: 15px; fill: var(--green); flex-shrink: 0; }
+    .online-list-label { font-size: .78rem; font-weight: 700; color: var(--dark); margin-bottom: 10px; letter-spacing: .03em; }
+    .online-list { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 10px; margin-bottom: 26px; }
+    .online-list li { font-size: .82rem; color: var(--gray); background: var(--green-l); border-radius: 16px; padding: 6px 14px; }
+    .online-bonus {
+      display: flex; align-items: center; gap: 12px;
+      background: linear-gradient(135deg, #fce4ec, #e8f0e0); border-radius: 16px;
+      padding: 14px 18px; margin-bottom: 24px; font-size: .82rem; color: var(--dark); line-height: 1.5;
+    }
+    .online-bonus span.emoji { font-size: 1.4rem; flex-shrink: 0; }
+    .online-note { font-size: .78rem; color: var(--gray); font-style: italic; margin-bottom: 4px; }
+
     /* COURSES */
     .courses-section { padding: 72px 5vw 80px; }
+    .section-heading { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 4vw, 2.3rem); font-style: italic; color: var(--dark); text-align: center; margin-bottom: 40px; }
     .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 28px; max-width: 1100px; margin: 0 auto; }
 
     .course-card {
@@ -132,6 +160,9 @@
       .nav-links { position: fixed; top: 64px; left: 0; right: 0; background: rgba(253,246,247,.98); backdrop-filter: blur(8px); flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px 5vw; display: none; border-bottom: 1px solid var(--pink); z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
       .nav-links.open { display: flex; }
       .nav-links a { font-size: .9rem; }
+      .online-card { grid-template-columns: 1fr; }
+      .online-img { min-height: 220px; }
+      .online-body { padding: 28px 24px; }
     }
   </style>
 </head>
@@ -161,8 +192,53 @@
   </div>
 </section>
 
+<!-- ONLINE LESSONS -->
+<section class="online-section">
+  <div class="online-card">
+    <img class="online-img" src="training/online-lessons.jpg" alt="Онлайн-уроки IrMa by Marinich">
+    <div class="online-body">
+      <p class="online-tag">Новинка · Онлайн-формат</p>
+      <p class="online-title">Онлайн-уроки от IrMa by Marinich</p>
+      <p class="online-sub">От обучающего кондитера и основателя семейного кафе IrMa by Marinich. Смотрите видеоуроки в удобное время и готовьте по проверенным техкартам и рецептам.</p>
+
+      <div class="online-features">
+        <span class="online-feature">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 12.42L11 15V7h1.5v7.25l4.5 2.67-.41.5z"/></svg>
+          Доступ сразу после оплаты
+        </span>
+        <span class="online-feature">
+          <svg viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.962 8.962 0 0012 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+          Смотрите в удобное время
+        </span>
+        <span class="online-feature">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          Техкарты и рецепты прилагаются
+        </span>
+      </div>
+
+      <p class="online-list-label">В наших уроках:</p>
+      <ul class="online-list">
+        <li>🍕 Пицца</li>
+        <li>🍰 Чизкейки</li>
+        <li>💍 Свадебный торт</li>
+        <li>🧁 Корпусные пирожные</li>
+        <li>🥐 Эклеры</li>
+      </ul>
+
+      <div class="online-bonus">
+        <span class="emoji">🎁</span>
+        <span>При покупке любых <strong>3 уроков</strong> — книга «80 рецептов» в подарок!</span>
+      </div>
+
+      <p class="online-note">Уроки будут постоянно пополняться ♥</p>
+      <a href="training-online.html" class="btn-pink" style="align-self:flex-start">Узнать больше</a>
+    </div>
+  </div>
+</section>
+
 <!-- COURSES -->
 <section class="courses-section">
+  <h2 class="section-heading">Очные мастер-классы</h2>
   <div class="courses-grid">
 
     <!-- Course 1 -->
