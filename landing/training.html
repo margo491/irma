@@ -90,11 +90,17 @@
     }
     .lesson-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.11); }
     .lesson-card-img { display: block; width: 100%; height: 100%; min-width: 0; object-fit: cover; min-height: 230px; }
-    .lesson-card-body { padding: 24px 26px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+    .lesson-card-body { padding: 26px; display: flex; flex-direction: column; min-width: 0; }
     .lesson-card-tag { font-size: .64rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--pink-d); margin-bottom: 8px; }
     .lesson-card-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-style: italic; color: var(--dark); margin-bottom: 10px; line-height: 1.3; }
-    .lesson-card-desc { font-size: .82rem; color: var(--gray); font-weight: 300; line-height: 1.55; margin-bottom: 16px; }
-    .lesson-card-footer { display: flex; justify-content: space-between; align-items: center; }
+    .lesson-card-desc { font-size: .82rem; color: var(--gray); font-weight: 300; line-height: 1.55; margin-bottom: 14px; }
+    .lesson-card-list { list-style: none; margin-bottom: 16px; }
+    .lesson-card-list li { font-size: .82rem; color: var(--gray); line-height: 1.75; padding-left: 15px; position: relative; }
+    .lesson-card-list li::before { content: '•'; position: absolute; left: 0; color: var(--pink-d); font-weight: 700; }
+    .lesson-card-flavors { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .lesson-card-flavors span { display: inline-flex; align-items: center; gap: 5px; background: var(--green-l); border-radius: 14px; padding: 6px 12px; font-size: .78rem; color: var(--dark); }
+    .lesson-card-note { font-size: .78rem; color: var(--pink-d); font-style: italic; margin-bottom: 14px; }
+    .lesson-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 8px; }
     .lesson-card-price { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--green); font-weight: 600; }
     .lesson-card-link { font-size: .75rem; font-weight: 700; color: var(--pink-d); letter-spacing: .04em; }
 
@@ -269,7 +275,13 @@
       <div class="lesson-card-body">
         <p class="lesson-card-tag">Видеоурок</p>
         <p class="lesson-card-title">Пицца</p>
-        <p class="lesson-card-desc">Научитесь готовить пиццу как в нашем кафе — замес теста, соус Альфредо и сборка 3 пицц.</p>
+        <p class="lesson-card-desc">Научитесь готовить пиццу как в нашем кафе!</p>
+        <ul class="lesson-card-list">
+          <li>Замес теста и правильная раскатка</li>
+          <li>Соус Альфредо для пиццы 4 сыра</li>
+          <li>Собираем 3 пиццы: 4 сыра, Пепперони, Ветчина/бекон</li>
+          <li>В подарок — техкарты теста и соуса</li>
+        </ul>
         <div class="lesson-card-footer">
           <span class="lesson-card-price">2200 ₽</span>
           <span class="lesson-card-link">Подробнее →</span>
@@ -282,7 +294,13 @@
       <div class="lesson-card-body">
         <p class="lesson-card-tag">Видеоурок · 10 минут</p>
         <p class="lesson-card-title">Эклеры</p>
-        <p class="lesson-card-desc">Заварное тесто, идеальная форма и два вида начинки — эклеры и дамские пальчики без сложностей.</p>
+        <ul class="lesson-card-list">
+          <li>Заварное тесто и заварные шарики</li>
+          <li>Какую форму нельзя использовать для выпекания</li>
+          <li>Собираем дамские пальчики</li>
+          <li>Начиняем и украшаем эклеры</li>
+          <li>В техкарте — рецепты теста и 2 кремов</li>
+        </ul>
         <div class="lesson-card-footer">
           <span class="lesson-card-price">1800 ₽</span>
           <span class="lesson-card-link">Подробнее →</span>
@@ -295,7 +313,13 @@
       <div class="lesson-card-body">
         <p class="lesson-card-tag">Видеоурок</p>
         <p class="lesson-card-title">Свадебный торт 17 кг</p>
-        <p class="lesson-card-desc">Реальный заказ, реальный процесс — сборка ярусов, декор и покрытие ганашем пошагово.</p>
+        <p class="lesson-card-desc">Реальный заказ. Реальный процесс. Пошагово и подробно!</p>
+        <ul class="lesson-card-list">
+          <li>Сборка всех ярусов и декор из вафельной/рисовой бумаги</li>
+          <li>Покрытие торта ганашем, разборка перед доставкой</li>
+          <li>Техкарты тортов «Гурмана» и «Супер ваниль»</li>
+        </ul>
+        <p class="lesson-card-note">Видео по выпечке не входит</p>
         <div class="lesson-card-footer">
           <span class="lesson-card-price">2000 ₽</span>
           <span class="lesson-card-link">Подробнее →</span>
@@ -308,7 +332,14 @@
       <div class="lesson-card-body">
         <p class="lesson-card-tag">Видеоурок · Тренд</p>
         <p class="lesson-card-title">Корпусные пирожные</p>
-        <p class="lesson-card-desc">4 самых популярных вкуса в одном уроке: малина, фисташка, манго и кофе.</p>
+        <p class="lesson-card-desc">4 самых популярных вкуса в одном уроке!</p>
+        <div class="lesson-card-flavors">
+          <span>🍓 Малина</span>
+          <span>🥜 Фисташка</span>
+          <span>🥭 Манго</span>
+          <span>☕ Кофе</span>
+        </div>
+        <p class="lesson-card-note">Просто, понятно, без лишней сложности ♥</p>
         <div class="lesson-card-footer">
           <span class="lesson-card-price">3000 ₽</span>
           <span class="lesson-card-link">Подробнее →</span>
@@ -321,7 +352,11 @@
       <div class="lesson-card-body">
         <p class="lesson-card-tag">Без видеоурока</p>
         <p class="lesson-card-title">Техкарты чизкейков</p>
-        <p class="lesson-card-desc">Готовые техкарты для двух авторских чизкейков — точные пропорции и порядок сборки.</p>
+        <p class="lesson-card-desc">Вы получите:</p>
+        <ul class="lesson-card-list">
+          <li>Техкарта чизкейка «Сникерс»</li>
+          <li>Техкарта чизкейка «Дорблю / Груша / Пекан»</li>
+        </ul>
         <div class="lesson-card-footer">
           <span class="lesson-card-price">1000 ₽</span>
           <span class="lesson-card-link">Подробнее →</span>
