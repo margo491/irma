@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IrMa — Эклеры</title>
+  <title>IrMa — Услуги</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
   <style>
@@ -40,64 +40,69 @@
     .cart-badge { background: var(--white); color: var(--pink-d); border-radius: 50%; width: 19px; height: 19px; font-size: .7rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
     .nav-burger { display: none; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--dark); padding: 4px; line-height: 1; }
 
-    .breadcrumb { padding: 32px 5vw 0; font-size: .78rem; color: var(--gray); max-width: 900px; margin: 0 auto; }
-    .breadcrumb a { color: var(--gray); text-decoration: none; transition: color .2s; }
-    .breadcrumb a:hover { color: var(--pink-d); }
-    .breadcrumb span.sep { margin: 0 6px; color: var(--pink); }
-    .breadcrumb span.current { color: var(--pink-d); font-weight: 600; }
-
-    .post-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.3fr); gap: 44px; max-width: 1100px; margin: 0 auto; padding: 28px 5vw 64px; align-items: start; }
-    .post-media img { width: 100%; border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,.12); display: block; }
-    .post-content { min-width: 0; }
-    .post-hero-tag { font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--pink-d); margin-bottom: 14px; }
-    .post-content h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.7rem, 2.8vw, 2.4rem); font-style: italic; color: var(--dark); margin-bottom: 14px; line-height: 1.15; }
-    .post-hero-sub { color: var(--gray); font-size: .95rem; font-weight: 300; line-height: 1.65; margin-bottom: 28px; }
-    .post-content h2 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-style: italic; color: var(--dark); margin-bottom: 16px; }
-
-    .meta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 40px; }
-    .meta-pill { display: flex; align-items: center; gap: 8px; background: var(--white); border: 1px solid var(--pink); border-radius: 30px; padding: 10px 18px; font-size: .85rem; color: var(--dark); box-shadow: 0 2px 10px rgba(0,0,0,.04); }
-    .meta-pill svg { width: 16px; height: 16px; fill: var(--green); flex-shrink: 0; }
-    .meta-pill.price { background: var(--green); color: var(--white); border-color: var(--green); font-weight: 600; }
-
-    .content-list { list-style: none; margin-bottom: 40px; }
-    .content-list li {
-      display: flex; align-items: flex-start; gap: 12px;
-      background: var(--white); border-radius: 16px; padding: 16px 18px;
-      font-size: .92rem; color: var(--dark); line-height: 1.55;
-      box-shadow: 0 4px 18px rgba(0,0,0,.06); margin-bottom: 12px;
+    .page-hero {
+      background: linear-gradient(135deg, #fce4ec 0%, #f8f4f0 50%, #e8f0e0 100%);
+      padding: 64px 5vw 60px; text-align: center; position: relative; overflow: hidden;
     }
-    .content-list li .num { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--green-l); color: var(--dark); font-size: .78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(242,196,206,.3) 0%, transparent 60%), radial-gradient(ellipse at 80% 30%, rgba(200,217,190,.25) 0%, transparent 55%); }
+    .page-hero-inner { position: relative; max-width: 640px; margin: 0 auto; }
+    .page-hero-sub { font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 4rem); font-style: italic; color: var(--dark); margin-bottom: 14px; line-height: 1.1; }
+    .page-hero p { color: var(--gray); font-size: .95rem; font-weight: 300; line-height: 1.65; }
+    .divider { width: 60px; height: 2px; background: linear-gradient(90deg, var(--pink-d), var(--green)); margin: 18px auto 0; border-radius: 2px; }
 
-    .flavor-grid { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 40px; }
-    .flavor-grid li { display: flex; align-items: center; gap: 10px; background: var(--white); border-radius: 16px; padding: 16px 18px; font-size: .92rem; color: var(--dark); font-weight: 500; box-shadow: 0 4px 18px rgba(0,0,0,.06); }
-    .flavor-grid li .emoji { font-size: 1.4rem; }
-
-    .bonus-block {
-      display: flex; align-items: flex-start; gap: 16px;
-      background: linear-gradient(135deg, #fce4ec, #e8f0e0); border-radius: 20px;
-      padding: 22px 26px; margin-bottom: 24px;
+    /* SERVICE ANCHOR NAV */
+    .service-anchors {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+      padding: 14px 5vw; position: sticky; top: 64px; z-index: 50;
+      background: rgba(253,246,247,.95); backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--pink);
     }
-    .bonus-block .emoji { font-size: 2rem; flex-shrink: 0; }
-    .bonus-block ul { list-style: none; }
-    .bonus-block ul li { font-size: .9rem; color: var(--dark); line-height: 1.6; }
-    .bonus-block ul li::before { content: '• '; color: var(--pink-d); }
-    .bonus-block p { font-size: .92rem; color: var(--dark); line-height: 1.6; }
+    .anchor-btn {
+      padding: 8px 20px; border-radius: 30px; border: 1.5px solid var(--pink);
+      background: transparent; cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .78rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--gray);
+      text-decoration: none; transition: all .2s; display: inline-block;
+    }
+    .anchor-btn:hover { background: var(--pink-d); border-color: var(--pink-d); color: var(--white); }
 
-    .post-note { font-size: .9rem; color: var(--gray); font-style: italic; margin-bottom: 44px; }
-
-    .cta-band { padding: 8px 0 0; }
+    /* SERVICE SECTIONS */
+    .service-section { padding: 72px 5vw 0; max-width: 1000px; margin: 0 auto; scroll-margin-top: 130px; }
+    .service-section:last-of-type { padding-bottom: 72px; }
+    .service-card {
+      background: var(--white); border-radius: 28px; overflow: hidden;
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 0;
+      box-shadow: 0 6px 32px rgba(0,0,0,.08);
+    }
+    .service-media {
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4.5rem; min-height: 280px;
+    }
+    .sm-pink  { background: linear-gradient(135deg, #fce4ec, #f9d0dc); }
+    .sm-green { background: linear-gradient(135deg, #e8f5e9, #c8d9be); }
+    .sm-peach { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+    .service-body { padding: 44px 48px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+    .service-tag { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--pink-d); margin-bottom: 12px; }
+    .service-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-style: italic; color: var(--dark); margin-bottom: 12px; line-height: 1.2; }
+    .service-sub { font-size: .9rem; color: var(--gray); line-height: 1.65; font-weight: 300; margin-bottom: 22px; }
+    .service-list { list-style: none; margin-bottom: 26px; }
+    .service-list li { font-size: .86rem; color: var(--dark); line-height: 1.7; padding-left: 20px; position: relative; }
+    .service-list li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+    .service-note { font-size: .8rem; color: var(--gray); font-style: italic; margin-bottom: 22px; }
     .btn-pink {
       display: inline-flex; align-items: center; gap: 8px;
       background: var(--pink-d); color: var(--white);
-      padding: 15px 40px; border-radius: 50px;
-      font-size: .95rem; font-weight: 600; text-decoration: none;
+      padding: 14px 34px; border-radius: 50px;
+      font-size: .9rem; font-weight: 600; text-decoration: none;
       letter-spacing: .04em; transition: background .2s, transform .15s;
       border: none; cursor: pointer; font-family: 'Montserrat', sans-serif;
+      align-self: flex-start;
     }
     .btn-pink:hover { background: #c07080; transform: translateY(-2px); }
-    .back-link { display: inline-block; margin-top: 20px; font-size: .82rem; color: var(--gray); text-decoration: none; }
-    .back-link:hover { color: var(--pink-d); }
 
+    /* MODAL */
     .modal-overlay {
       display: none; position: fixed; inset: 0; z-index: 200;
       background: rgba(58,58,58,.55); backdrop-filter: blur(2px);
@@ -136,6 +141,7 @@
     .modal-feedback.success { color: var(--green); }
     .modal-feedback.error { color: var(--pink-d); }
 
+    /* FOOTER */
     footer { background: var(--dark); color: rgba(255,255,255,.5); padding: 36px 5vw 24px; font-size: .78rem; }
     .footer-inner { max-width: 960px; margin: 0 auto; }
     .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; margin-bottom: 28px; }
@@ -151,7 +157,9 @@
       .nav-links { position: fixed; top: 64px; left: 0; right: 0; background: rgba(253,246,247,.98); backdrop-filter: blur(8px); flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px 5vw; display: none; border-bottom: 1px solid var(--pink); z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
       .nav-links.open { display: flex; }
       .nav-links a { font-size: .9rem; }
-      .post-layout { grid-template-columns: 1fr; gap: 24px; }
+      .service-card { grid-template-columns: 1fr; }
+      .service-media { min-height: 160px; }
+      .service-body { padding: 28px 24px; }
     }
   </style>
 </head>
@@ -162,8 +170,8 @@
   <div class="nav-links" id="nav-links">
     <a href="index.html">Главная</a>
     <a href="menu.html">Меню</a>
-    <a href="services.html">Услуги</a>
-    <a href="training.html" class="nav-active">Обучение</a>
+    <a href="services.html" class="nav-active">Услуги</a>
+    <a href="training.html">Обучение</a>
     <a href="blog.html">Блог</a>
     <a href="contacts.html">Контакты</a>
     <button class="btn-cart" onclick="window.location='menu.html'">🛒 <span class="cart-badge" id="cart-count">0</span></button>
@@ -172,57 +180,89 @@
   <button class="nav-burger" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
 </nav>
 
-<div class="breadcrumb">
-  <a href="training.html">Обучение</a>
-  <span class="sep">/</span>
-  <span class="current">Эклеры</span>
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="page-hero-sub">Семейное кафе IrMa</p>
+    <h1>Услуги</h1>
+    <p>Кейтеринг, торты на заказ и организация дня рождения под ключ — берём заботы на себя, вам остаётся только праздновать</p>
+    <div class="divider"></div>
+  </div>
+</section>
+
+<!-- ANCHORS -->
+<div class="service-anchors">
+  <a class="anchor-btn" href="#catering">Кейтеринг</a>
+  <a class="anchor-btn" href="#cakes">Торты на заказ</a>
+  <a class="anchor-btn" href="#birthday">День рождения под ключ</a>
 </div>
 
-<div class="post-layout">
-  <div class="post-media">
-    <img class="post-hero-img" src="training/eclairs.jpg" alt="Эклеры — видеоурок IrMa by Marinich">
-  </div>
-  <div class="post-content">
-  <p class="post-hero-tag">Видеоурок · 10 минут</p>
-  <h1>Эклеры</h1>
-  <p class="post-hero-sub">Заварное тесто, идеальная форма и два вида начинки — научитесь готовить эклеры и дамские пальчики без лишних сложностей.</p>
-  <div class="meta-row">
-    <span class="meta-pill"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 12.42L11 15V7h1.5v7.25l4.5 2.67-.41.5z"/></svg>Длительность 10 минут</span>
-    <span class="meta-pill"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>Можно скачать</span>
-    <span class="meta-pill price">Стоимость: 1800 ₽</span>
-  </div>
-  <h2>В уроке мы готовим</h2>
-  <ul class="content-list">
-    <li><span class="num">1</span><span>Заварное тесто</span></li>
-    <li><span class="num">2</span><span>Делаем заварные шарики для заварных и творожных или дамских пальчиков</span></li>
-    <li><span class="num">3</span><span>Показываю, какую форму категорически не нужно использовать для выпекания эклеров</span></li>
-    <li><span class="num">4</span><span>Собираем дамские пальчики</span></li>
-    <li><span class="num">5</span><span>Начиняем и украшаем эклеры</span></li>
-  </ul>
-  <div class="bonus-block">
-    <div>
-      <p style="font-weight:600;margin-bottom:8px">🎁 В техкарте к уроку</p>
-      <ul>
-      <li>Рецепт теста</li>
-      <li>Рецепт крема для дамских пальцев</li>
-      <li>Рецепт крема для эклеров</li>
+<!-- CATERING -->
+<section class="service-section" id="catering">
+  <div class="service-card">
+    <div class="service-media sm-green">🍽️</div>
+    <div class="service-body">
+      <p class="service-tag">Для мероприятий любого формата</p>
+      <p class="service-title">Кейтеринг от IrMa by Marinich</p>
+      <p class="service-sub">Привезём и красиво накроем стол для корпоратива, дня рождения, девичника или любого другого события — от фуршетных закусок до полноценного меню на большую компанию.</p>
+      <ul class="service-list">
+        <li>Фуршетное меню и полноценные банкеты</li>
+        <li>Свежая подача прямо на площадке</li>
+        <li>Гибкое меню под бюджет и число гостей</li>
+        <li>Посуда, сервировка и доставка включены</li>
       </ul>
+      <p class="service-note">Минимальный заказ и стоимость обсуждаются индивидуально — зависят от даты, числа гостей и меню.</p>
+      <button type="button" class="btn-pink" onclick="openLeadModal('catering')">Обсудить кейтеринг</button>
     </div>
   </div>
+</section>
 
-  <div class="cta-band">
-    <button type="button" class="btn-pink" onclick="openLeadModal()">Записаться на урок</button>
-    <br>
-    <a href="training.html" class="back-link">← Вернуться к разделу «Обучение»</a>
+<!-- CUSTOM CAKES -->
+<section class="service-section" id="cakes">
+  <div class="service-card">
+    <div class="service-media sm-pink">🎂</div>
+    <div class="service-body">
+      <p class="service-tag">Торты на заказ</p>
+      <p class="service-title">Торт под любой повод</p>
+      <p class="service-sub">Свадебные, детские, корпоративные — обсудим вкус, начинку, вес и дизайн, и приготовим торт индивидуально под ваше событие.</p>
+      <ul class="service-list">
+        <li>Свадебные, детские и праздничные торты</li>
+        <li>Любой вес — от небольшого до многоярусного</li>
+        <li>Авторские начинки и оформление под тематику праздника</li>
+        <li>Дегустация начинок перед заказом</li>
+      </ul>
+      <p class="service-note">Стоимость рассчитывается индивидуально по весу, составу и сложности декора.</p>
+      <button type="button" class="btn-pink" onclick="openLeadModal('cakes')">Заказать торт</button>
+    </div>
   </div>
-  </div>
-</div>
+</section>
 
+<!-- BIRTHDAY TURNKEY -->
+<section class="service-section" id="birthday">
+  <div class="service-card">
+    <div class="service-media sm-peach">🎉</div>
+    <div class="service-body">
+      <p class="service-tag">Под ключ</p>
+      <p class="service-title">День рождения под ключ</p>
+      <p class="service-sub">Организуем праздник от начала до конца: зал в кафе, торт, угощения и декор — вам останется только пригласить гостей.</p>
+      <ul class="service-list">
+        <li>Аренда зала кафе для праздника</li>
+        <li>Праздничный торт и меню для гостей</li>
+        <li>Оформление и декор зала</li>
+        <li>Программа для детских и взрослых праздников</li>
+      </ul>
+      <p class="service-note">Пакет и стоимость подбираем под возраст именинника, число гостей и пожелания по программе.</p>
+      <button type="button" class="btn-pink" onclick="openLeadModal('birthday')">Организовать праздник</button>
+    </div>
+  </div>
+</section>
+
+<!-- LEAD MODAL -->
 <div class="modal-overlay" id="lead-modal">
   <div class="modal-box">
     <button type="button" class="modal-close" onclick="closeLeadModal()">×</button>
-    <p class="modal-title">Записаться на урок</p>
-    <p class="modal-sub">Оставьте контакты — мы свяжемся с вами и поможем выбрать урок и оплатить доступ.</p>
+    <p class="modal-title" id="lead-modal-title">Оставить заявку</p>
+    <p class="modal-sub">Оставьте контакты — мы свяжемся с вами и обсудим детали.</p>
     <form id="lead-form">
       <div class="form-group">
         <label class="form-label" for="lead-name">Имя</label>
@@ -242,6 +282,7 @@
   </div>
 </div>
 
+<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
@@ -271,7 +312,16 @@
   } catch(e) {}
 })();
 
-function openLeadModal() {
+var leadSource = 'services';
+var modalTitles = {
+  catering: 'Обсудить кейтеринг',
+  cakes: 'Заказать торт',
+  birthday: 'Организовать праздник'
+};
+
+function openLeadModal(source) {
+  leadSource = 'services-' + source;
+  document.getElementById('lead-modal-title').textContent = modalTitles[source] || 'Оставить заявку';
   document.getElementById('lead-modal').classList.add('open');
   var submitBtn = document.getElementById('lead-submit');
   var feedback = document.getElementById('lead-feedback');
@@ -303,7 +353,7 @@ document.getElementById('lead-form').addEventListener('submit', function(e) {
       name: document.getElementById('lead-name').value,
       phone: document.getElementById('lead-phone').value,
       email: document.getElementById('lead-email').value || null,
-      source: 'training-eclairs'
+      source: leadSource
     })
   })
   .then(function(res) {
