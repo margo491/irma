@@ -139,7 +139,16 @@
     .dish-card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #fce4ec; display: block; }
     .dish-card-body { padding: 14px 16px 16px; }
     .dish-card-name { font-size: .88rem; font-weight: 600; color: var(--dark); margin-bottom: 6px; line-height: 1.35; }
+    .dish-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .dish-card-price { font-size: .95rem; font-weight: 700; color: var(--pink-d); }
+    .dish-card-add {
+      width: 34px; height: 34px; border-radius: 50%; border: none; flex-shrink: 0;
+      background: var(--green); color: var(--white); font-size: 1.2rem; font-weight: 700;
+      line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .15s;
+    }
+    .dish-card-add:hover { background: #7a956a; transform: scale(1.08); }
+    .dish-card-add.added { background: var(--pink-d); font-size: .95rem; }
 
     /* MODAL */
     .modal-overlay {
@@ -404,12 +413,13 @@ const MENU = [
   {
     id: "bliny", name: "Блины и бургеры",
     items: [
-      { id: 14, img: "dishes/14.png", name: "Блины с ягодами",         price: 250, ingredients: "Тонкие блины, клубника, черника, сахарная пудра" },
-      { id: 15, img: "dishes/15.png", name: "Блин с ветчиной и сыром", price: 220, ingredients: "Блин, ветчина, сыр гауда" },
-      { id: 16, img: "dishes/16.png", name: "Блин с шоколадом",        price: 180, ingredients: "Блин, шоколадная паста" },
-      { id: 17, img: "dishes/17.png", name: "Чизбургер",               price: 320, ingredients: "Говяжья котлета, булка, чеддер, листья салата" },
-      { id: 18, img: "dishes/18.png", name: "Бургер классический",     price: 300, ingredients: "Говяжья котлета, булка, томат, красный лук, листья салата, соус" },
-      { id: 19, img: "dishes/19.png", name: "Бургер «Двойной»",        price: 390, ingredients: "Двойная говяжья котлета, чеддер, помидор, красный лук, листья салата" }
+      { id: 14, img: "dishes/14.png", name: "Блин «Жюльен»",              price: 470, ingredients: "Блин, курица, сливочный соус, пармезан, моцарелла, шампиньоны, лук фри, сырный соус, соус терияки" },
+      { id: 15, img: "dishes/15.png", name: "Блин с форелью",             price: 480, ingredients: "Блин, форель, салат, моцарелла, творожный сыр, огурец, черри" },
+      { id: 16, img: "dishes/16.png", name: "Блин с ветчиной",            price: 430, ingredients: "Блин, ветчина, салат, моцарелла, творожный сыр, огурец, черри" },
+      { id: 17, img: "dishes/17.png", name: "Блин с бананом и нутеллой",  price: 430, ingredients: "Блин, банан, нутелла" },
+      { id: 18, img: "dishes/18.png", name: "Бургер с говядиной",         price: 520, ingredients: "Булочка бриошь, соус томатный, соус барбекю, котлета из говядины, помидор, солёный огурец, салат, сыр, лук репчатый" },
+      { id: 31, img: "dishes/19.png", name: "Наггетсы 6 шт",              price: 340, ingredients: "Подаются с сырным соусом и кетчупом" },
+      { id: 32, img: "dishes/1.png",  name: "Картофель фри 150 г",        price: 240, ingredients: "Подаётся с сырным соусом и кетчупом" }
     ]
   },
   {
@@ -466,8 +476,19 @@ function saveCart() {
         '<img class="dish-card-img" src="' + item.img + '" alt="' + item.name + '" loading="lazy">' +
         '<div class="dish-card-body">' +
           '<div class="dish-card-name">' + item.name + '</div>' +
-          '<div class="dish-card-price">' + item.price + ' ₽</div>' +
+          '<div class="dish-card-footer">' +
+            '<span class="dish-card-price">' + item.price + ' ₽</span>' +
+            '<button type="button" class="dish-card-add" aria-label="Добавить в корзину">+</button>' +
+          '</div>' +
         '</div>';
+      var addBtn = card.querySelector('.dish-card-add');
+      addBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        addItemToCart(item);
+        addBtn.textContent = '✓';
+        addBtn.classList.add('added');
+        setTimeout(function(){ addBtn.textContent = '+'; addBtn.classList.remove('added'); }, 1000);
+      });
       grid.appendChild(card);
     });
     section.appendChild(grid);
@@ -504,12 +525,16 @@ function onOverlayClick(e) {
 
 document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
 
+function addItemToCart(item) {
+  var id = String(item.id);
+  if (cart[id]) { cart[id].qty++; }
+  else { cart[id] = { name: item.name, price: item.price, img: item.img, qty: 1 }; }
+  saveCart();
+}
+
 function addCurrentToCart() {
   if (!currentItem) return;
-  var id = String(currentItem.id);
-  if (cart[id]) { cart[id].qty++; }
-  else { cart[id] = { name: currentItem.name, price: currentItem.price, img: currentItem.img, qty: 1 }; }
-  saveCart();
+  addItemToCart(currentItem);
   var btn = document.getElementById('add-btn');
   btn.textContent = '✓ Добавлено';
   btn.className = 'btn-add added';
