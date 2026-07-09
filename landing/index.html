@@ -109,6 +109,35 @@
     }
     .btn-main-outline:hover { background: var(--green-l); transform: translateY(-2px); }
 
+    /* AFISHA */
+    .afisha-section { padding: 72px 5vw 0; }
+    .afisha-card {
+      background: var(--white); border-radius: 28px; overflow: hidden;
+      display: grid; grid-template-columns: 1fr 1.1fr; gap: 0;
+      box-shadow: 0 6px 32px rgba(0,0,0,.08);
+      max-width: 1000px; margin: 0 auto;
+      text-decoration: none; color: inherit;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .afisha-card:hover { transform: translateY(-4px); box-shadow: 0 14px 44px rgba(0,0,0,.13); }
+    .afisha-img { display: block; width: 100%; height: 100%; min-width: 0; object-fit: cover; min-height: 380px; }
+    .afisha-body { padding: 44px 48px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+    .afisha-tag { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--pink-d); margin-bottom: 12px; }
+    .afisha-title { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-style: italic; color: var(--dark); margin-bottom: 10px; line-height: 1.2; }
+    .afisha-sub { font-size: .88rem; color: var(--gray); line-height: 1.65; font-weight: 300; margin-bottom: 24px; }
+    .afisha-features { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+    .afisha-feature { display: flex; align-items: center; gap: 7px; background: var(--bg); border: 1px solid var(--pink); border-radius: 30px; padding: 8px 14px; font-size: .78rem; color: var(--dark); }
+    .afisha-feature svg { width: 15px; height: 15px; fill: var(--green); flex-shrink: 0; }
+    .btn-pink {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--pink-d); color: var(--white);
+      padding: 14px 36px; border-radius: 50px;
+      font-size: .9rem; font-weight: 600; text-decoration: none;
+      letter-spacing: .04em; transition: background .2s, transform .15s;
+      align-self: flex-start;
+    }
+    .btn-pink:hover { background: #c07080; transform: translateY(-2px); }
+
     /* SECTION TITLE */
     .section-title { text-align: center; padding: 64px 5vw 40px; }
     .section-title h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); font-style: italic; color: var(--dark); margin-bottom: 10px; }
@@ -249,6 +278,9 @@
       .nav-links.open { display: flex; }
       .nav-links a { font-size: .9rem; }
       .hero { min-height: 80vh; }
+      .afisha-card { grid-template-columns: 1fr; }
+      .afisha-img { min-height: 220px; }
+      .afisha-body { padding: 28px 24px; }
     }
   </style>
 </head>
@@ -282,6 +314,40 @@
       <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-main-outline">Заказать в MAX</a>
     </div>
   </div>
+</section>
+
+<!-- AFISHA -->
+<section class="afisha-section">
+  <div class="section-title" style="padding-top:0">
+    <h2>Афиша</h2>
+    <p>Детские мастер-классы и дни рождения «под ключ»</p>
+    <div class="divider"></div>
+  </div>
+  <a class="afisha-card" href="services-birthday.html">
+    <img class="afisha-img" src="afisha/afisha.jpg" alt="Детские мастер-классы и дни рождения под ключ в кафе IrMa">
+    <div class="afisha-body">
+      <p class="afisha-tag">Детская студия · Дни рождения</p>
+      <p class="afisha-title">Детские мастер-классы и дни рождения «под ключ»</p>
+      <p class="afisha-sub">Пицца, трайфлы и пряники своими руками — увлекательные мастер-классы для детей. А день рождения «под ключ» мы возьмём на себя: аниматор, торт, детское меню и оформление праздника.</p>
+
+      <div class="afisha-features">
+        <span class="afisha-feature">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 12.42L11 15V7h1.5v7.25l4.5 2.67-.41.5z"/></svg>
+          Всё включено — напиток и сахарная вата
+        </span>
+        <span class="afisha-feature">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+          Аниматор и торт любой сложности
+        </span>
+        <span class="afisha-feature">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          Возможны индивидуальные программы
+        </span>
+      </div>
+
+      <span class="btn-pink">Узнать больше</span>
+    </div>
+  </a>
 </section>
 
 <!-- CAROUSEL -->
