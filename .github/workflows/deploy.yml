@@ -18,6 +18,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           command_timeout: 15m
           script: |
+            set -ex
             cd /srv/irma
             git fetch origin
             git pull origin master
