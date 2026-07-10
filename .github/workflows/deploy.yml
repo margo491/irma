@@ -24,7 +24,7 @@ jobs:
             git pull origin master
 
             docker compose -f docker-compose.yml -f docker-compose.prod.yml \
-              build --no-cache app
+              build app
 
             docker compose -f docker-compose.yml -f docker-compose.prod.yml \
               up -d --remove-orphans
