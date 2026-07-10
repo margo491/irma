@@ -31,11 +31,8 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 5vw; height: 64px;
     }
-    .nav-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem; font-style: italic;
-      color: var(--dark); text-decoration: none; letter-spacing: .03em;
-    }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
+    .nav-logo-img { height: 44px; width: auto; display: block; }
     .nav-links { display: flex; gap: 14px; align-items: center; }
     .nav-links a {
       text-decoration: none; color: var(--gray);
@@ -288,7 +285,7 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="index.html">IrMa</a>
+  <a class="nav-logo" href="index.html"><img src="logo.jpg" alt="IrMa by Marinich" class="nav-logo-img"></a>
   <div class="nav-links" id="nav-links">
     <a href="index.html" class="nav-active">Главная</a>
     <a href="menu.html">Меню</a>
@@ -313,6 +310,21 @@
       <a href="menu.html" class="btn-main">Смотреть меню</a>
       <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-main-outline">Заказать в MAX</a>
     </div>
+  </div>
+</section>
+
+<!-- CAROUSEL -->
+<section class="carousel-section">
+  <div class="section-title">
+    <h2>Из нашего меню</h2>
+    <p>Свежие блюда каждый день — выбирайте любимое</p>
+    <div class="divider"></div>
+  </div>
+  <div class="carousel-wrapper">
+    <div class="carousel-track" id="carousel-track"></div>
+  </div>
+  <div class="carousel-cta">
+    <a href="menu.html" class="btn-outline-green">Всё меню →</a>
   </div>
 </section>
 
@@ -348,21 +360,6 @@
       <span class="btn-pink">Узнать больше</span>
     </div>
   </a>
-</section>
-
-<!-- CAROUSEL -->
-<section class="carousel-section">
-  <div class="section-title">
-    <h2>Из нашего меню</h2>
-    <p>Свежие блюда каждый день — выбирайте любимое</p>
-    <div class="divider"></div>
-  </div>
-  <div class="carousel-wrapper">
-    <div class="carousel-track" id="carousel-track"></div>
-  </div>
-  <div class="carousel-cta">
-    <a href="menu.html" class="btn-outline-green">Всё меню →</a>
-  </div>
 </section>
 
 <!-- NEWS -->
