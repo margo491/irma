@@ -73,14 +73,12 @@
     .hours-table td:last-child { color: var(--dark); font-weight: 600; }
 
     /* MAP */
-    .map-placeholder {
-      background: linear-gradient(135deg, #f8f4f0 0%, #e8f0e0 100%);
-      border-radius: 24px; overflow: hidden; height: 360px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      border: 2px dashed var(--pink);
-      text-align: center; padding: 32px;
+    .map-card {
+      background: var(--white); border-radius: 24px; overflow: hidden;
+      box-shadow: 0 6px 28px rgba(0,0,0,.08);
     }
-    .map-emoji { font-size: 4rem; margin-bottom: 16px; }
+    .map-iframe { width: 100%; height: 260px; border: 0; display: block; }
+    .map-caption { text-align: center; padding: 24px 28px; }
     .map-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-style: italic; color: var(--dark); margin-bottom: 8px; }
     .map-address { font-size: .88rem; color: var(--gray); font-weight: 300; line-height: 1.6; margin-bottom: 20px; }
     .btn-map {
@@ -195,8 +193,7 @@
         <div class="contact-icon ci-pink">📍</div>
         <div class="contact-text">
           <p class="contact-label">Адрес</p>
-          <p class="contact-value">г. Москва, ул. Цветочная, д. 5</p>
-          <p class="contact-note">Метро «Садовая», 5 минут пешком</p>
+          <p class="contact-value">г. Краснодар, ул. Адмирала Крузенштерна, д. 6/3</p>
         </div>
       </div>
 
@@ -204,7 +201,7 @@
         <div class="contact-icon ci-green">📞</div>
         <div class="contact-text">
           <p class="contact-label">Телефон</p>
-          <p class="contact-value"><a href="tel:+79995552233">+7 (999) 555-22-33</a></p>
+          <p class="contact-value"><a href="tel:+79102221480">+7 910 222-14-80</a></p>
           <p class="contact-note">Принимаем звонки в часы работы</p>
         </div>
       </div>
@@ -232,11 +229,13 @@
     </div>
 
     <!-- MAP -->
-    <div class="map-placeholder">
-      <div class="map-emoji">🗺️</div>
-      <p class="map-title">IrMa на карте</p>
-      <p class="map-address">г. Москва<br>ул. Цветочная, д. 5<br>м. Садовая</p>
-      <a href="https://yandex.ru/maps/" target="_blank" class="btn-map">Открыть в Яндекс Картах</a>
+    <div class="map-card">
+      <iframe class="map-iframe" src="https://yandex.ru/map-widget/v1/?text=Краснодар%2C%20ул.%20Адмирала%20Крузенштерна%2C%206%2F3&z=16" loading="lazy" title="IrMa на карте"></iframe>
+      <div class="map-caption">
+        <p class="map-title">IrMa на карте</p>
+        <p class="map-address">г. Краснодар<br>ул. Адмирала Крузенштерна, д. 6/3</p>
+        <a href="https://yandex.ru/maps/?text=Краснодар%2C%20ул.%20Адмирала%20Крузенштерна%2C%206%2F3" target="_blank" class="btn-map">Открыть в Яндекс Картах</a>
+      </div>
     </div>
 
   </div>
