@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IrMa — Акции</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink:    #f2c4ce;
+      --pink-d:  #d98a9a;
+      --green:   #8fa87c;
+      --green-l: #c8d9be;
+      --bg:      #fdf6f7;
+      --white:   #ffffff;
+      --dark:    #3a3a3a;
+      --gray:    #7a7a7a;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--dark); }
+
+    nav:not(.footer-nav) { position: sticky; top: 0; z-index: 100; background: rgba(246,238,235,.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--pink); display: flex; align-items: center; justify-content: space-between; padding: 0 5vw; height: 64px; }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
+    .nav-logo-img { height: 44px; width: auto; display: block; }
+    .nav-links { display: flex; gap: 14px; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--gray); font-size: .77rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; transition: color .2s; white-space: nowrap; }
+    .nav-links a:hover { color: var(--pink-d); }
+    .nav-links a.nav-active { color: var(--pink-d); font-weight: 700; }
+    .btn-order { background: var(--green); color: var(--white) !important; padding: 9px 20px; border-radius: 30px; font-size: .77rem; font-weight: 600 !important; transition: background .2s, transform .15s !important; white-space: nowrap; }
+    .btn-order:hover { background: #7a956a !important; transform: translateY(-1px); }
+    .btn-cart { display: inline-flex; align-items: center; gap: 6px; background: var(--pink-d); color: var(--white) !important; padding: 9px 16px; border-radius: 30px; font-size: .77rem; font-weight: 600 !important; border: none; cursor: pointer; letter-spacing: .04em; transition: background .2s, transform .15s; font-family: 'Montserrat', sans-serif; white-space: nowrap; }
+    .btn-cart:hover { background: #c07080 !important; transform: translateY(-1px); }
+    .cart-badge { background: var(--white); color: var(--pink-d); border-radius: 50%; width: 19px; height: 19px; font-size: .7rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+    .nav-burger { display: none; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--dark); padding: 4px; line-height: 1; }
+
+    .page-hero { background: linear-gradient(135deg, #fce4ec 0%, #f8f4f0 50%, #e8f0e0 100%); padding: 64px 5vw 60px; text-align: center; position: relative; overflow: hidden; }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(242,196,206,.3) 0%, transparent 60%), radial-gradient(ellipse at 80% 30%, rgba(200,217,190,.25) 0%, transparent 55%); }
+    .page-hero-inner { position: relative; max-width: 640px; margin: 0 auto; }
+    .page-hero-sub { font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 4rem); font-style: italic; color: var(--dark); margin-bottom: 14px; line-height: 1.1; }
+    .page-hero p { color: var(--gray); font-size: .95rem; font-weight: 300; line-height: 1.65; }
+    .divider { width: 60px; height: 2px; background: linear-gradient(90deg, var(--pink-d), var(--green)); margin: 18px auto 0; border-radius: 2px; }
+
+    /* PROMOS */
+    .promos-section { padding: 56px 5vw 80px; }
+    .promos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; max-width: 1100px; margin: 0 auto; }
+    .promo-card {
+      border-radius: 24px; overflow: hidden; position: relative;
+      min-height: 200px; display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 28px 28px 28px;
+      box-shadow: 0 6px 28px rgba(0,0,0,.12);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .promo-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(0,0,0,.16); }
+    .promo-card-1 { background: linear-gradient(135deg, #d98a9a 0%, #f2c4ce 100%); }
+    .promo-card-2 { background: linear-gradient(135deg, #8fa87c 0%, #c8d9be 100%); }
+    .promo-card-3 { background: linear-gradient(135deg, #b07baf 0%, #e8d5e8 100%); }
+    .promo-card-4 { background: linear-gradient(135deg, #d4a544 0%, #f0d99a 100%); }
+    .promo-card-5 { background: linear-gradient(135deg, #6fa8a0 0%, #b8dad5 100%); }
+    .promo-card-6 { background: linear-gradient(135deg, #d98a9a 0%, #b07baf 100%); }
+    .promo-card-7 { background: linear-gradient(135deg, #8fa87c 0%, #d4a544 100%); }
+    .promo-icon { font-size: 2.8rem; margin-bottom: 12px; }
+    .promo-badge {
+      display: inline-block; background: rgba(255,255,255,.25);
+      color: var(--white); font-size: .68rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 10px;
+    }
+    .promo-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-style: italic; color: var(--white); margin-bottom: 8px; line-height: 1.2; }
+    .promo-text { font-size: .85rem; color: rgba(255,255,255,.85); line-height: 1.55; font-weight: 300; }
+
+    .back-link { display: block; text-align: center; margin-top: 44px; font-size: .82rem; color: var(--gray); text-decoration: none; }
+    .back-link:hover { color: var(--pink-d); }
+
+    /* FOOTER */
+    footer { background: var(--dark); color: rgba(255,255,255,.5); padding: 36px 5vw 24px; font-size: .78rem; }
+    .footer-inner { max-width: 960px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; margin-bottom: 28px; }
+    .footer-brand-name { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--white); display: block; margin-bottom: 4px; }
+    .footer-tagline { color: rgba(255,255,255,.4); font-size: .76rem; }
+    .footer-nav { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+    .footer-nav a { color: rgba(255,255,255,.5); text-decoration: none; font-size: .75rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; transition: color .2s; }
+    .footer-nav a:hover { color: rgba(255,255,255,.9); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px; text-align: center; }
+
+    @media (max-width: 768px) {
+      .nav-burger { display: block; }
+      .nav-links { position: fixed; top: 64px; left: 0; right: 0; background: rgba(253,246,247,.98); backdrop-filter: blur(8px); flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px 5vw; display: none; border-bottom: 1px solid var(--pink); z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+      .nav-links.open { display: flex; }
+      .nav-links a { font-size: .9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html"><img src="logo.jpg" alt="IrMa by Marinich" class="nav-logo-img"></a>
+  <div class="nav-links" id="nav-links">
+    <a href="index.html" class="nav-active">Главная</a>
+    <a href="menu.html">Меню</a>
+    <a href="services.html">Услуги</a>
+    <a href="training.html">Обучение</a>
+    <a href="blog.html">Блог</a>
+    <a href="contacts.html">Контакты</a>
+    <button class="btn-cart" onclick="window.location='menu.html'">🛒 <span class="cart-badge" id="cart-count">0</span></button>
+    <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-order">Заказать</a>
+  </div>
+  <button class="nav-burger" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <p class="page-hero-sub">Семейное кафе IrMa</p>
+    <h1>Акции</h1>
+    <p>Выгодные предложения для наших гостей — все актуальные акции в одном месте</p>
+    <div class="divider"></div>
+  </div>
+</section>
+
+<!-- PROMOS -->
+<section class="promos-section">
+  <div class="promos-grid">
+
+    <div class="promo-card promo-card-1">
+      <div class="promo-icon">☀️</div>
+      <span class="promo-badge">Каждый день</span>
+      <p class="promo-title">Завтрак в подарок</p>
+      <p class="promo-text">При заказе от 600 ₽ с 9:00 до 12:00 — чашка кофе или чай в подарок. Идеально начать день вкусно.</p>
+    </div>
+
+    <div class="promo-card promo-card-2">
+      <div class="promo-icon">☕</div>
+      <span class="promo-badge">По вторникам</span>
+      <p class="promo-title">Два кофе по цене одного</p>
+      <p class="promo-text">Каждый вторник — любые два кофейных напитка за цену одного. Приходите вдвоём и пробуйте новинки вместе.</p>
+    </div>
+
+    <div class="promo-card promo-card-3">
+      <div class="promo-icon">🎁</div>
+      <span class="promo-badge">Постоянно</span>
+      <p class="promo-title">Бонусная программа</p>
+      <p class="promo-text">10% от каждого заказа через бота IrMa возвращается бонусами. Копите и тратьте на любимые блюда.</p>
+    </div>
+
+    <div class="promo-card promo-card-4">
+      <div class="promo-icon">🕕</div>
+      <span class="promo-badge">Будни, 15:00–17:00</span>
+      <p class="promo-title">Счастливые часы</p>
+      <p class="promo-text">Скидка 20% на всю выпечку и десерты каждый будний день с 15:00 до 17:00. Успейте порадовать себя сладким.</p>
+    </div>
+
+    <div class="promo-card promo-card-5">
+      <div class="promo-icon">🎈</div>
+      <span class="promo-badge">В день рождения</span>
+      <p class="promo-title">Десерт в подарок</p>
+      <p class="promo-text">Покажите документ в свой день рождения — любой десерт из витрины дарим бесплатно. Приходите отмечать с нами!</p>
+    </div>
+
+    <div class="promo-card promo-card-6">
+      <div class="promo-icon">👯</div>
+      <span class="promo-badge">Приведи друга</span>
+      <p class="promo-title">Скидка 15% на двоих</p>
+      <p class="promo-text">Приведите друга, который у нас впервые — получите скидку 15% на весь заказ для вас обоих.</p>
+    </div>
+
+    <div class="promo-card promo-card-7">
+      <div class="promo-icon">🍽️</div>
+      <span class="promo-badge">Будни, 12:00–16:00</span>
+      <p class="promo-title">Бизнес-ланч за 390 ₽</p>
+      <p class="promo-text">Суп, горячее и напиток на выбор — сытный обед по фиксированной цене каждый будний день.</p>
+    </div>
+
+  </div>
+  <a href="index.html" class="back-link">← Вернуться на главную</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <span class="footer-brand-name">IrMa</span>
+        <span class="footer-tagline">Семейное кафе by Marinich</span>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Главная</a>
+        <a href="menu.html">Меню</a>
+        <a href="services.html">Услуги</a>
+        <a href="training.html">Обучение</a>
+        <a href="blog.html">Блог</a>
+        <a href="contacts.html">Контакты</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">© 2025 IrMa. Все права защищены.</div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  try {
+    var cart = JSON.parse(localStorage.getItem('irma_cart') || '{}');
+    var total = Object.values(cart).reduce(function(s,v){ return s+(v.qty||0); }, 0);
+    document.getElementById('cart-count').textContent = total;
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>
