@@ -21,7 +21,7 @@
     html { scroll-behavior: smooth; }
     body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--dark); }
 
-    nav { position: sticky; top: 0; z-index: 100; background: rgba(246,238,235,.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--pink); display: flex; align-items: center; justify-content: space-between; padding: 0 5vw; height: 64px; }
+    nav:not(.footer-nav) { position: sticky; top: 0; z-index: 100; background: rgba(246,238,235,.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--pink); display: flex; align-items: center; justify-content: space-between; padding: 0 5vw; height: 64px; }
     .nav-logo { display: flex; align-items: center; text-decoration: none; }
     .nav-logo-img { height: 44px; width: auto; display: block; }
     .nav-links { display: flex; gap: 14px; align-items: center; }

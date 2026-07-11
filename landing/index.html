@@ -24,7 +24,7 @@
     body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--dark); }
 
     /* NAV */
-    nav {
+    nav:not(.footer-nav) {
       position: sticky; top: 0; z-index: 100;
       background: rgba(246,238,235,.95); backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--pink);
@@ -213,6 +213,10 @@
     .promo-card-1 { background: linear-gradient(135deg, #d98a9a 0%, #f2c4ce 100%); }
     .promo-card-2 { background: linear-gradient(135deg, #8fa87c 0%, #c8d9be 100%); }
     .promo-card-3 { background: linear-gradient(135deg, #b07baf 0%, #e8d5e8 100%); }
+    .promo-card-4 { background: linear-gradient(135deg, #d4a544 0%, #f0d99a 100%); }
+    .promo-card-5 { background: linear-gradient(135deg, #6fa8a0 0%, #b8dad5 100%); }
+    .promo-card-6 { background: linear-gradient(135deg, #d98a9a 0%, #b07baf 100%); }
+    .promo-card-7 { background: linear-gradient(135deg, #8fa87c 0%, #d4a544 100%); }
     .promo-icon { font-size: 2.8rem; margin-bottom: 12px; }
     .promo-badge {
       display: inline-block; background: rgba(255,255,255,.25);
@@ -401,6 +405,46 @@
       </div>
     </div>
 
+    <div class="news-card">
+      <div class="news-card-img">🥗</div>
+      <div class="news-card-body">
+        <p class="news-tag">Новинка</p>
+        <p class="news-card-title">Летние боулы с киноа и авокадо</p>
+        <p class="news-card-text">Обновили летнее меню: три новых боула с киноа, авокадо, лососем и сезонными овощами. Лёгко, свежо и очень по-летнему.</p>
+        <p class="news-date">20 мая 2025</p>
+      </div>
+    </div>
+
+    <div class="news-card">
+      <div class="news-card-img">🌿</div>
+      <div class="news-card-body">
+        <p class="news-tag">Открытие</p>
+        <p class="news-card-title">Открыли летнюю веранду</p>
+        <p class="news-card-text">Теперь можно позавтракать и поужинать на свежем воздухе — веранда работает ежедневно до заката. Места лучше бронировать заранее.</p>
+        <p class="news-date">5 мая 2025</p>
+      </div>
+    </div>
+
+    <div class="news-card">
+      <div class="news-card-img">🏆</div>
+      <div class="news-card-body">
+        <p class="news-tag">Достижение</p>
+        <p class="news-card-title">IrMa вошла в топ-10 кафе города</p>
+        <p class="news-card-text">По версии городского гастрономического гида мы попали в десятку лучших семейных кафе. Спасибо, что выбираете нас!</p>
+        <p class="news-date">22 апреля 2025</p>
+      </div>
+    </div>
+
+    <div class="news-card">
+      <div class="news-card-img">👩‍🍳</div>
+      <div class="news-card-body">
+        <p class="news-tag">Команда</p>
+        <p class="news-card-title">У нас новый шеф-кондитер</p>
+        <p class="news-card-text">К команде IrMa присоединилась шеф-кондитер с опытом работы в европейских кондитерских. Уже готовит новые десерты для меню.</p>
+        <p class="news-date">10 апреля 2025</p>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -432,6 +476,34 @@
       <span class="promo-badge">Постоянно</span>
       <p class="promo-title">Бонусная программа</p>
       <p class="promo-text">10% от каждого заказа через бота IrMa возвращается бонусами. Копите и тратьте на любимые блюда.</p>
+    </div>
+
+    <div class="promo-card promo-card-4">
+      <div class="promo-icon">🕕</div>
+      <span class="promo-badge">Будни, 15:00–17:00</span>
+      <p class="promo-title">Счастливые часы</p>
+      <p class="promo-text">Скидка 20% на всю выпечку и десерты каждый будний день с 15:00 до 17:00. Успейте порадовать себя сладким.</p>
+    </div>
+
+    <div class="promo-card promo-card-5">
+      <div class="promo-icon">🎈</div>
+      <span class="promo-badge">В день рождения</span>
+      <p class="promo-title">Десерт в подарок</p>
+      <p class="promo-text">Покажите документ в свой день рождения — любой десерт из витрины дарим бесплатно. Приходите отмечать с нами!</p>
+    </div>
+
+    <div class="promo-card promo-card-6">
+      <div class="promo-icon">👯</div>
+      <span class="promo-badge">Приведи друга</span>
+      <p class="promo-title">Скидка 15% на двоих</p>
+      <p class="promo-text">Приведите друга, который у нас впервые — получите скидку 15% на весь заказ для вас обоих.</p>
+    </div>
+
+    <div class="promo-card promo-card-7">
+      <div class="promo-icon">🍽️</div>
+      <span class="promo-badge">Будни, 12:00–16:00</span>
+      <p class="promo-title">Бизнес-ланч за 390 ₽</p>
+      <p class="promo-text">Суп, горячее и напиток на выбор — сытный обед по фиксированной цене каждый будний день.</p>
     </div>
 
   </div>
