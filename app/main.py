@@ -7,6 +7,7 @@ from app.api.bonus import router as bonus_router
 from app.api.lead import router as lead_router
 from app.api.admin import router as admin_router
 from app.bot.webhook import router as webhook_router
+from app.bot.news_webhook import router as news_webhook_router
 
 app = FastAPI(title="Irma Bot API", version="0.1.0")
 
@@ -19,6 +20,7 @@ app.include_router(bonus_router, prefix="/bonuses", tags=["bonus"])
 app.include_router(lead_router, prefix="/leads", tags=["lead"])
 app.include_router(admin_router, prefix="/admin", tags=["admin"])
 app.include_router(webhook_router, tags=["bot"])
+app.include_router(news_webhook_router, tags=["news-bot-debug"])
 
 # Лендинг — монтируется последним, не перекрывает API-роуты
 app.mount("/", StaticFiles(directory="landing", html=True), name="landing")

@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     bonus_earn_rate: float = 0.05
     bonus_max_spend_rate: float = 0.20
     max_token: str = ""
+    token_bot_max: str = ""
     admin_max_user_id: str = ""
     admin_email: str = ""
     admin_password: str = ""
