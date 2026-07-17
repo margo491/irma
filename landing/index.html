@@ -196,7 +196,8 @@
       text-transform: uppercase; color: var(--green); margin-bottom: 8px;
     }
     .news-card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; color: var(--dark); margin-bottom: 8px; line-height: 1.35; }
-    .news-card-text { font-size: .85rem; color: var(--gray); line-height: 1.65; font-weight: 300; }
+    .news-card-text { font-size: .85rem; color: var(--gray); line-height: 1.65; font-weight: 300; white-space: pre-line; }
+    .news-empty { text-align: center; color: var(--gray); font-size: .9rem; grid-column: 1 / -1; padding: 20px 0; }
     .news-date { font-size: .72rem; color: #bbb; margin-top: 14px; letter-spacing: .04em; }
 
     /* PROMOS */
@@ -373,59 +374,7 @@
     <p>Следите за жизнью кафе</p>
     <div class="divider"></div>
   </div>
-  <div class="news-grid">
-
-    <div class="news-card">
-      <div class="news-card-img">🍕</div>
-      <div class="news-card-body">
-        <p class="news-tag">Новинка</p>
-        <p class="news-card-title">Пицца «Гриль» теперь в меню</p>
-        <p class="news-card-text">Добавили новую пиццу с пепперони, шампиньонами, болгарским перцем и оливками на тонком хрустящем тесте. Обязательно попробуйте!</p>
-        <p class="news-date">25 июня 2025</p>
-      </div>
-    </div>
-
-    <div class="news-card">
-      <div class="news-card-img">⏰</div>
-      <div class="news-card-body">
-        <p class="news-tag">График работы</p>
-        <p class="news-card-title">Открываемся по воскресеньям</p>
-        <p class="news-card-text">Отличные новости! Теперь IrMa работает все семь дней в неделю. В выходные ждём вас с 10:00 до 20:00 — приходите с семьёй на вкусный завтрак.</p>
-        <p class="news-date">10 июня 2025</p>
-      </div>
-    </div>
-
-    <div class="news-card">
-      <div class="news-card-img">🎂</div>
-      <div class="news-card-body">
-        <p class="news-tag">Событие</p>
-        <p class="news-card-title">IrMa — нам исполняется 3 года!</p>
-        <p class="news-card-text">15 июля отмечаем день рождения кафе: скидки на всё меню, живая музыка с 18:00 и сладкие подарки первым 30 гостям. Не пропустите!</p>
-        <p class="news-date">1 июня 2025</p>
-      </div>
-    </div>
-
-    <div class="news-card">
-      <div class="news-card-img">🥗</div>
-      <div class="news-card-body">
-        <p class="news-tag">Новинка</p>
-        <p class="news-card-title">Летние боулы с киноа и авокадо</p>
-        <p class="news-card-text">Обновили летнее меню: три новых боула с киноа, авокадо, лососем и сезонными овощами. Лёгко, свежо и очень по-летнему.</p>
-        <p class="news-date">20 мая 2025</p>
-      </div>
-    </div>
-
-    <div class="news-card">
-      <div class="news-card-img">🌿</div>
-      <div class="news-card-body">
-        <p class="news-tag">Открытие</p>
-        <p class="news-card-title">Открыли летнюю веранду</p>
-        <p class="news-card-text">Теперь можно позавтракать и поужинать на свежем воздухе — веранда работает ежедневно до заката. Места лучше бронировать заранее.</p>
-        <p class="news-date">5 мая 2025</p>
-      </div>
-    </div>
-
-  </div>
+  <div class="news-grid" id="news-grid"></div>
   <div class="carousel-cta">
     <a href="news.html" class="btn-outline-green">Остальные новости →</a>
   </div>
@@ -597,6 +546,38 @@ var track = document.getElementById('carousel-track');
     '</div>';
   track.appendChild(a);
 });
+
+/* News (auto-published from MAX channel) */
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+fetch('/news/?limit=5')
+  .then(function(res) { return res.json(); })
+  .then(function(items) {
+    var grid = document.getElementById('news-grid');
+    if (!items.length) {
+      grid.innerHTML = '<p class="news-empty">Пока нет новостей — загляните позже.</p>';
+      return;
+    }
+    grid.innerHTML = items.map(function(n) {
+      var img = n.image_path
+        ? '<img class="news-card-img" src="' + n.image_path + '" alt="' + escapeHtml(n.title) + '">'
+        : '<div class="news-card-img">📰</div>';
+      var date = new Date(n.published_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+      return '<div class="news-card">' + img +
+        '<div class="news-card-body">' +
+          '<p class="news-tag">' + escapeHtml(n.tag) + '</p>' +
+          '<p class="news-card-title">' + escapeHtml(n.title) + '</p>' +
+          '<p class="news-card-text">' + escapeHtml(n.text) + '</p>' +
+          '<p class="news-date">' + date + '</p>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  })
+  .catch(function(err) { console.error('news load failed', err); });
 </script>
 </body>
 </html>

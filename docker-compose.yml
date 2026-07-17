@@ -22,6 +22,9 @@ services:
     restart: unless-stopped
     dns:
       - 8.8.8.8
+    volumes:
+      - news_uploads:/app/uploads
 
 volumes:
   postgres_data:
+  news_uploads:
