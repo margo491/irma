@@ -6,9 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.config import settings
 from app.database import get_db
+from pathlib import Path
 from app.models.lead import Lead
 from app.models.order import Order
 from app.models.user import User
+from app.models.news import News
 
 router = APIRouter()
 security = HTTPBasic()
@@ -72,6 +74,9 @@ async def admin_home(db: AsyncSession = Depends(get_db), _: str = Depends(requir
     )
     orders = orders_result.all()
 
+    news_result = await db.execute(select(News).order_by(News.published_at.desc()).limit(100))
+    news_items = news_result.scalars().all()
+
     leads_rows = "".join(
         f"""<tr>
           <td>{lead.created_at:%d.%m.%Y %H:%M}</td>
@@ -102,6 +107,21 @@ async def admin_home(db: AsyncSession = Depends(get_db), _: str = Depends(requir
         for order, user in orders
     ) or '<tr><td colspan="5" class="empty">Заказов пока нет</td></tr>'
 
+    news_rows = "".join(
+        f"""<tr>
+          <td>{item.published_at:%d.%m.%Y}</td>
+          <td>{item.tag}</td>
+          <td>{item.title}</td>
+          <td>{'бот' if item.mid else 'вручную'}</td>
+          <td>
+            <form method="post" action="/admin/news/{item.id}/delete" onsubmit="return confirm('Удалить эту новость?')">
+              <button type="submit" style="background:#d98a9a">Удалить</button>
+            </form>
+          </td>
+        </tr>"""
+        for item in news_items
+    ) or '<tr><td colspan="5" class="empty">Новостей пока нет</td></tr>'
+
     body = f"""
     <h2>Заявки с сайта ({len(leads)})</h2>
     <table>
@@ -115,8 +135,33 @@ async def admin_home(db: AsyncSession = Depends(get_db), _: str = Depends(requir
       {orders_rows}
     </table>
     <p class="empty">Заказы из корзины на сайте пока не сохраняются в базу — только уходят уведомлением в MAX.</p>
+
+    <h2>Новости ({len(news_items)})</h2>
+    <table>
+      <tr><th>Дата</th><th>Тег</th><th>Заголовок</th><th>Источник</th><th></th></tr>
+      {news_rows}
+    </table>
+    <p class="empty">Новости из канала MAX публикуются автоматически, без модерации — здесь можно удалить неудачный пост.</p>
     """
     return HTMLResponse(_page(body))
+
+
+@router.post("/news/{news_id}/delete")
+async def delete_news(
+    news_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: str = Depends(require_admin),
+):
+    item = await db.get(News, news_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Новость не найдена")
+    if item.image_path:
+        file_path = Path(item.image_path.lstrip("/"))
+        if file_path.exists():
+            file_path.unlink()
+    await db.delete(item)
+    await db.commit()
+    return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.post("/leads/{lead_id}/status")
