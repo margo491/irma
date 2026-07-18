@@ -13,5 +13,6 @@ class News(Base):
     title: Mapped[str] = mapped_column(String, nullable=False)
     text: Mapped[str] = mapped_column(Text, default="")
     image_path: Mapped[str | None] = mapped_column(String, nullable=True)
+    video_path: Mapped[str | None] = mapped_column(String, nullable=True)
     published_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

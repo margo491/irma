@@ -10,4 +10,5 @@ class NewsOut(BaseModel):
     title: str
     text: str
     image_path: str | None
+    video_path: str | None
     published_at: datetime

@@ -39,6 +39,7 @@
     .article-section { padding: 48px 5vw 80px; }
     .article { max-width: 720px; margin: 0 auto; background: var(--white); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,.06); }
     .article-img { width: 100%; max-height: 420px; object-fit: cover; display: block; }
+    .article-video { width: 100%; max-height: 480px; display: block; background: #000; }
     .article-img-placeholder { width: 100%; height: 260px; background: linear-gradient(135deg, var(--pink) 0%, var(--green-l) 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem; }
     .article-body { padding: 36px 40px 44px; }
     .article-tag { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
@@ -146,11 +147,18 @@ if (!newsId) {
     })
     .then(function(n) {
       document.title = 'IrMa — ' + n.title;
-      var img = n.image_path
-        ? '<img class="article-img" src="' + n.image_path + '" alt="' + escapeHtml(n.title) + '">'
-        : '<div class="article-img-placeholder">📰</div>';
+      var media;
+      if (n.video_path) {
+        media = '<video class="article-video" controls playsinline' +
+          (n.image_path ? ' poster="' + n.image_path + '"' : '') +
+          '><source src="' + n.video_path + '" type="video/mp4"></video>';
+      } else if (n.image_path) {
+        media = '<img class="article-img" src="' + n.image_path + '" alt="' + escapeHtml(n.title) + '">';
+      } else {
+        media = '<div class="article-img-placeholder">📰</div>';
+      }
       var date = new Date(n.published_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-      articleEl.innerHTML = img +
+      articleEl.innerHTML = media +
         '<div class="article-body">' +
           '<p class="article-tag">' + escapeHtml(n.tag) + '</p>' +
           '<h1 class="article-title">' + escapeHtml(n.title) + '</h1>' +

@@ -56,9 +56,18 @@ async def _handle_event(payload: dict) -> None:
     if not mid:
         return
 
+    attachments = body.get("attachments") or []
+
     async with async_session() as session:
-        existing = await session.scalar(select(News.id).where(News.mid == mid))
+        existing = await session.scalar(select(News).where(News.mid == mid))
         if existing:
+            # Retry filling in a video we may have missed the first time
+            # (e.g. an earlier deploy that didn't download it yet).
+            if not existing.video_path:
+                video_path = await _download_first_video(attachments, mid)
+                if video_path:
+                    existing.video_path = video_path
+                    await session.commit()
             return
 
         text = (body.get("text") or "").strip()
@@ -68,7 +77,8 @@ async def _handle_event(payload: dict) -> None:
         if not rest:
             rest = text
 
-        image_path = await _download_first_image(body.get("attachments") or [], mid)
+        image_path = await _download_first_image(attachments, mid)
+        video_path = await _download_first_video(attachments, mid)
 
         timestamp_ms = message.get("timestamp")
         published_at = (
@@ -82,6 +92,7 @@ async def _handle_event(payload: dict) -> None:
                 title=title,
                 text=rest,
                 image_path=image_path,
+                video_path=video_path,
                 published_at=published_at,
             )
         )
@@ -121,6 +132,29 @@ async def _download_first_image(attachments: list[dict], mid: str) -> str | None
         ext = "jpg"
 
     filename = f"{safe_mid}.{ext}"
+    (UPLOAD_DIR / filename).write_bytes(resp.content)
+
+    return f"/uploads/news/{filename}"
+
+
+async def _download_first_video(attachments: list[dict], mid: str) -> str | None:
+    url = None
+    for att in attachments:
+        if att.get("type") == "video":
+            url = (att.get("payload") or {}).get("url")
+            if url:
+                break
+    if not url:
+        return None
+
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    safe_mid = re.sub(r"[^a-zA-Z0-9_.-]", "_", mid)
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url, timeout=60, headers={"User-Agent": "Mozilla/5.0"})
+        resp.raise_for_status()
+
+    filename = f"{safe_mid}.mp4"
     (UPLOAD_DIR / filename).write_bytes(resp.content)
 
     return f"/uploads/news/{filename}"
