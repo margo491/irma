@@ -179,9 +179,10 @@
     .news-section { padding: 0 5vw 80px; }
     .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
     .news-card {
-      background: var(--white); border-radius: 20px; overflow: hidden;
+      display: block; background: var(--white); border-radius: 20px; overflow: hidden;
       box-shadow: 0 4px 20px rgba(0,0,0,.06);
       transition: transform .2s, box-shadow .2s;
+      text-decoration: none; color: inherit;
     }
     .news-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,.1); }
     .news-card-img {
@@ -297,6 +298,7 @@
     <a href="services.html">Услуги</a>
     <a href="training.html">Обучение</a>
     <a href="blog.html">Блог</a>
+    <a href="news.html">Новости</a>
     <a href="contacts.html">Контакты</a>
     <button class="btn-cart" onclick="window.location='menu.html'">🛒 <span class="cart-badge" id="cart-count">0</span></button>
     <a href="https://web.max.ru/-71665082178843" target="_blank" class="btn-order">Заказать</a>
@@ -502,6 +504,7 @@
         <a href="services.html">Услуги</a>
         <a href="training.html">Обучение</a>
         <a href="blog.html">Блог</a>
+        <a href="news.html">Новости</a>
         <a href="contacts.html">Контакты</a>
       </nav>
     </div>
@@ -567,14 +570,14 @@ fetch('/news/?limit=5')
         ? '<img class="news-card-img" src="' + n.image_path + '" alt="' + escapeHtml(n.title) + '">'
         : '<div class="news-card-img">📰</div>';
       var date = new Date(n.published_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-      return '<div class="news-card">' + img +
+      return '<a class="news-card" href="news-item.html?id=' + n.id + '">' + img +
         '<div class="news-card-body">' +
           '<p class="news-tag">' + escapeHtml(n.tag) + '</p>' +
           '<p class="news-card-title">' + escapeHtml(n.title) + '</p>' +
           '<p class="news-card-text">' + escapeHtml(n.text) + '</p>' +
           '<p class="news-date">' + date + '</p>' +
         '</div>' +
-      '</div>';
+      '</a>';
     }).join('');
   })
   .catch(function(err) { console.error('news load failed', err); });
