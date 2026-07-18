@@ -1,6 +1,6 @@
 ---
 name: max-news-pipeline
-description: Use when working with the MAX-messenger channel integration for the IrMa site — reading channel posts via the news-bot API, debugging/testing the auto-publish news webhook, moderating auto-published news in the admin panel, or building a curated landing page (like a training lesson) from a channel post. Triggers on "MAX", "канал", "новости", "вебхук", "новостной бот", "автопубликация", "training-*.html", "id312332413602_3_bot".
+description: Use when working with the MAX-messenger channel integration for the IrMa site — reading channel posts via the news-bot API, debugging/testing the auto-publish news webhook (images or video), moderating auto-published news in the admin panel, fixing the news detail page, or building a curated landing page (like a training lesson) from a channel post. Triggers on "MAX", "канал", "новости", "вебхук", "новостной бот", "автопубликация", "news-item.html", "training-*.html", "id312332413602_3_bot", "irma-cafe.ru".
 ---
 
 # MAX channel → IrMa site publishing
@@ -20,33 +20,51 @@ produce a priced, structured lesson page.
   which is the customer-order bot's token used by `app/bot/handlers.py` /
   `app/bot/max_adapter.py`.
 - **Push subscription**: already registered with MAX Bot API, pointed at
-  `https://irma.bot-ktu.online/webhook/news`, `update_types: [bot_added,
+  `https://irma-cafe.ru/webhook/news`, `update_types: [bot_added,
   bot_removed, message_created]`. Don't re-register unless it's gone (check
   first, see below).
 - **Webhook handler**: `app/bot/news_webhook.py`. On `message_created` for the
   channel's `chat_id`, it derives `title` = first non-empty line of the post
-  text, `text` = the rest, downloads the first `image`-type attachment (or a
-  video's `thumbnail.url` if no image), and inserts a `News` row — **idempotent
-  on the MAX message id (`mid`)**, so redelivery never duplicates.
-- **Storage**: `news` table in Postgres (`app/models/news.py`), images in a
-  dedicated Docker volume `news_uploads` mounted at `/app/uploads`, served at
-  `/uploads/...`. `landing/` is baked into the image at *build* time (see
-  `Dockerfile`) — it is **not** persistent, so anything the running app writes
-  must go in `uploads/`, never under `landing/`.
-- **Read API**: `GET /news/?limit=N` (`app/api/news.py`), ordered by
-  `published_at desc`.
+  text, `text` = the rest, downloads the first `image`-type attachment (falling
+  back to a video's `thumbnail.url` as the card image if there's no photo),
+  **and** downloads the first `video`-type attachment's actual file (not just
+  its thumbnail) into `video_path` — inserts a `News` row that's **idempotent
+  on the MAX message id (`mid`)**, so redelivery never duplicates. If the row
+  already exists but is missing `video_path`, redelivery **backfills** it
+  instead of no-opping — see "Backfilling a published post" below.
+- **Storage**: `news` table in Postgres (`app/models/news.py`), images/videos
+  in a dedicated Docker volume `news_uploads` mounted at `/app/uploads`,
+  served at `/uploads/...`. `landing/` is baked into the image at *build* time
+  (see `Dockerfile`) — it is **not** persistent, so anything the running app
+  writes must go in `uploads/`, never under `landing/`.
+- **Read API** (`app/api/news.py`): `GET /news/?limit=N` (list, newest first)
+  and `GET /news/{id}` (single item, used by the detail page).
 - **Frontend**: `landing/index.html` (top 5) and `landing/news.html` (all)
-  render cards client-side via `fetch('/news/...')` — no server templating,
-  plain JS building `innerHTML` with `escapeHtml()` (the post text is
-  untrusted external content; never remove the escaping).
+  render cards client-side via `fetch('/news/...')`; each card links to
+  `landing/news-item.html?id=<id>`, which fetches `GET /news/{id}` and renders
+  the full post — a `<video controls poster="{image_path}">` if `video_path`
+  is set, otherwise the image at full size (`object-fit: contain`, **not**
+  `cover` — a fixed `max-height` + `cover` crops portrait photos hard, that's
+  a recurring complaint, don't reintroduce it). All three pages build
+  `innerHTML` with `escapeHtml()` in plain JS, no server templating — the post
+  text/title is untrusted external content, never remove the escaping.
+  "Новости" is in the shared nav/footer on every landing page.
 - **Moderation**: `/admin` (HTTP Basic — `ADMIN_EMAIL`/`ADMIN_PASSWORD` in
   `.env`) has a "Новости" section with a delete button per row (removes the DB
-  row and its downloaded image file). Since publishing has no pre-review step,
-  this is the only way to take down a bad auto-post.
-- **Deploy**: push to `master` → `.github/workflows/deploy.yml` SSHes into the
-  VPS, `git pull`, rebuilds/restarts the `app` container via `docker compose`,
-  which runs `alembic upgrade head` before `uvicorn` starts. Prod:
-  `https://irma.bot-ktu.online`.
+  row and its downloaded image/video files). Since publishing has no
+  pre-review step, this is the only way to take down a bad auto-post.
+- **Deploy**: push to `master` on **`origin`** (GitHub) →
+  `.github/workflows/deploy.yml` SSHes into the VPS, `git pull`,
+  rebuilds/restarts the `app` container via `docker compose`, which runs
+  `alembic upgrade head` before `uvicorn` starts. Prod is reachable at both
+  `https://irma-cafe.ru` (the real domain, use this one when talking to the
+  user) and `https://irma.bot-ktu.online` (same server/IP, same deploy — pick
+  either for `curl`/testing, they're interchangeable).
+- There's also a second remote, `local`
+  (`http://192.168.31.250:3002/margo491/irma.git`, a self-hosted
+  Gitea/Forgejo on the LAN) — it's a plain mirror the user pushes to
+  separately on request. **Pushing to `local` does not deploy anything**; only
+  a push to `origin master` triggers the Actions workflow above.
 
 ## Reading the MAX Bot API
 
@@ -74,15 +92,23 @@ response `Content-Type` header when downloading, don't trust a `.jpg` guess.
 
 ## Debugging / testing the webhook
 
-Raw payloads are buffered in memory (last 20) for inspection:
+Raw payloads are buffered **in memory** (last 20) for inspection — this
+buffer is process-local and gets **wiped on every redeploy/restart**, so it's
+only useful for something that happened since the last deploy:
 
 ```bash
-curl -sS "https://irma.bot-ktu.online/webhook/news/debug"
+curl -sS "https://irma-cafe.ru/webhook/news/debug"
 ```
 
+For anything older, don't rely on the buffer — refetch the original message
+by `mid`/text from `GET /messages` (above) instead, which always reflects
+live channel history regardless of when the app last restarted.
+
 To test the full ingestion path end-to-end without waiting for a real post,
-POST a synthetic `message_created` event (use a real, already-hosted image URL
-from the site itself, not an external one) and verify + clean up afterward:
+POST a synthetic `message_created` event and verify + clean up afterward.
+Use a real, already-hosted URL from the site itself for the attachment (not
+an external one) — a static image for the image path, or an existing
+`/uploads/news/*.mp4` for the video path:
 
 ```bash
 NOW_MS=$(( $(date +%s) * 1000 ))
@@ -96,13 +122,13 @@ cat > payload.json <<EOF
     "body": {
       "mid": "${MID}",
       "text": "ТЕСТ (можно удалить)\n\nПроверка вебхука.",
-      "attachments": [{"type": "image", "payload": {"url": "https://irma.bot-ktu.online/logo.jpg"}}]
+      "attachments": [{"type": "image", "payload": {"url": "https://irma-cafe.ru/logo.jpg"}}]
     }
   }
 }
 EOF
-curl -sS -X POST "https://irma.bot-ktu.online/webhook/news" -H "Content-Type: application/json" --data @payload.json
-curl -sS "https://irma.bot-ktu.online/news/?limit=1"   # confirm it landed
+curl -sS -X POST "https://irma-cafe.ru/webhook/news" -H "Content-Type: application/json" --data @payload.json
+curl -sS "https://irma-cafe.ru/news/?limit=1"   # confirm it landed, check image_path/video_path
 # resend the same payload — total count must NOT increase (idempotency check)
 ```
 
@@ -112,8 +138,31 @@ never inline them):
 ```bash
 USER=$(grep -m1 '^ADMIN_EMAIL=' .env | cut -d= -f2-)
 PASS=$(grep -m1 '^ADMIN_PASSWORD=' .env | cut -d= -f2-)
-curl -sS -u "${USER}:${PASS}" -X POST "https://irma.bot-ktu.online/admin/news/<id>/delete"
+curl -sS -u "${USER}:${PASS}" -X POST "https://irma-cafe.ru/admin/news/<id>/delete"
 ```
+
+## Backfilling a published post (missing video, wrong media, etc.)
+
+The webhook is safe to redeliver: if a `News` row for that `mid` already
+exists, it currently only fills in `video_path` if that's still empty
+(see `_handle_event` in `news_webhook.py`) — everything else on an existing
+row is left alone. This is how the "Витрина" video posts that predated video
+support got fixed after the fact, and it's the general pattern for any future
+"we shipped a fix, now backfill what's already live" situation:
+
+1. Find the row's `mid` — either from `/webhook/news/debug` if it's recent
+   enough, or by matching title/timestamp against `GET /messages`.
+2. Re-fetch that exact message from `GET /messages` (attachment CDN URLs
+   expire, so grab a *fresh* copy, don't reuse an old captured payload).
+3. Wrap it in the same `message_created` envelope shape as above, using the
+   **real** `mid`, and POST it to `/webhook/news`.
+4. `GET /news/{id}` to confirm the field actually filled in.
+
+If a future fix needs to *overwrite* a field that's already set (not just
+fill in something empty), the idempotency check in `_handle_event` will need
+a similar carve-out added for that field — it doesn't blanket-update existing
+rows on redelivery by design (that would let a redelivered/duplicated MAX
+event clobber manual admin edits).
 
 ## Deploying a change
 
