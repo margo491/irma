@@ -12,7 +12,6 @@ from app.models.lead import Lead
 from app.models.order import Order
 from app.models.user import User
 from app.models.news import News
-from app.models.blog_post import BlogPost
 from app.models.training_lesson import TrainingLesson
 
 router = APIRouter()
@@ -135,9 +134,6 @@ async def admin_home(db: AsyncSession = Depends(get_db), _: str = Depends(requir
     news_result = await db.execute(select(News).order_by(News.published_at.desc()).limit(100))
     news_items = news_result.scalars().all()
 
-    blog_result = await db.execute(select(BlogPost).order_by(BlogPost.published_at.desc()).limit(100))
-    blog_items = blog_result.scalars().all()
-
     lessons_result = await db.execute(select(TrainingLesson).order_by(TrainingLesson.created_at.desc()))
     lessons = lessons_result.scalars().all()
 
@@ -187,21 +183,6 @@ async def admin_home(db: AsyncSession = Depends(get_db), _: str = Depends(requir
         for item in news_items
     ) or '<tr><td colspan="5" class="empty">Новостей пока нет</td></tr>'
 
-    blog_rows = "".join(
-        f"""<tr>
-          <td>{item.published_at:%d.%m.%Y}</td>
-          <td>{item.tag}</td>
-          <td>{item.title}</td>
-          <td class="row-actions">
-            <a class="btn-edit" href="/admin/blog/{item.id}/edit">Изменить</a>
-            <form method="post" action="/admin/blog/{item.id}/delete" onsubmit="return confirm('Удалить эту статью?')">
-              <button type="submit" style="background:#d98a9a">Удалить</button>
-            </form>
-          </td>
-        </tr>"""
-        for item in blog_items
-    ) or '<tr><td colspan="4" class="empty">Статей пока нет</td></tr>'
-
     lessons_rows = "".join(
         f"""<tr>
           <td>{lesson.title}</td>
@@ -237,12 +218,6 @@ async def admin_home(db: AsyncSession = Depends(get_db), _: str = Depends(requir
       {news_rows}
     </table>
     <p class="empty">Новости из канала MAX публикуются автоматически (с задержкой {settings.news_publish_delay_minutes} мин) — здесь можно поправить или удалить пост.</p>
-
-    <h2>Блог ({len(blog_items)}) <a class="add-link" href="/admin/blog/new">+ Добавить</a></h2>
-    <table>
-      <tr><th>Дата</th><th>Тег</th><th>Заголовок</th><th></th></tr>
-      {blog_rows}
-    </table>
 
     <h2>Уроки обучения ({len(lessons)}) <a class="add-link" href="/admin/training/new">+ Добавить</a></h2>
     <table>
@@ -369,113 +344,6 @@ async def delete_news(
         raise HTTPException(status_code=404, detail="Новость не найдена")
     _delete_file(item.image_path)
     _delete_file(item.video_path)
-    await db.delete(item)
-    await db.commit()
-    return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
-
-
-# ---------------------------------------------------------------- Blog
-
-def _blog_form(action: str, item: BlogPost | None = None) -> str:
-    img_preview = f'<img class="current-img" src="{item.image_path}">' if item and item.image_path else ""
-    return f"""
-    <h2>{"Изменить статью" if item else "Добавить статью"}</h2>
-    <form class="edit-form" method="post" action="{action}" enctype="multipart/form-data">
-      <label>Тег</label>
-      <input type="text" name="tag" value="{item.tag if item else 'Блог'}">
-
-      <label>Заголовок</label>
-      <input type="text" name="title" required value="{item.title if item else ''}">
-
-      <label>Краткое описание (для карточки)</label>
-      <textarea name="excerpt">{item.excerpt if item else ''}</textarea>
-
-      <label>Полный текст статьи</label>
-      <textarea name="text" style="min-height:200px">{item.text if item else ''}</textarea>
-
-      <label>Фото {"(оставьте пустым, чтобы не менять)" if item else "(необязательно)"}</label>
-      <input type="file" name="image" accept="image/*">
-      {img_preview}
-
-      <button type="submit">Сохранить</button>
-    </form>
-    """
-
-
-@router.get("/blog/new", response_class=HTMLResponse)
-async def blog_new_form(_: str = Depends(require_admin)):
-    return HTMLResponse(_page(_blog_form("/admin/blog/new")))
-
-
-@router.post("/blog/new")
-async def blog_create(
-    tag: str = Form("Блог"),
-    title: str = Form(...),
-    excerpt: str = Form(""),
-    text: str = Form(""),
-    image: UploadFile | None = File(None),
-    db: AsyncSession = Depends(get_db),
-    _: str = Depends(require_admin),
-):
-    image_path = await _save_upload(image, "blog")
-    db.add(
-        BlogPost(
-            tag=tag,
-            title=title,
-            excerpt=excerpt or text[:160],
-            text=text,
-            image_path=image_path,
-            published_at=datetime.utcnow(),
-        )
-    )
-    await db.commit()
-    return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
-
-
-@router.get("/blog/{post_id}/edit", response_class=HTMLResponse)
-async def blog_edit_form(post_id: int, db: AsyncSession = Depends(get_db), _: str = Depends(require_admin)):
-    item = await db.get(BlogPost, post_id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Статья не найдена")
-    return HTMLResponse(_page(_blog_form(f"/admin/blog/{post_id}/edit", item)))
-
-
-@router.post("/blog/{post_id}/edit")
-async def blog_update(
-    post_id: int,
-    tag: str = Form("Блог"),
-    title: str = Form(...),
-    excerpt: str = Form(""),
-    text: str = Form(""),
-    image: UploadFile | None = File(None),
-    db: AsyncSession = Depends(get_db),
-    _: str = Depends(require_admin),
-):
-    item = await db.get(BlogPost, post_id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Статья не найдена")
-    item.tag = tag
-    item.title = title
-    item.excerpt = excerpt or text[:160]
-    item.text = text
-    new_image = await _save_upload(image, "blog")
-    if new_image:
-        _delete_file(item.image_path)
-        item.image_path = new_image
-    await db.commit()
-    return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
-
-
-@router.post("/blog/{post_id}/delete")
-async def blog_delete(
-    post_id: int,
-    db: AsyncSession = Depends(get_db),
-    _: str = Depends(require_admin),
-):
-    item = await db.get(BlogPost, post_id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Статья не найдена")
-    _delete_file(item.image_path)
     await db.delete(item)
     await db.commit()
     return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)

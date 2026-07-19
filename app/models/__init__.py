@@ -4,7 +4,6 @@ from app.models.order import Order
 from app.models.bonus_transaction import BonusTransaction
 from app.models.lead import Lead
 from app.models.news import News
-from app.models.blog_post import BlogPost
 from app.models.training_lesson import TrainingLesson
 
 __all__ = [
@@ -15,6 +14,5 @@ __all__ = [
     "BonusTransaction",
     "Lead",
     "News",
-    "BlogPost",
     "TrainingLesson",
 ]
