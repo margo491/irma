@@ -1,6 +1,6 @@
 ---
 name: max-news-pipeline
-description: Use when working with the MAX-messenger channel integration for the IrMa site, or its admin-managed content (News/Blog/Training lessons) — reading channel posts via the news-bot API, debugging/testing the auto-publish news webhook (images or video), the 5-minute publish delay, moderating or CRUD-editing news/blog/training content in the admin panel, fixing a detail page, or building a curated landing page (like a hand-built training lesson) from a channel post. Triggers on "MAX", "канал", "новости", "вебхук", "новостной бот", "автопубликация", "news-item.html", "blog-item.html", "training-item.html", "training-*.html", "админка", "id312332413602_3_bot", "irma-cafe.ru".
+description: Use when working with the MAX-messenger channel integration for the IrMa site, or its admin-managed content (News/Training lessons) — reading channel posts via the news-bot API, debugging/testing the auto-publish news webhook (images or video), the 5-minute publish delay, moderating or CRUD-editing news/training content in the admin panel, fixing a detail page, or building a curated landing page (like a hand-built training lesson) from a channel post. Triggers on "MAX", "канал", "новости", "вебхук", "новостной бот", "автопубликация", "news-item.html", "training-item.html", "training-*.html", "админка", "id312332413602_3_bot", "irma-cafe.ru". There is no Blog feature — it was built then removed on request (2026-07-20); don't resurrect it without asking.
 ---
 
 # MAX channel → IrMa site publishing, and admin-managed content
@@ -19,8 +19,12 @@ Three related but distinct systems live here:
    `message_edited` updates the existing row in place — see "Keeping news
    in sync with deletions/edits in MAX" below for the payload shapes and
    how to test this.)
-2. A **generic admin CRUD** system for News, Blog posts, and Training
-   lessons — `/admin` has add/edit/delete forms for all three.
+2. A **generic admin CRUD** system for News and Training lessons —
+   `/admin` has add/edit/delete forms for both. (A third one, for Blog
+   posts, existed briefly and was fully removed on 2026-07-20 — the user
+   decided not to use it. If asked to work on "blog", check first whether
+   they mean this removed feature or something else; don't rebuild it
+   without confirming.)
 3. A **manual/curated** one-off workflow — hand-build a rich landing page
    like `training-cake-motorcycle.html` from a specific flyer-style channel
    post, when it needs a layout the generic CRUD template can't express.
@@ -104,11 +108,11 @@ auto-pipeline to produce a priced, structured lesson page from a plain post.
   separately on request. **Pushing to `local` does not deploy anything**; only
   a push to `origin master` triggers the Actions workflow above.
 
-## Admin CRUD: News, Blog, Training lessons
+## Admin CRUD: News, Training lessons
 
 `app/api/admin.py` renders everything as plain f-string HTML (no Jinja) —
 stay consistent with that style rather than introducing a templating engine
-for one section. All three content types follow the same shape:
+for one section. Both content types follow the same shape:
 
 - List + "+ Добавить" link on `/admin` (built in `admin_home`).
 - `GET /admin/{type}/new` → blank form; `POST /admin/{type}/new` → insert.
@@ -120,14 +124,6 @@ for one section. All three content types follow the same shape:
   file leaves the existing image alone; picking one deletes the old file via
   `_delete_file()` first.
 
-**Blog** (`app/models/blog_post.py`, `app/api/blog.py` at prefix
-`/blog-posts`, `landing/blog.html` + `landing/blog-item.html?id=`): didn't
-exist before — `landing/blog.html` used to be six hardcoded cards linking to
-`#`. Those six were seeded into `blog_posts` by the migration so the page
-didn't go blank; the hand-written "featured post" hero block at the top of
-`blog.html` is untouched/still static (it was never part of the card grid).
-No publish delay here — this is manually-authored content, not bot-fed.
-
 **Training lessons** (`app/models/training_lesson.py`,
 `app/api/training_lessons.py` at prefix `/training-lessons`,
 `landing/training-item.html?slug=`): a **parallel, additive** system, not a
@@ -136,8 +132,8 @@ pizza, capybara, etc.) are hand-built with genuinely different layouts each
 and are **not** migrated into this table — don't move them. `landing/training.html`
 fetches `/training-lessons/` and **appends** those cards after the existing
 static ones in the same `.lessons-grid` via `insertAdjacentHTML`; it does not
-replace the grid contents (unlike news.html/blog.html, which do replace
-theirs — training.html's static cards keep their hand-tuned copy). Each
+replace the grid contents (unlike news.html, which replaces its cards
+entirely — training.html's static cards keep their hand-tuned copy). Each
 lesson row has two *optional* bullet-list sections
 (`section1_heading`/`section1_items`, `section2_heading`/`section2_items`,
 newline-separated in a textarea) plus `price_label` and `bonus_note`, which
@@ -164,10 +160,10 @@ with open('.env', encoding='utf-8') as f:
         if line.startswith('ADMIN_EMAIL='): user = line.strip().split('=',1)[1]
         if line.startswith('ADMIN_PASSWORD='): pw = line.strip().split('=',1)[1]
 data = {'tag': 'Тест', 'title': 'ТЕСТ (удалить)', 'text': '...'}
-r = httpx.post('https://irma-cafe.ru/admin/blog/new', data=data, auth=(user, pw), follow_redirects=False, timeout=20)
+r = httpx.post('https://irma-cafe.ru/admin/news/new', data=data, auth=(user, pw), follow_redirects=False, timeout=20)
 print('status:', r.status_code)
 "
-curl -sS "https://irma-cafe.ru/blog-posts/?limit=1" -o out.json   # inspect via file, not console
+curl -sS "https://irma-cafe.ru/news/?limit=1" -o out.json   # inspect via file, not console
 ```
 
 Same idempotent-cleanup discipline as the webhook tests: create, verify via
