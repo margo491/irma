@@ -29,8 +29,13 @@ auto-pipeline to produce a priced, structured lesson page from a plain post.
   `app/bot/max_adapter.py`.
 - **Push subscription**: already registered with MAX Bot API, pointed at
   `https://irma-cafe.ru/webhook/news`, `update_types: [bot_added,
-  bot_removed, message_created]`. Don't re-register unless it's gone (check
-  first, see below).
+  bot_removed, message_created, message_edited, message_removed]`. Check
+  `GET /subscriptions` before touching this — **posting a new subscription
+  with a URL string that differs even slightly (e.g. the `.bot-ktu.online`
+  vs `-cafe.ru` domain, same server) creates a *second*, separate
+  subscription** rather than updating the existing one; this happened once
+  and had to be cleaned up with `DELETE /subscriptions?url=<old, url-encoded>`.
+  Always check the current list first and reuse the exact registered URL.
 - **Webhook handler**: `app/bot/news_webhook.py`. On `message_created` for the
   channel's `chat_id`, it derives `title` = first non-empty line of the post
   text, `text` = the rest, downloads the first `image`-type attachment (falling
@@ -40,6 +45,11 @@ auto-pipeline to produce a priced, structured lesson page from a plain post.
   on the MAX message id (`mid`)**, so redelivery never duplicates. If the row
   already exists but is missing `video_path`, redelivery **backfills** it
   instead of no-opping — see "Backfilling a published post" below.
+  It also handles `message_edited` (updates the existing row's
+  title/text/media in place instead of inserting a second row) and
+  `message_removed` (deletes the matching row + its files) — see
+  "Keeping news in sync with deletions/edits in MAX" below; this is the real
+  fix for duplicate posts, not just the publish delay.
 - **Storage**: `news` table in Postgres (`app/models/news.py`), images/videos
   in a dedicated Docker volume `news_uploads` mounted at `/app/uploads`,
   served at `/uploads/...`. `landing/` is baked into the image at *build* time
@@ -50,8 +60,10 @@ auto-pipeline to produce a priced, structured lesson page from a plain post.
   `app/config.py`/`.env`). The row is written to the DB immediately on
   webhook receipt — the delay is a **read-side filter**, not a queued job —
   so `/admin` (which queries the table directly, not through this filter)
-  always shows a just-arrived post right away. This is the window for
-  catching and deleting a bad auto-post before the public sees it.
+  always shows a just-arrived post right away. Treat this as a **backstop**,
+  not the primary fix for the "posted with a typo, fixed it" case — that's
+  what message_removed/message_edited handling is for (below). The delay
+  just covers whatever those don't catch.
 - **Read API** (`app/api/news.py`): `GET /news/?limit=N` (list, newest first)
   and `GET /news/{id}` (single item, used by the detail page).
 - **Frontend**: `landing/index.html` (top 5) and `landing/news.html` (all)
@@ -226,6 +238,64 @@ USER=$(grep -m1 '^ADMIN_EMAIL=' .env | cut -d= -f2-)
 PASS=$(grep -m1 '^ADMIN_PASSWORD=' .env | cut -d= -f2-)
 curl -sS -u "${USER}:${PASS}" -X POST "https://irma-cafe.ru/admin/news/<id>/delete"
 ```
+
+## Keeping news in sync with deletions/edits in MAX
+
+The actual root cause of the "duplicate post" problem: an admin posts
+something with a mistake, deletes it in MAX, reposts the fix. Those are two
+separate `message_created` events with two different `mid`s — the
+idempotent-on-`mid` check never sees them as related, so without this
+handling both would become permanent, separate `News` rows (the publish
+delay only hides this from the public for 5 minutes; it doesn't stop the
+duplicate from existing in the DB/admin). This happened for real once
+(news #15/#16, cleaned up manually) before the fix below existed.
+
+MAX is built on the TamTam messenger platform — its public schema
+(`tamtam-chat/tamtam-bot-api-schema` on GitHub) is the best source for
+exact webhook payload shapes MAX doesn't document as clearly itself, and it
+matched what MAX actually accepted:
+
+- `message_removed`: flat fields `message_id` (string — this is the `mid`),
+  `chat_id` (int64), `user_id` (int64). No nested `message` object, since
+  the message is gone.
+- `message_edited`: a `message` field with the exact same shape as
+  `message_created`'s.
+
+`app/bot/news_webhook.py` handles both: `message_removed` deletes the
+matching `News` row (by `mid`) and its image/video files;
+`message_edited` updates title/text/media **on the existing row** if one
+exists for that `mid` (falls back to inserting if it somehow doesn't — e.g.
+the subscription was added after the original post already existed).
+
+To add `message_removed`/`message_edited` to a subscription that's missing
+them (check `GET /subscriptions` first — see the Architecture note above
+about not accidentally creating a second subscription):
+
+```bash
+TOKEN=$(grep -m1 '^token_bot_max=' .env | cut -d= -f2-)
+curl -sS -X POST "https://botapi.max.ru/subscriptions?url=<the existing registered URL, url-encoded>" \
+  -H "Authorization: $TOKEN" -H "Content-Type: application/json" \
+  -d '{"url":"<same URL>","update_types":["bot_added","bot_removed","message_created","message_edited","message_removed"]}'
+```
+
+To test without waiting for a real MAX deletion/edit: POST a synthetic
+`message_created` to create a throwaway row (as in "Debugging / testing the
+webhook" below), note its `mid`, then POST a synthetic `message_removed`
+(`{"update_type":"message_removed","message_id":"<mid>","chat_id":-71665082178843,"user_id":0,"timestamp":...}`)
+or `message_edited` (same envelope as `message_created` but with
+`update_type: message_edited` and changed `body.text`) and confirm via
+`/admin` (bypasses the publish delay) that the row disappeared / updated in
+place rather than a second row appearing. This was verified working
+end-to-end when the feature was built.
+
+**Caveat**: MAX accepting `message_removed`/`message_edited` in the
+subscription request is not itself proof it reliably *fires* them in
+production — that was confirmed here only via synthetic payloads. If a real
+duplicate ever slips through again, check `/webhook/news/debug` (remember:
+wiped on redeploy) right after it happens to see whether MAX actually sent a
+`message_removed`/`message_edited` update at all, or whether this needs a
+different detection strategy (e.g. de-duping near-identical text posted
+within a short window).
 
 ## Backfilling a published post (missing video, wrong media, etc.)
 
