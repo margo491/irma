@@ -8,7 +8,17 @@ description: Use when working with the MAX-messenger channel integration for the
 Three related but distinct systems live here:
 
 1. An **automatic** pipeline — every MAX channel post becomes a news card,
-   no review, just a 5-minute delay before it's public (see below).
+   no review, just a 5-minute delay before it's public (see below). It also
+   stays **in sync with the source post**:
+   - Если исходный пост в MAX удалили — соответствующая запись на сайте
+     удаляется автоматически.
+   - Если пост отредактировали — на сайте обновляется тот же пост, а не
+     создаётся второй.
+
+   (`message_removed` deletes the matching row + its files;
+   `message_edited` updates the existing row in place — see "Keeping news
+   in sync with deletions/edits in MAX" below for the payload shapes and
+   how to test this.)
 2. A **generic admin CRUD** system for News, Blog posts, and Training
    lessons — `/admin` has add/edit/delete forms for all three.
 3. A **manual/curated** one-off workflow — hand-build a rich landing page
