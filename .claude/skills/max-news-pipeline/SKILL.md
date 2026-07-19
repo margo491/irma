@@ -1,16 +1,24 @@
 ---
 name: max-news-pipeline
-description: Use when working with the MAX-messenger channel integration for the IrMa site — reading channel posts via the news-bot API, debugging/testing the auto-publish news webhook (images or video), moderating auto-published news in the admin panel, fixing the news detail page, or building a curated landing page (like a training lesson) from a channel post. Triggers on "MAX", "канал", "новости", "вебхук", "новостной бот", "автопубликация", "news-item.html", "training-*.html", "id312332413602_3_bot", "irma-cafe.ru".
+description: Use when working with the MAX-messenger channel integration for the IrMa site, or its admin-managed content (News/Blog/Training lessons) — reading channel posts via the news-bot API, debugging/testing the auto-publish news webhook (images or video), the 5-minute publish delay, moderating or CRUD-editing news/blog/training content in the admin panel, fixing a detail page, or building a curated landing page (like a hand-built training lesson) from a channel post. Triggers on "MAX", "канал", "новости", "вебхук", "новостной бот", "автопубликация", "news-item.html", "blog-item.html", "training-item.html", "training-*.html", "админка", "id312332413602_3_bot", "irma-cafe.ru".
 ---
 
-# MAX channel → IrMa site publishing
+# MAX channel → IrMa site publishing, and admin-managed content
 
-Two related but distinct workflows live here: an **automatic** pipeline (every
-channel post becomes a news card, no review) and a **manual/curated** pipeline
-(build a rich landing page like `training-cake-motorcycle.html` from one
-specific post). Pick the right one — don't hand-build a page for something
-the auto-pipeline already covers, and don't expect the auto-pipeline to
-produce a priced, structured lesson page.
+Three related but distinct systems live here:
+
+1. An **automatic** pipeline — every MAX channel post becomes a news card,
+   no review, just a 5-minute delay before it's public (see below).
+2. A **generic admin CRUD** system for News, Blog posts, and Training
+   lessons — `/admin` has add/edit/delete forms for all three.
+3. A **manual/curated** one-off workflow — hand-build a rich landing page
+   like `training-cake-motorcycle.html` from a specific flyer-style channel
+   post, when it needs a layout the generic CRUD template can't express.
+
+Pick the right one: don't hand-build a page for something the auto-pipeline
+or the admin CRUD already covers; don't expect the generic CRUD template to
+reproduce a bespoke hand-built page's exact layout; don't expect the
+auto-pipeline to produce a priced, structured lesson page from a plain post.
 
 ## Architecture
 
@@ -37,6 +45,13 @@ produce a priced, structured lesson page.
   served at `/uploads/...`. `landing/` is baked into the image at *build* time
   (see `Dockerfile`) — it is **not** persistent, so anything the running app
   writes must go in `uploads/`, never under `landing/`.
+- **Publish delay**: `GET /news/` and `GET /news/{id}` only return rows where
+  `created_at <= now() - NEWS_PUBLISH_DELAY_MINUTES` (default 5, in
+  `app/config.py`/`.env`). The row is written to the DB immediately on
+  webhook receipt — the delay is a **read-side filter**, not a queued job —
+  so `/admin` (which queries the table directly, not through this filter)
+  always shows a just-arrived post right away. This is the window for
+  catching and deleting a bad auto-post before the public sees it.
 - **Read API** (`app/api/news.py`): `GET /news/?limit=N` (list, newest first)
   and `GET /news/{id}` (single item, used by the detail page).
 - **Frontend**: `landing/index.html` (top 5) and `landing/news.html` (all)
@@ -50,9 +65,10 @@ produce a priced, structured lesson page.
   text/title is untrusted external content, never remove the escaping.
   "Новости" is in the shared nav/footer on every landing page.
 - **Moderation**: `/admin` (HTTP Basic — `ADMIN_EMAIL`/`ADMIN_PASSWORD` in
-  `.env`) has a "Новости" section with a delete button per row (removes the DB
-  row and its downloaded image/video files). Since publishing has no
-  pre-review step, this is the only way to take down a bad auto-post.
+  `.env`) has a "Новости" section with add/edit/delete per row (delete also
+  removes the downloaded image/video files). Since bot-published news has no
+  pre-review step, edit/delete there is the way to fix or take down a bad
+  auto-post — the 5-minute delay just buys time to notice it first.
 - **Deploy**: push to `master` on **`origin`** (GitHub) →
   `.github/workflows/deploy.yml` SSHes into the VPS, `git pull`,
   rebuilds/restarts the `app` container via `docker compose`, which runs
@@ -65,6 +81,76 @@ produce a priced, structured lesson page.
   Gitea/Forgejo on the LAN) — it's a plain mirror the user pushes to
   separately on request. **Pushing to `local` does not deploy anything**; only
   a push to `origin master` triggers the Actions workflow above.
+
+## Admin CRUD: News, Blog, Training lessons
+
+`app/api/admin.py` renders everything as plain f-string HTML (no Jinja) —
+stay consistent with that style rather than introducing a templating engine
+for one section. All three content types follow the same shape:
+
+- List + "+ Добавить" link on `/admin` (built in `admin_home`).
+- `GET /admin/{type}/new` → blank form; `POST /admin/{type}/new` → insert.
+- `GET /admin/{type}/{id}/edit` → pre-filled form; `POST .../edit` → update.
+- `POST /admin/{type}/{id}/delete` → remove row + any uploaded files.
+- Image fields are a `<input type=file>` (`UploadFile`), saved via the shared
+  `_save_upload(file, subdir)` helper into `uploads/<subdir>/` (persistent
+  volume, same one the MAX pipeline uses) — editing without picking a new
+  file leaves the existing image alone; picking one deletes the old file via
+  `_delete_file()` first.
+
+**Blog** (`app/models/blog_post.py`, `app/api/blog.py` at prefix
+`/blog-posts`, `landing/blog.html` + `landing/blog-item.html?id=`): didn't
+exist before — `landing/blog.html` used to be six hardcoded cards linking to
+`#`. Those six were seeded into `blog_posts` by the migration so the page
+didn't go blank; the hand-written "featured post" hero block at the top of
+`blog.html` is untouched/still static (it was never part of the card grid).
+No publish delay here — this is manually-authored content, not bot-fed.
+
+**Training lessons** (`app/models/training_lesson.py`,
+`app/api/training_lessons.py` at prefix `/training-lessons`,
+`landing/training-item.html?slug=`): a **parallel, additive** system, not a
+replacement. The 9 existing `landing/training-*.html` pages (motorcycle,
+pizza, capybara, etc.) are hand-built with genuinely different layouts each
+and are **not** migrated into this table — don't move them. `landing/training.html`
+fetches `/training-lessons/` and **appends** those cards after the existing
+static ones in the same `.lessons-grid` via `insertAdjacentHTML`; it does not
+replace the grid contents (unlike news.html/blog.html, which do replace
+theirs — training.html's static cards keep their hand-tuned copy). Each
+lesson row has two *optional* bullet-list sections
+(`section1_heading`/`section1_items`, `section2_heading`/`section2_items`,
+newline-separated in a textarea) plus `price_label` and `bonus_note`, which
+covers the range seen across the existing hand-built pages (one list, two
+lists, priced, unpriced, with/without a gift note) without needing a fully
+dynamic repeater UI. `slug` is auto-generated from the title via a small
+Cyrillic transliteration table in `admin.py` (`_slugify`) plus a random
+suffix — never ask the admin to type one.
+
+**Testing admin forms — encoding gotcha**: this Windows/git-bash environment
+mangles Cyrillic passed through `curl -F field=значение` (the shell's
+codepage clobbers it before curl ever sees UTF-8 bytes) — you'll get
+mojibake in the DB, not a real bug. Don't debug the server for this. Test
+multipart form submits with Python `httpx` instead, reading creds from
+`.env` the usual way, and write output to a file instead of `print()`-ing
+Cyrillic (the Windows console codepage chokes on it too, e.g. on `₽`):
+
+```bash
+python -c "
+import httpx
+user = pw = None
+with open('.env', encoding='utf-8') as f:
+    for line in f:
+        if line.startswith('ADMIN_EMAIL='): user = line.strip().split('=',1)[1]
+        if line.startswith('ADMIN_PASSWORD='): pw = line.strip().split('=',1)[1]
+data = {'tag': 'Тест', 'title': 'ТЕСТ (удалить)', 'text': '...'}
+r = httpx.post('https://irma-cafe.ru/admin/blog/new', data=data, auth=(user, pw), follow_redirects=False, timeout=20)
+print('status:', r.status_code)
+"
+curl -sS "https://irma-cafe.ru/blog-posts/?limit=1" -o out.json   # inspect via file, not console
+```
+
+Same idempotent-cleanup discipline as the webhook tests: create, verify via
+the read API / a Playwright screenshot, delete via the admin endpoint,
+confirm it's gone — never leave test rows live.
 
 ## Reading the MAX Bot API
 
@@ -193,11 +279,16 @@ migrations against local Postgres from this sandbox (see below).
 - No Docker CLI available locally either — can't `docker compose up` to test
   the full stack; same story, verify on prod post-deploy.
 
-## Building a curated page instead (e.g. a new training lesson)
+## Building a bespoke curated page instead (beyond what admin CRUD covers)
 
 Some channel posts (flyer-style announcements with a price and curriculum)
-deserve a full page like `landing/training-cake-motorcycle.html`, not just a
-news card. When asked for that:
+deserve a full page like `landing/training-cake-motorcycle.html` — with
+layout the generic training-lesson CRUD template can't express (e.g. more
+than two bullet sections, a highlighted "included" badge, custom copy
+structure) — not just a news card or a CRUD-generated `training-item.html`
+entry. If the generic two-section template (above) is good enough, prefer
+that — it's zero-code and editable without a deploy. Reach for a fully
+hand-built page only when it isn't. When you do:
 
 1. Find the post via `GET /messages` (above), download+inspect every
    attached photo — the "product photo" is often actually a marketing flyer
