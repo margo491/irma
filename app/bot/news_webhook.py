@@ -43,7 +43,13 @@ async def news_webhook_debug():
 
 
 async def _handle_event(payload: dict) -> None:
-    if payload.get("update_type") != "message_created":
+    update_type = payload.get("update_type")
+
+    if update_type == "message_removed":
+        await _handle_removed(payload)
+        return
+
+    if update_type not in ("message_created", "message_edited"):
         return
 
     message = payload.get("message") or {}
@@ -58,24 +64,40 @@ async def _handle_event(payload: dict) -> None:
 
     attachments = body.get("attachments") or []
 
+    text = (body.get("text") or "").strip()
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    title = lines[0][:120] if lines else "Новый пост"
+    rest = "\n".join(lines[1:]).strip()
+    if not rest:
+        rest = text
+
     async with async_session() as session:
         existing = await session.scalar(select(News).where(News.mid == mid))
+
         if existing:
-            # Retry filling in a video we may have missed the first time
-            # (e.g. an earlier deploy that didn't download it yet).
-            if not existing.video_path:
+            if update_type == "message_edited":
+                # The channel post was corrected in place — reflect the new
+                # text/media instead of leaving the stale/erroneous version
+                # live (this is the "typo, fixed via edit" path; the "typo,
+                # deleted and reposted" path is handled by message_removed
+                # deleting the original row so it never becomes a duplicate).
+                existing.title = title
+                existing.text = rest
+                image_path = await _download_first_image(attachments, mid)
+                if image_path:
+                    existing.image_path = image_path
+                video_path = await _download_first_video(attachments, mid)
+                if video_path:
+                    existing.video_path = video_path
+                await session.commit()
+            elif not existing.video_path:
+                # Retry filling in a video we may have missed the first time
+                # (e.g. an earlier deploy that didn't download it yet).
                 video_path = await _download_first_video(attachments, mid)
                 if video_path:
                     existing.video_path = video_path
                     await session.commit()
             return
-
-        text = (body.get("text") or "").strip()
-        lines = [line.strip() for line in text.splitlines() if line.strip()]
-        title = lines[0][:120] if lines else "Новый пост"
-        rest = "\n".join(lines[1:]).strip()
-        if not rest:
-            rest = text
 
         image_path = await _download_first_image(attachments, mid)
         video_path = await _download_first_video(attachments, mid)
@@ -97,6 +119,29 @@ async def _handle_event(payload: dict) -> None:
             )
         )
         await session.commit()
+
+
+async def _handle_removed(payload: dict) -> None:
+    mid = payload.get("message_id") or (payload.get("message") or {}).get("body", {}).get("mid")
+    if not mid:
+        return
+
+    async with async_session() as session:
+        item = await session.scalar(select(News).where(News.mid == mid))
+        if not item:
+            return
+        _delete_local_file(item.image_path)
+        _delete_local_file(item.video_path)
+        await session.delete(item)
+        await session.commit()
+
+
+def _delete_local_file(path: str | None) -> None:
+    if not path:
+        return
+    file_path = Path(path.lstrip("/"))
+    if file_path.exists():
+        file_path.unlink()
 
 
 async def _download_first_image(attachments: list[dict], mid: str) -> str | None:
