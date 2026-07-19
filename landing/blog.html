@@ -181,87 +181,7 @@
 
 <!-- BLOG GRID -->
 <section class="blog-section">
-  <div class="blog-grid">
-
-    <div class="blog-card">
-      <div class="blog-card-img bc-pink">☕</div>
-      <div class="blog-card-body">
-        <p class="blog-card-tag">Напитки</p>
-        <p class="blog-card-title">5 рецептов идеального кофе для дома</p>
-        <p class="blog-card-text">Раскрываем секреты, которые превратят обычное утро в маленькое удовольствие — без кофемашины за 100 тысяч.</p>
-        <div class="blog-card-footer">
-          <span class="blog-card-date">5 июня 2025</span>
-          <a href="#" class="blog-card-link">Читать →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="blog-card">
-      <div class="blog-card-img bc-green">🥑</div>
-      <div class="blog-card-body">
-        <p class="blog-card-tag">Советы</p>
-        <p class="blog-card-title">Как выбрать авокадо и не ошибиться</p>
-        <p class="blog-card-text">Недозрелый или перезрелый — авокадо легко испортит блюдо. Рассказываем, как выбрать идеальный плод за 30 секунд.</p>
-        <div class="blog-card-footer">
-          <span class="blog-card-date">18 мая 2025</span>
-          <a href="#" class="blog-card-link">Читать →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="blog-card">
-      <div class="blog-card-img bc-peach">🍕</div>
-      <div class="blog-card-body">
-        <p class="blog-card-tag">Рецепт</p>
-        <p class="blog-card-title">Домашняя пицца: тонкое тесто без дрожжей</p>
-        <p class="blog-card-text">Быстрый рецепт пиццы, которую можно приготовить за 40 минут — хрустящее тесто, томатный соус и любая начинка.</p>
-        <div class="blog-card-footer">
-          <span class="blog-card-date">2 мая 2025</span>
-          <a href="#" class="blog-card-link">Читать →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="blog-card">
-      <div class="blog-card-img bc-lilac">🎂</div>
-      <div class="blog-card-body">
-        <p class="blog-card-tag">О нас</p>
-        <p class="blog-card-title">История IrMa: как семейная кухня стала кафе</p>
-        <p class="blog-card-text">Три года назад Ирина Маринич решила открыть маленькое место, где можно поесть как дома. Читайте, как всё начиналось.</p>
-        <div class="blog-card-footer">
-          <span class="blog-card-date">15 апреля 2025</span>
-          <a href="#" class="blog-card-link">Читать →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="blog-card">
-      <div class="blog-card-img bc-blue">🍓</div>
-      <div class="blog-card-body">
-        <p class="blog-card-tag">Сезон</p>
-        <p class="blog-card-title">Летнее меню: что попробовать этим летом</p>
-        <p class="blog-card-text">Клубничный лимонад, лёгкие салаты и холодный капучино — собрали всё самое освежающее из нашего летнего меню.</p>
-        <div class="blog-card-footer">
-          <span class="blog-card-date">1 июня 2025</span>
-          <a href="#" class="blog-card-link">Читать →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="blog-card">
-      <div class="blog-card-img bc-pink" style="font-size:3.5rem">🥞</div>
-      <div class="blog-card-body">
-        <p class="blog-card-tag">Рецепт</p>
-        <p class="blog-card-title">Тонкие блины: 3 теста для любого случая</p>
-        <p class="blog-card-text">На кефире, на молоке и на воде — у каждого теста свой характер. Разбираемся, когда и какой выбрать.</p>
-        <div class="blog-card-footer">
-          <span class="blog-card-date">10 марта 2025</span>
-          <a href="#" class="blog-card-link">Читать →</a>
-        </div>
-      </div>
-    </div>
-
-  </div>
+  <div class="blog-grid" id="blog-grid"></div>
 </section>
 
 <!-- SUBSCRIBE -->
@@ -304,6 +224,43 @@
     document.getElementById('cart-count').textContent = total;
   } catch(e) {}
 })();
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+var BC_CLASSES = ['bc-pink', 'bc-green', 'bc-peach', 'bc-lilac', 'bc-blue'];
+var BC_EMOJI = ['📝', '🥗', '🍕', '🎂', '🍓'];
+
+fetch('/blog-posts/?limit=50')
+  .then(function(res) { return res.json(); })
+  .then(function(items) {
+    var grid = document.getElementById('blog-grid');
+    if (!items.length) {
+      grid.innerHTML = '<p class="empty" style="grid-column:1/-1;text-align:center;color:var(--gray)">Пока нет статей — загляните позже.</p>';
+      return;
+    }
+    grid.innerHTML = items.map(function(p, i) {
+      var img = p.image_path
+        ? '<img class="blog-card-img" style="object-fit:cover" src="' + p.image_path + '" alt="' + escapeHtml(p.title) + '">'
+        : '<div class="blog-card-img ' + BC_CLASSES[i % BC_CLASSES.length] + '">' + BC_EMOJI[i % BC_EMOJI.length] + '</div>';
+      var date = new Date(p.published_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+      return '<a class="blog-card" href="blog-item.html?id=' + p.id + '" style="text-decoration:none;color:inherit">' + img +
+        '<div class="blog-card-body">' +
+          '<p class="blog-card-tag">' + escapeHtml(p.tag) + '</p>' +
+          '<p class="blog-card-title">' + escapeHtml(p.title) + '</p>' +
+          '<p class="blog-card-text">' + escapeHtml(p.excerpt) + '</p>' +
+          '<div class="blog-card-footer">' +
+            '<span class="blog-card-date">' + date + '</span>' +
+            '<span class="blog-card-link">Читать →</span>' +
+          '</div>' +
+        '</div>' +
+      '</a>';
+    }).join('');
+  })
+  .catch(function(err) { console.error('blog load failed', err); });
 </script>
 </body>
 </html>

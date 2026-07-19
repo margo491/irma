@@ -274,7 +274,7 @@
 <!-- LESSON CATALOG -->
 <section class="lessons-section">
   <h2 class="section-heading">Каталог видеоуроков</h2>
-  <div class="lessons-grid">
+  <div class="lessons-grid" id="lessons-grid">
 
     <a href="training-pizza.html" class="lesson-card">
       <img class="lesson-card-img" src="training/pizza.jpg" alt="Пицца">
@@ -591,6 +591,39 @@ document.querySelectorAll('.faq-q').forEach(function(q) {
     item.classList.toggle('open');
   });
 });
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+fetch('/training-lessons/')
+  .then(function(res) { return res.json(); })
+  .then(function(lessons) {
+    if (!lessons.length) return;
+    var grid = document.getElementById('lessons-grid');
+    var html = lessons.map(function(l) {
+      var img = l.image_path
+        ? '<img class="lesson-card-img" src="' + l.image_path + '" alt="' + escapeHtml(l.title) + '">'
+        : '';
+      var items = l.section1_items.slice(0, 4).map(function(i) { return '<li>' + escapeHtml(i) + '</li>'; }).join('');
+      var price = l.price_label
+        ? '<span class="lesson-card-price">' + escapeHtml(l.price_label) + '</span>'
+        : '<span></span>';
+      return '<a href="training-item.html?slug=' + encodeURIComponent(l.slug) + '" class="lesson-card">' + img +
+        '<div class="lesson-card-body">' +
+          '<p class="lesson-card-tag">' + escapeHtml(l.tag) + '</p>' +
+          '<p class="lesson-card-title">' + escapeHtml(l.title) + '</p>' +
+          (l.subtitle ? '<p class="lesson-card-desc">' + escapeHtml(l.subtitle) + '</p>' : '') +
+          '<ul class="lesson-card-list">' + items + '</ul>' +
+          '<div class="lesson-card-footer">' + price + '<span class="lesson-card-link">Подробнее →</span></div>' +
+        '</div>' +
+      '</a>';
+    }).join('');
+    grid.insertAdjacentHTML('beforeend', html);
+  })
+  .catch(function(err) { console.error('lessons load failed', err); });
 </script>
 </body>
 </html>

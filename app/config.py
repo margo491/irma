@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     admin_max_user_id: str = ""
     admin_email: str = ""
     admin_password: str = ""
+    news_publish_delay_minutes: int = 5
 
     class Config:
         env_file = ".env"
