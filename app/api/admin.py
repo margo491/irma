@@ -259,10 +259,16 @@ async def admin_dashboard(db: AsyncSession = Depends(get_db), _: str = Depends(r
     </table>
 
     <h2>Для ChatMarket</h2>
-    <p class="empty">Фид меню для импорта каталога в ChatMarket по ссылке:
-      <a href="https://irma-cafe.ru/menu/export.yml" target="_blank">https://irma-cafe.ru/menu/export.yml</a>
-      (формат YML/Яндекс.Маркет — самый распространённый для таких импортов;
-      если ChatMarket попросит другой формат, дайте знать).</p>
+    <p class="empty">
+      <a href="/menu/export.xlsx">Скачать меню в Excel</a> — для ручной загрузки файлом
+      (на вашем тарифе доступен только этот способ).<br>
+      <a href="https://irma-cafe.ru/menu/export.yml" target="_blank">https://irma-cafe.ru/menu/export.yml</a> —
+      тот же каталог фидом по ссылке, пригодится, если перейдёте на тариф «Бизнес»
+      (там есть импорт по URL).<br>
+      Колонки/формат — стандартные, не по шаблону ChatMarket (нигде не публикуют его) —
+      если у них в кабинете есть готовый шаблон для скачивания, ориентируйтесь на него,
+      и дайте знать, поправлю выгрузку под него.
+    </p>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>

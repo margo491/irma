@@ -1,8 +1,11 @@
+from io import BytesIO
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import get_db
@@ -74,6 +77,63 @@ async def export_menu_yml(db: AsyncSession = Depends(get_db)):
     xml_bytes = tostring(root, encoding="utf-8")
     pretty = minidom.parseString(xml_bytes).toprettyxml(indent="  ", encoding="utf-8")
     return Response(content=pretty, media_type="application/xml")
+
+
+@router.get("/export.xlsx")
+async def export_menu_xlsx(db: AsyncSession = Depends(get_db)):
+    """Excel-выгрузка меню — для ручного импорта в ChatMarket файлом
+    (импорт по URL-фиду там доступен только на тарифе «Бизнес»).
+
+    Колонки — общепринятые для таких табличных импортов (категория,
+    название, описание, цена, наличие); формат ChatMarket-шаблона нигде
+    не задокументирован публично, так что если у них есть готовый шаблон
+    для скачивания в личном кабинете — ориентироваться на него, а не на
+    этот файл."""
+    categories = {
+        c.id: c.name
+        for c in (await db.execute(select(MenuCategory))).scalars().all()
+    }
+    items = (
+        (await db.execute(select(MenuItem).order_by(MenuItem.category_id)))
+        .scalars()
+        .all()
+    )
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Меню"
+
+    headers = ["Категория", "Название", "Описание", "Цена", "В наличии", "Фото (URL)"]
+    ws.append(headers)
+
+    for item in items:
+        image_url = item.image_url or ""
+        if image_url and not image_url.startswith("http"):
+            image_url = f"{SITE_URL}/{image_url.lstrip('/')}"
+        ws.append([
+            categories.get(item.category_id, ""),
+            item.name,
+            item.description or "",
+            float(item.price),
+            "Да" if item.is_available else "Нет",
+            image_url,
+        ])
+
+    for i, header in enumerate(headers, start=1):
+        col = get_column_letter(i)
+        max_len = max(
+            [len(header)] + [len(str(row[i - 1])) for row in ws.iter_rows(min_row=2, values_only=True)]
+        )
+        ws.column_dimensions[col].width = min(max_len + 2, 60)
+
+    buf = BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+    return Response(
+        content=buf.read(),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=irma-menu.xlsx"},
+    )
 
 
 @router.get("/{category_id}", response_model=list[MenuItemOut])
