@@ -7,6 +7,7 @@ from app.models.news import News
 from app.models.training_lesson import TrainingLesson
 from app.models.site_order import SiteOrder
 from app.models.promo import Promo
+from app.models.max_order import MaxOrder
 
 __all__ = [
     "User",
@@ -19,4 +20,5 @@ __all__ = [
     "TrainingLesson",
     "SiteOrder",
     "Promo",
+    "MaxOrder",
 ]

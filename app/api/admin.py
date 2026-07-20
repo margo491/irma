@@ -17,6 +17,7 @@ from app.models.news import News
 from app.models.training_lesson import TrainingLesson
 from app.models.site_order import SiteOrder
 from app.models.promo import Promo
+from app.models.max_order import MaxOrder
 
 router = APIRouter()
 security = HTTPBasic()
@@ -24,6 +25,7 @@ security = HTTPBasic()
 LEAD_STATUSES = ["new", "contacted", "paid", "done"]
 SITE_ORDER_STATUSES = ["new", "processing", "done"]
 BOT_ORDER_STATUSES = ["created", "completed", "cancelled"]
+MAX_ORDER_STATUSES = ["new", "confirmed", "done", "cancelled"]
 
 TRANSLIT = {
     "а": "a", "б": "b", "в": "v", "г": "g", "д": "d", "е": "e", "ё": "e",
@@ -93,7 +95,8 @@ def _delete_file(path: str | None) -> None:
 async def _nav_counts(db: AsyncSession) -> tuple[int, int]:
     site_new = await db.scalar(select(func.count()).select_from(SiteOrder).where(SiteOrder.status == "new")) or 0
     bot_new = await db.scalar(select(func.count()).select_from(Order).where(Order.status == "created")) or 0
-    return site_new, bot_new
+    max_new = await db.scalar(select(func.count()).select_from(MaxOrder).where(MaxOrder.status == "new")) or 0
+    return site_new, bot_new + max_new
 
 
 def _nav_html(active: str, site_new: int, bot_new: int) -> str:
@@ -190,10 +193,12 @@ async def admin_dashboard(db: AsyncSession = Depends(get_db), _: str = Depends(r
 
     site_orders = (await db.execute(select(SiteOrder).where(SiteOrder.created_at >= since))).scalars().all()
     bot_orders = (await db.execute(select(Order).where(Order.created_at >= since))).scalars().all()
+    max_orders_recent = (await db.execute(select(MaxOrder).where(MaxOrder.created_at >= since))).scalars().all()
+    app_orders = bot_orders + max_orders_recent  # "через приложение" = бот IrMa + ChatMarket
 
-    orders_today = sum(1 for o in site_orders + bot_orders if o.created_at.date() == today)
+    orders_today = sum(1 for o in site_orders + app_orders if o.created_at.date() == today)
     revenue_week = sum(
-        o.total_amount for o in site_orders + bot_orders if o.created_at >= week_ago
+        o.total_amount for o in site_orders + app_orders if o.created_at >= week_ago
     )
     new_leads = await db.scalar(select(func.count()).select_from(Lead).where(Lead.status == "new")) or 0
 
@@ -204,7 +209,7 @@ async def admin_dashboard(db: AsyncSession = Depends(get_db), _: str = Depends(r
         d = o.created_at.date()
         if d in site_by_day:
             site_by_day[d] += 1
-    for o in bot_orders:
+    for o in app_orders:
         d = o.created_at.date()
         if d in bot_by_day:
             bot_by_day[d] += 1
@@ -252,6 +257,12 @@ async def admin_dashboard(db: AsyncSession = Depends(get_db), _: str = Depends(r
       <tr><th>Дата</th><th>Имя</th><th>Телефон</th><th>Источник</th><th>Статус</th></tr>
       {recent_leads_rows}
     </table>
+
+    <h2>Для ChatMarket</h2>
+    <p class="empty">Фид меню для импорта каталога в ChatMarket по ссылке:
+      <a href="https://irma-cafe.ru/menu/export.yml" target="_blank">https://irma-cafe.ru/menu/export.yml</a>
+      (формат YML/Яндекс.Маркет — самый распространённый для таких импортов;
+      если ChatMarket попросит другой формат, дайте знать).</p>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -376,13 +387,41 @@ async def admin_bot_orders(db: AsyncSession = Depends(get_db), _: str = Depends(
         for order, user in orders
     ) or '<tr><td colspan="5" class="empty">Заказов пока нет</td></tr>'
 
+    max_orders = (await db.execute(select(MaxOrder).order_by(MaxOrder.created_at.desc()).limit(200))).scalars().all()
+    max_rows = "".join(
+        f"""<tr>
+          <td>{o.created_at:%d.%m.%Y %H:%M}</td>
+          <td>{o.phone or '—'}</td>
+          <td>{o.description}</td>
+          <td>{o.total_amount:,.0f} ₽</td>
+          <td class="row-actions">
+            <form method="post" action="/admin/max-orders/{o.id}/status" style="display:flex;gap:6px">
+              <select name="status">
+                {"".join(f'<option value="{s}" {"selected" if s == o.status else ""}>{s}</option>' for s in MAX_ORDER_STATUSES)}
+              </select>
+              <button type="submit">Сохранить</button>
+            </form>
+            <form method="post" action="/admin/max-orders/{o.id}/delete" onsubmit="return confirm('Удалить этот заказ?')">
+              <button type="submit" style="background:#d98a9a">Удалить</button>
+            </form>
+          </td>
+        </tr>"""
+        for o in max_orders
+    ) or '<tr><td colspan="5" class="empty">Заказов пока нет</td></tr>'
+
     body = f"""
-    <h2>Заказы через приложение ({len(orders)})</h2>
+    <h2>Заказы через бота IrMa ({len(orders)})</h2>
     <table>
       <tr><th>Дата</th><th>Клиент</th><th>Состав</th><th>Сумма</th><th>Статус</th></tr>
       {rows}
     </table>
-    <p class="empty">Заказы, оформленные через бота IrMa в MAX.</p>
+
+    <h2>Заказы из магазина ChatMarket ({len(max_orders)}) <a class="add-link" href="/admin/max-orders/new">+ Внести заказ</a></h2>
+    <table>
+      <tr><th>Дата</th><th>Телефон</th><th>Состав</th><th>Сумма</th><th>Статус</th></tr>
+      {max_rows}
+    </table>
+    <p class="empty">ChatMarket не отдаёт заказы по API — присылает уведомления в Telegram/почту. Заносите их сюда вручную, чтобы они попадали в общую статистику с пометкой источника.</p>
     """
     return HTMLResponse(_page(body, "bot-orders", site_new, bot_new))
 
@@ -400,6 +439,78 @@ async def bot_order_update_status(
     if not order:
         raise HTTPException(status_code=404, detail="Заказ не найден")
     order.status = status_value
+    await db.commit()
+    return RedirectResponse(url="/admin/bot-orders", status_code=status.HTTP_303_SEE_OTHER)
+
+
+def _max_order_form() -> str:
+    return """
+    <h2>Внести заказ из ChatMarket</h2>
+    <form class="edit-form" method="post" action="/admin/max-orders/new">
+      <label>Телефон (необязательно)</label>
+      <input type="text" name="phone">
+
+      <label>Состав заказа</label>
+      <textarea name="description" required placeholder="Например: Капучино 0.4 x2, Круассан x1"></textarea>
+
+      <label>Сумма, ₽</label>
+      <input type="text" name="total_amount" required placeholder="850">
+      <p class="hint">Заполняйте по уведомлению из Telegram/почты от ChatMarket.</p>
+
+      <button type="submit">Сохранить</button>
+    </form>
+    """
+
+
+@router.get("/max-orders/new", response_class=HTMLResponse)
+async def max_order_new_form(_: str = Depends(require_admin)):
+    return HTMLResponse(_page(_max_order_form(), "bot-orders"))
+
+
+@router.post("/max-orders/new")
+async def max_order_create(
+    phone: str = Form(""),
+    description: str = Form(...),
+    total_amount: str = Form(...),
+    db: AsyncSession = Depends(get_db),
+    _: str = Depends(require_admin),
+):
+    try:
+        amount = Decimal(total_amount.replace(",", ".").strip())
+    except Exception:
+        raise HTTPException(status_code=422, detail="Некорректная сумма")
+    db.add(MaxOrder(phone=phone or None, description=description, total_amount=amount))
+    await db.commit()
+    return RedirectResponse(url="/admin/bot-orders", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.post("/max-orders/{order_id}/status")
+async def max_order_update_status(
+    order_id: int,
+    status_value: str = Form(..., alias="status"),
+    db: AsyncSession = Depends(get_db),
+    _: str = Depends(require_admin),
+):
+    if status_value not in MAX_ORDER_STATUSES:
+        raise HTTPException(status_code=422, detail="Недопустимый статус")
+    order = await db.get(MaxOrder, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Заказ не найден")
+    order.status = status_value
+    await db.commit()
+    return RedirectResponse(url="/admin/bot-orders", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.post("/max-orders/{order_id}/delete")
+async def max_order_delete(
+    order_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: str = Depends(require_admin),
+):
+    order = await db.get(MaxOrder, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Заказ не найден")
+    await db.delete(order)
     await db.commit()
     return RedirectResponse(url="/admin/bot-orders", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -473,6 +584,7 @@ async def admin_stats(db: AsyncSession = Depends(get_db), _: str = Depends(requi
 
     site_orders = (await db.execute(select(SiteOrder))).scalars().all()
     bot_orders = (await db.execute(select(Order))).scalars().all()
+    max_orders = (await db.execute(select(MaxOrder))).scalars().all()
 
     def _stats_block(orders: list, statuses: list[str]) -> dict:
         total = len(orders)
@@ -491,8 +603,9 @@ async def admin_stats(db: AsyncSession = Depends(get_db), _: str = Depends(requi
 
     site_stats = _stats_block(site_orders, SITE_ORDER_STATUSES)
     bot_stats = _stats_block(bot_orders, BOT_ORDER_STATUSES)
-    combined_total = site_stats["total"] + bot_stats["total"]
-    combined_revenue = site_stats["revenue"] + bot_stats["revenue"]
+    max_stats = _stats_block(max_orders, MAX_ORDER_STATUSES)
+    combined_total = site_stats["total"] + bot_stats["total"] + max_stats["total"]
+    combined_revenue = site_stats["revenue"] + bot_stats["revenue"] + max_stats["revenue"]
 
     def _card(title: str, s: dict) -> str:
         status_rows = "".join(
@@ -514,12 +627,13 @@ async def admin_stats(db: AsyncSession = Depends(get_db), _: str = Depends(requi
     body = f"""
     <h2>Статистика по заказам</h2>
     <div class="kpi-grid">
-      <div class="kpi-tile"><div class="kpi-label">Всего заказов (сайт + приложение)</div><div class="kpi-value">{combined_total}</div></div>
+      <div class="kpi-tile"><div class="kpi-label">Всего заказов (все каналы)</div><div class="kpi-value">{combined_total}</div></div>
       <div class="kpi-tile"><div class="kpi-label">Общая выручка</div><div class="kpi-value green">{combined_revenue:,.0f} ₽</div></div>
     </div>
     <div class="stats-grid">
       {_card("Заказы через сайт", site_stats)}
-      {_card("Заказы через приложение", bot_stats)}
+      {_card("Заказы через бота IrMa", bot_stats)}
+      {_card("Заказы из ChatMarket (MAX)", max_stats)}
     </div>
     """
     return HTMLResponse(_page(body, "stats", site_new, bot_new))
