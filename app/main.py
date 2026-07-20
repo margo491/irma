@@ -9,6 +9,7 @@ from app.api.bonus import router as bonus_router
 from app.api.lead import router as lead_router
 from app.api.admin import router as admin_router
 from app.api.news import router as news_router
+from app.api.promos import router as promos_router
 from app.api.training_lessons import router as training_lessons_router
 from app.bot.webhook import router as webhook_router
 from app.bot.news_webhook import router as news_webhook_router
@@ -27,6 +28,7 @@ app.include_router(bonus_router, prefix="/bonuses", tags=["bonus"])
 app.include_router(lead_router, prefix="/leads", tags=["lead"])
 app.include_router(admin_router, prefix="/admin", tags=["admin"])
 app.include_router(news_router, prefix="/news", tags=["news"])
+app.include_router(promos_router, prefix="/promos", tags=["promos"])
 app.include_router(training_lessons_router, prefix="/training-lessons", tags=["training"])
 app.include_router(webhook_router, tags=["bot"])
 app.include_router(news_webhook_router, tags=["news-bot"])

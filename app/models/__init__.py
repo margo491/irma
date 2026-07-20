@@ -5,6 +5,8 @@ from app.models.bonus_transaction import BonusTransaction
 from app.models.lead import Lead
 from app.models.news import News
 from app.models.training_lesson import TrainingLesson
+from app.models.site_order import SiteOrder
+from app.models.promo import Promo
 
 __all__ = [
     "User",
@@ -15,4 +17,6 @@ __all__ = [
     "Lead",
     "News",
     "TrainingLesson",
+    "SiteOrder",
+    "Promo",
 ]

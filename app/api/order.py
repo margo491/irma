@@ -6,6 +6,7 @@ import httpx
 from app.config import settings
 from app.database import get_db
 from app.models.order import Order
+from app.models.site_order import SiteOrder
 from app.schemas.order import OrderCreate, OrderOut
 from app.services.order import create_order, repeat_order
 
@@ -41,30 +42,38 @@ class LandingOrder(BaseModel):
 
 
 @router.post("/landing")
-async def landing_order(data: LandingOrder):
+async def landing_order(data: LandingOrder, db: AsyncSession = Depends(get_db)):
     digits = "".join(c for c in data.phone if c.isdigit())
     if len(digits) < 10:
         raise HTTPException(status_code=422, detail="Неверный номер телефона")
-    if not settings.admin_max_user_id:
-        return {"ok": True}
-    items_text = "\n".join(
-        f"  • {i.name} × {i.qty} = {i.price * i.qty} ₽" for i in data.items
-    )
+
     total = sum(i.price * i.qty for i in data.items)
-    text = (
-        f"🛒 Новый заказ с сайта\n"
-        f"Телефон: {data.phone}\n\n"
-        f"Состав:\n{items_text}\n\n"
-        f"Итого: {total} ₽"
+    site_order = SiteOrder(
+        phone=data.phone,
+        items=[i.model_dump() for i in data.items],
+        total_amount=total,
     )
-    async with httpx.AsyncClient() as client:
-        await client.post(
-            "https://botapi.max.ru/messages",
-            params={"user_id": settings.admin_max_user_id},
-            headers={"Authorization": settings.max_token},
-            json={"text": text},
-            timeout=10,
+    db.add(site_order)
+    await db.commit()
+
+    if settings.admin_max_user_id:
+        items_text = "\n".join(
+            f"  • {i.name} × {i.qty} = {i.price * i.qty} ₽" for i in data.items
         )
+        text = (
+            f"🛒 Новый заказ с сайта\n"
+            f"Телефон: {data.phone}\n\n"
+            f"Состав:\n{items_text}\n\n"
+            f"Итого: {total} ₽"
+        )
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                "https://botapi.max.ru/messages",
+                params={"user_id": settings.admin_max_user_id},
+                headers={"Authorization": settings.max_token},
+                json={"text": text},
+                timeout=10,
+            )
     return {"ok": True}
 
 

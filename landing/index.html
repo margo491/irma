@@ -388,44 +388,7 @@
     <p>Выгодные предложения для наших гостей</p>
     <div class="divider"></div>
   </div>
-  <div class="promos-grid">
-
-    <div class="promo-card promo-card-1">
-      <div class="promo-icon">☀️</div>
-      <span class="promo-badge">Каждый день</span>
-      <p class="promo-title">Завтрак в подарок</p>
-      <p class="promo-text">При заказе от 600 ₽ с 9:00 до 12:00 — чашка кофе или чай в подарок. Идеально начать день вкусно.</p>
-    </div>
-
-    <div class="promo-card promo-card-2">
-      <div class="promo-icon">☕</div>
-      <span class="promo-badge">По вторникам</span>
-      <p class="promo-title">Два кофе по цене одного</p>
-      <p class="promo-text">Каждый вторник — любые два кофейных напитка за цену одного. Приходите вдвоём и пробуйте новинки вместе.</p>
-    </div>
-
-    <div class="promo-card promo-card-3">
-      <div class="promo-icon">🎁</div>
-      <span class="promo-badge">Постоянно</span>
-      <p class="promo-title">Бонусная программа</p>
-      <p class="promo-text">10% от каждого заказа через бота IrMa возвращается бонусами. Копите и тратьте на любимые блюда.</p>
-    </div>
-
-    <div class="promo-card promo-card-4">
-      <div class="promo-icon">🕕</div>
-      <span class="promo-badge">Будни, 15:00–17:00</span>
-      <p class="promo-title">Счастливые часы</p>
-      <p class="promo-text">Скидка 20% на всю выпечку и десерты каждый будний день с 15:00 до 17:00. Успейте порадовать себя сладким.</p>
-    </div>
-
-    <div class="promo-card promo-card-5">
-      <div class="promo-icon">🎈</div>
-      <span class="promo-badge">В день рождения</span>
-      <p class="promo-title">Десерт в подарок</p>
-      <p class="promo-text">Покажите документ в свой день рождения — любой десерт из витрины дарим бесплатно. Приходите отмечать с нами!</p>
-    </div>
-
-  </div>
+  <div class="promos-grid" id="promos-grid"></div>
   <div class="carousel-cta">
     <a href="promos.html" class="btn-outline-green">Остальные акции →</a>
   </div>
@@ -579,6 +542,22 @@ fetch('/news/?limit=5')
     }).join('');
   })
   .catch(function(err) { console.error('news load failed', err); });
+
+/* Promos */
+fetch('/promos/?limit=5')
+  .then(function(res) { return res.json(); })
+  .then(function(items) {
+    var grid = document.getElementById('promos-grid');
+    grid.innerHTML = items.map(function(p, i) {
+      return '<div class="promo-card promo-card-' + ((i % 7) + 1) + '">' +
+        '<div class="promo-icon">' + p.icon + '</div>' +
+        '<span class="promo-badge">' + escapeHtml(p.badge) + '</span>' +
+        '<p class="promo-title">' + escapeHtml(p.title) + '</p>' +
+        '<p class="promo-text">' + escapeHtml(p.text) + '</p>' +
+      '</div>';
+    }).join('');
+  })
+  .catch(function(err) { console.error('promos load failed', err); });
 </script>
 </body>
 </html>
