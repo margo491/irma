@@ -1,6 +1,6 @@
 ---
 name: admin-panel
-description: Use when working on the IrMa admin panel's structure, navigation, orders (site cart or MAX-bot), leads, the dashboard chart, or order statistics — anything under `/admin` that isn't content management (News/Акции/Training-lesson CRUD, which is the separate `max-news-pipeline` skill's "Контент" tab). Triggers on "админка", "/admin", "дашборд", "заказы через сайт", "заказы через приложение", "статистика по заказам", "site_orders", "bot orders", "вкладка", "badge", "счётчик новых".
+description: Use when working on the IrMa admin panel's structure, navigation, orders (site cart, MAX bot, or ChatMarket), leads, the dashboard chart, order statistics, the menu export feed, or the ChatMarket/payment-provider shop project — anything under `/admin` that isn't content management (News/Акции/Training-lesson CRUD, which is the separate `max-news-pipeline` skill's "Контент" tab). Triggers on "админка", "/admin", "дашборд", "заказы через сайт", "заказы через приложение", "статистика по заказам", "site_orders", "bot orders", "ChatMarket", "TZ.env", "YooKassa", "Tinkoff", "CloudPayments", "export.yml", "вкладка", "badge", "счётчик новых".
 ---
 
 # IrMa admin panel: tabs, orders, dashboard, stats
@@ -26,10 +26,20 @@ shows up in the nav automatically.
    before that, `POST /order/landing` only sent a MAX notification and
    never touched the DB). Status dropdown (`new/processing/done`) +
    delete per row.
-3. **Заказы через приложение** (`GET/POST /admin/bot-orders`) — `Order` rows
-   (checkout inside the MAX bot conversation), joined to `User`. Status
-   dropdown (`created/completed/cancelled`); no delete here (bot orders are
-   treated as a real transaction log, unlike site-order cart junk).
+3. **Заказы через приложение** (`GET/POST /admin/bot-orders`) — **two**
+   sections on one page, both "orders that happened inside MAX", from two
+   unrelated flows:
+   - `Order` rows (checkout inside the MAX **bot conversation** — the
+     original cafe-order bot), joined to `User`. Status dropdown
+     (`created/completed/cancelled`); no delete here, treated as a real
+     transaction log.
+   - `MaxOrder` rows — orders from the **ChatMarket** microapp shop (a
+     separate, newer MAX-native storefront, see "ChatMarket" below).
+     `POST /admin/max-orders/new` / `.../status` / `.../delete`, statuses
+     `new/confirmed/done/cancelled`.
+   Don't confuse the two when someone says "заказ из MAX" — ask which flow,
+   or check whether the order came with a MAX bot `user_id` (→ `Order`) or
+   was manually logged from a ChatMarket notification (→ `MaxOrder`).
 4. **Обучение** (`GET /admin/training`) — `Lead` rows filtered to
    `source LIKE 'training-%'` (the lesson sign-up forms on
    `training-*.html`/`training-item.html`). Status dropdown now includes a
@@ -38,38 +48,76 @@ shows up in the nav automatically.
    the admin manually confirming money changed hands. Reuses the generic
    `POST /admin/leads/{id}/status` endpoint (not scoped to training — same
    endpoint the dashboard's lead table posts to).
-5. **Статистика** (`GET /admin/stats`) — per-channel (site/app) totals,
-   revenue, average order value, status breakdown, and 7-/30-day rollups,
-   built by `_stats_block()` in Python (not SQL aggregates — order volumes
-   are small enough that fetching all rows and summing in Python is simpler
-   and avoids DB-specific date-bucketing code).
+5. **Статистика** (`GET /admin/stats`) — **three** per-channel cards now
+   (сайт / бот IrMa / ChatMarket), each with totals, revenue, average order
+   value, status breakdown, and 7-/30-day rollups, built by `_stats_block()`
+   in Python (not SQL aggregates — order volumes are small enough that
+   fetching all rows and summing in Python is simpler and avoids
+   DB-specific date-bucketing code). The combined KPI tiles at the top sum
+   all three.
 6. **Контент** — belongs to the `max-news-pipeline` skill, not this one.
 
 ## Nav badges
 
-`_nav_counts(db)` returns `(site_new, bot_new)` — `count(SiteOrder where
-status='new')` and `count(Order where status='created')`. Every route calls
-this once and passes it into `_page()`; there's no caching, it's a live
-count on every page load. The badge is a small red pill next to the tab
-label (`.tab-badge` CSS, inverts to white-on-accent when the tab is active)
-and disappears (0 == no badge rendered) once every order in that channel has
-been moved off its initial status. **This is the actual mechanism behind
-"когда есть новые заказы — горит циферка"** — it is driven purely by
-`status`, not by a separate "viewed" flag, so changing an order's status via
-its dropdown is what clears the badge, not just looking at the list.
+`_nav_counts(db)` returns `(site_new, bot_new)` where `bot_new =
+count(Order where status='created') + count(MaxOrder where status='new')`
+— the "Заказы через приложение" badge covers *both* MAX order flows
+combined, not just the bot. Every route calls this once and passes it into
+`_page()`; there's no caching, it's a live count on every page load. The
+badge is a small red pill next to the tab label (`.tab-badge` CSS, inverts
+to white-on-accent when the tab is active) and disappears (0 == no badge
+rendered) once every order in that channel has been moved off its initial
+status. **This is the actual mechanism behind "когда есть новые заказы —
+горит циферка"** — it is driven purely by `status`, not by a separate
+"viewed" flag, so changing an order's status via its dropdown is what
+clears the badge, not just looking at the list.
 
 ## Dashboard chart
 
 Chart.js loaded from `cdn.jsdelivr.net` (fine — this is a normal
 server-rendered page, not a sandboxed Artifact, external `<script src>` is
 allowed). Data is computed in Python (`admin_dashboard()` in `admin.py`):
-last 30 calendar days as dict keys, `SiteOrder`/`Order` rows bucketed by
-`.created_at.date()`, then `json.dumps()`'d straight into the inline
-`<script>` that constructs the `Chart(...)`. Two-series line chart (site vs
-app), zero-filled for days with no orders — don't switch this to a raw SQL
-`GROUP BY date_trunc(...)` unless volume actually becomes a problem; the
-Python approach is simpler and this is a small cafe, not a query-performance
-case.
+last 30 calendar days as dict keys, `SiteOrder` rows bucketed into the
+"site" series, `Order` + `MaxOrder` rows bucketed together into the "app"
+series (both are "orders that happened via MAX"), by `.created_at.date()`,
+then `json.dumps()`'d straight into the inline `<script>` that constructs
+the `Chart(...)`. Two-series line chart, zero-filled for days with no
+orders — don't switch this to a raw SQL `GROUP BY date_trunc(...)` unless
+volume actually becomes a problem; the Python approach is simpler and this
+is a small cafe, not a query-performance case.
+
+## ChatMarket (MAX microapp shop) — why MaxOrder is manual
+
+A 2026-07-20 ТЗ (`TZ.env` in repo root — the user's file, not committed;
+read it directly if it's still there) asked for a full shop-in-MAX build on
+**ChatMarket**, a third-party no-code storefront constructor for MAX, plus
+online payment (YooKassa/Tinkoff/CloudPayments, with 54-ФЗ fiscal receipts)
+and delivery/pickup. Two hard blockers, confirmed by checking
+chatmarket.io and websearch (no real API docs exist publicly):
+
+- **No payment provider chosen yet** — that requires the user to actually
+  register a merchant account (legal entity, banking, KYC); nothing to
+  build in code until one is picked. Don't start payment integration code
+  speculatively.
+- **ChatMarket has no public order webhook/API** — new-order alerts go to
+  **Telegram or email only**, not to an arbitrary endpoint. So `MaxOrder`
+  (`app/models/max_order.py`) exists as a **manual log**: staff reads a
+  ChatMarket notification and types it into `/admin/max-orders/new`
+  (phone, free-text `description`, `total_amount`) rather than it arriving
+  automatically. If ChatMarket support (support@chatmarket.io /
+  `@chatmarket_support` on Telegram) ever confirms a real webhook/API
+  exists, that's the point to replace this with an automated receiver
+  (mirror the `news_webhook.py` pattern from the `max-news-pipeline`
+  skill) — don't build that receiver speculatively without confirmation,
+  the schema would be a guess.
+- **Catalog IS syncable today**: `GET /menu/export.yml` (`app/api/menu.py`)
+  produces a YML (Яндекс.Маркет format) feed of the live menu — ChatMarket
+  documents "import from XML feed URL" as one of its catalog import
+  options. YML was chosen because it's the de facto standard for such
+  feeds in the Russian market and no ChatMarket-specific schema is
+  published; if it turns out ChatMarket wants a different XML shape, ask
+  before guessing again. The feed link is on the dashboard
+  ("Для ChatMarket" section).
 
 ## Adding a 7th tab or a new order/lead view
 
