@@ -1,6 +1,6 @@
 ---
 name: max-news-pipeline
-description: Use when working with the MAX-messenger channel integration for the IrMa site, or its admin-managed content (News/Training lessons) — reading channel posts via the news-bot API, debugging/testing the auto-publish news webhook (images or video), the 5-minute publish delay, moderating or CRUD-editing news/training content in the admin panel, fixing a detail page, or building a curated landing page (like a hand-built training lesson) from a channel post. Triggers on "MAX", "канал", "новости", "вебхук", "новостной бот", "автопубликация", "news-item.html", "training-item.html", "training-*.html", "админка", "id312332413602_3_bot", "irma-cafe.ru". There is no Blog feature — it was built then removed on request (2026-07-20); don't resurrect it without asking.
+description: Use when working with the MAX-messenger channel integration for the IrMa site, or its admin-managed content (News/Акции/Training lessons under the "Контент" admin tab) — reading channel posts via the news-bot API, debugging/testing the auto-publish news webhook (images or video), the 5-minute publish delay, moderating or CRUD-editing content in the admin panel, fixing a detail page, or building a curated landing page (like a hand-built training lesson) from a channel post. For anything else in /admin (dashboard, orders, stats, leads), use the separate `admin-panel` skill instead. Triggers on "MAX", "канал", "новости", "вебхук", "новостной бот", "автопубликация", "news-item.html", "training-item.html", "training-*.html", "промо", "акции", "id312332413602_3_bot", "irma-cafe.ru". There is no Blog feature — it was built then removed on request (2026-07-20); don't resurrect it without asking.
 ---
 
 # MAX channel → IrMa site publishing, and admin-managed content
@@ -108,21 +108,43 @@ auto-pipeline to produce a priced, structured lesson page from a plain post.
   separately on request. **Pushing to `local` does not deploy anything**; only
   a push to `origin master` triggers the Actions workflow above.
 
-## Admin CRUD: News, Training lessons
+## Admin CRUD: News, Акции (Promos), Training lessons
+
+The admin panel is a **tabbed app**, not one long page — full nav map,
+orders/dashboard/stats are in the separate **`admin-panel`** skill, load
+that one for anything outside content management. This section only covers
+the "Контент" tab, which is where MAX-fed News lives alongside two other
+content types managed the same way.
 
 `app/api/admin.py` renders everything as plain f-string HTML (no Jinja) —
-stay consistent with that style rather than introducing a templating engine
-for one section. Both content types follow the same shape:
+stay consistent with that style. All three content types under
+`GET /admin/content?section=news|promos|training` follow the same shape:
 
-- List + "+ Добавить" link on `/admin` (built in `admin_home`).
-- `GET /admin/{type}/new` → blank form; `POST /admin/{type}/new` → insert.
+- List + "+ Добавить" link inside the relevant `section` block of
+  `admin_content()`.
+- `GET /admin/{type}/new` → blank form; `POST /admin/{type}/new` → insert,
+  redirects to `/admin/content?section=<matching section>`.
 - `GET /admin/{type}/{id}/edit` → pre-filled form; `POST .../edit` → update.
 - `POST /admin/{type}/{id}/delete` → remove row + any uploaded files.
-- Image fields are a `<input type=file>` (`UploadFile`), saved via the shared
+- Image fields (news, training lessons — **not** promos, which are icon-only)
+  are a `<input type=file>` (`UploadFile`), saved via the shared
   `_save_upload(file, subdir)` helper into `uploads/<subdir>/` (persistent
   volume, same one the MAX pipeline uses) — editing without picking a new
   file leaves the existing image alone; picking one deletes the old file via
   `_delete_file()` first.
+
+**`{type}` in the URL is not literally "news"/"promos"/"training" for all
+three** — training lessons live at `/admin/training-lessons/*`, *not*
+`/admin/training/*`, because `/admin/training` is a separate top-level tab
+(lesson-signup leads, see the `admin-panel` skill) that took that name first.
+News and Promos do use their plain names (`/admin/news/*`, `/admin/promos/*`).
+
+**Акции** (`app/models/promo.py`, `app/api/promos.py` at prefix `/promos`):
+fields are `icon` (a single emoji), `badge` (short label like "Каждый
+день"), `title`, `text` — matches the existing `.promo-card` design
+(rotating `promo-card-1..7` gradient backgrounds, assigned by list position
+in the frontend JS, not stored). `landing/index.html` (top 5) and
+`landing/promos.html` (all) render dynamically the same way News does.
 
 **Training lessons** (`app/models/training_lesson.py`,
 `app/api/training_lessons.py` at prefix `/training-lessons`,
