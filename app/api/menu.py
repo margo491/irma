@@ -81,18 +81,19 @@ async def export_menu_yml(db: AsyncSession = Depends(get_db)):
 
 @router.get("/export.xlsx")
 async def export_menu_xlsx(db: AsyncSession = Depends(get_db)):
-    """Excel-выгрузка меню — для ручного импорта в ChatMarket файлом
-    (импорт по URL-фиду там доступен только на тарифе «Бизнес»).
+    """Excel-выгрузка меню под реальный шаблон импорта ChatMarket
+    (5 листов: Категории, Товары, Характеристики, Дополнительные услуги,
+    URL-кнопки — структура подтверждена их собственным example.xlsx).
 
-    Колонки — общепринятые для таких табличных импортов (категория,
-    название, описание, цена, наличие); формат ChatMarket-шаблона нигде
-    не задокументирован публично, так что если у них есть готовый шаблон
-    для скачивания в личном кабинете — ориентироваться на него, а не на
-    этот файл."""
-    categories = {
-        c.id: c.name
-        for c in (await db.execute(select(MenuCategory))).scalars().all()
-    }
+    Категории и Товары заполняются из нашего меню. Остальные три листа
+    для кафе неприменимы (размеры/варианты, платные допуслуги, кнопки со
+    ссылками — это под магазины одежды/техники) — оставлены с одной
+    строкой заголовков, без выдуманных данных."""
+    categories = (
+        (await db.execute(select(MenuCategory).order_by(MenuCategory.sort_order)))
+        .scalars()
+        .all()
+    )
     items = (
         (await db.execute(select(MenuItem).order_by(MenuItem.category_id)))
         .scalars()
@@ -100,31 +101,54 @@ async def export_menu_xlsx(db: AsyncSession = Depends(get_db)):
     )
 
     wb = Workbook()
-    ws = wb.active
-    ws.title = "Меню"
 
-    headers = ["Категория", "Название", "Описание", "Цена", "В наличии", "Фото (URL)"]
-    ws.append(headers)
+    ws_cat = wb.active
+    ws_cat.title = "Категории"
+    ws_cat.append(["ID категории", "Название"])
+    for cat in categories:
+        ws_cat.append([f"C{cat.id}", cat.name])
 
+    ws_items = wb.create_sheet("Товары")
+    ws_items.append([
+        "ID категории", "ID товара", "Название", "Цена", "Скидка", "Бонусов",
+        "Описание", "Количество", "Артикул",
+        *[f"Изображение {i}" for i in range(1, 11)],
+    ])
     for item in items:
-        image_url = item.image_url or ""
+        image_url = item.image_url or None
         if image_url and not image_url.startswith("http"):
             image_url = f"{SITE_URL}/{image_url.lstrip('/')}"
-        ws.append([
-            categories.get(item.category_id, ""),
+        row = [
+            f"C{item.category_id}",
+            f"I{item.id}",
             item.name,
-            item.description or "",
             float(item.price),
-            "Да" if item.is_available else "Нет",
+            0,
+            None,
+            item.description or "",
+            None,
+            None,
             image_url,
-        ])
+        ] + [None] * 9  # Изображение 2..10
+        ws_items.append(row)
 
-    for i, header in enumerate(headers, start=1):
-        col = get_column_letter(i)
-        max_len = max(
-            [len(header)] + [len(str(row[i - 1])) for row in ws.iter_rows(min_row=2, values_only=True)]
-        )
-        ws.column_dimensions[col].width = min(max_len + 2, 60)
+    ws_char = wb.create_sheet("Характеристики")
+    ws_char.append(["ID товара", "Название", "Значение"])
+
+    ws_extra = wb.create_sheet("Дополнительные услуги")
+    ws_extra.append(["ID товара", "Название", "Цена"])
+
+    ws_url = wb.create_sheet("URL-кнопки")
+    ws_url.append(["ID товара", "Текст", "Ссылка"])
+
+    for ws in (ws_cat, ws_items, ws_char, ws_extra, ws_url):
+        for i in range(1, ws.max_column + 1):
+            col = get_column_letter(i)
+            values = [ws.cell(row=1, column=i).value] + [
+                ws.cell(row=r, column=i).value for r in range(2, ws.max_row + 1)
+            ]
+            max_len = max(len(str(v)) for v in values if v is not None) if any(v is not None for v in values) else 10
+            ws.column_dimensions[col].width = min(max_len + 2, 60)
 
     buf = BytesIO()
     wb.save(buf)
