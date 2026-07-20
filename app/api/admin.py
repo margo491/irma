@@ -288,12 +288,15 @@ async def admin_site_orders(db: AsyncSession = Depends(get_db), _: str = Depends
           <td>{o.phone}</td>
           <td>{"; ".join(f"{i['name']} × {i['qty']}" for i in o.items)}</td>
           <td>{o.total_amount:,.0f} ₽</td>
-          <td>
+          <td class="row-actions">
             <form method="post" action="/admin/site-orders/{o.id}/status" style="display:flex;gap:6px">
               <select name="status">
                 {"".join(f'<option value="{s}" {"selected" if s == o.status else ""}>{s}</option>' for s in SITE_ORDER_STATUSES)}
               </select>
               <button type="submit">Сохранить</button>
+            </form>
+            <form method="post" action="/admin/site-orders/{o.id}/delete" onsubmit="return confirm('Удалить этот заказ?')">
+              <button type="submit" style="background:#d98a9a">Удалить</button>
             </form>
           </td>
         </tr>"""
@@ -324,6 +327,20 @@ async def site_order_update_status(
     if not order:
         raise HTTPException(status_code=404, detail="Заказ не найден")
     order.status = status_value
+    await db.commit()
+    return RedirectResponse(url="/admin/site-orders", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.post("/site-orders/{order_id}/delete")
+async def site_order_delete(
+    order_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: str = Depends(require_admin),
+):
+    order = await db.get(SiteOrder, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Заказ не найден")
+    await db.delete(order)
     await db.commit()
     return RedirectResponse(url="/admin/site-orders", status_code=status.HTTP_303_SEE_OTHER)
 
