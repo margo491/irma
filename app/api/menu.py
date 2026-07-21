@@ -126,7 +126,7 @@ async def export_menu_xlsx(db: AsyncSession = Depends(get_db)):
             0,
             None,
             item.description or "",
-            None,
+            99 if item.is_available else 0,
             None,
             image_url,
         ] + [None] * 9  # Изображение 2..10
